@@ -1,0 +1,181 @@
+h1 {
+    font-size: 1.3em;
+    margin-bottom: 10px;
+}
+
+h2 {
+    font-size: 1.1em;
+    margin-bottom: 10px;
+}
+
+a {
+    text-decoration:none;
+    color: #09C;
+}
+
+a:visited {
+    color: #09C;
+}
+
+input {
+    color: white;
+    background-color: #019AD2;
+    border-radius: 4px;
+    -moz-border-radius: 4px;
+    border: none;
+    padding: 5px;
+}
+
+body {
+    background: url(../img/background.png) repeat-x left top;
+    background-attachment:fixed;
+    width: 800px;
+    margin: 0 auto;
+    font-family: "Helvetica Neue",Arial,sans-serif;
+    font-size: 14px;
+    line-height: 18px;
+}
+
+header, menu.main, section{
+  background: #ffffff;
+  border-radius: 5px;
+  -moz-border-radius: 5px;
+  border: 1px solid #EEE;
+}
+
+header {
+  padding: 10px;
+  margin: 2% 0;
+
+}
+
+
+header:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+
+header img {
+    float: left;
+    margin-right: 1em;
+}
+
+header form.logout{
+    float:right;
+}
+
+menu.main, #copyright, #chirp {
+    width: 28%;
+    float: left;
+    clear:left;
+    margin-bottom: 10px;
+}
+
+menu.main a{
+    display: block;
+    border-bottom: 1px solid #EEE;
+    padding: 10px;
+    background-color: #F9F9F9;
+}
+
+menu.main a:hover{
+    background-color: #ffffff;
+}
+
+#copyright{
+  padding: 10px;
+}
+
+#copyright p{
+    font-size: 0.9em;
+    color: #666;
+}
+
+#chirp{
+    padding: 10px;
+    background-color: whiteSmoke;
+}
+
+#chirp textarea {
+    width: 100%;
+    height: 10em;
+    color: #AAA;
+    border-radius: 4px;
+    -moz-border-radius: 4px
+}
+
+#chirp input {
+    float:right;
+}
+
+#content {
+    width: 70%;
+    float:right;
+}
+
+#content h1 {
+    border-bottom: 1px solid #EEE;
+    padding: 10px;
+}
+
+#content ul li{
+    padding: 5px 10px;
+    border-bottom: 1px solid #EEE;
+    position:relative;
+}
+
+#content ul li:after {
+    content: "";
+    display: table;
+    clear: both;
+}
+
+#content ul li img{
+    width: 48px;
+    height: 65px;
+    position: absolute;
+    top:10px;
+    left:10px;
+    margin-right: 10px;
+}
+
+#content ul li date{
+    float:right;
+}
+
+#content ul li address {
+    margin: 0 0 5px 60px;
+}
+
+
+#content ul li address .name{
+    font-size: 1.1em;
+    margin-right: 5px;
+}
+
+
+#content ul li address .username, #content ul li date{
+    font-size: 0.9em;
+    color: #999;
+}
+
+#content ul li p {
+    margin: 0 0 2em 60px;
+}
+
+#content ul li menu {
+    margin-left: 60px;
+    visibility: hidden;
+    position:absolute;
+    bottom: 1em;
+}
+
+#content ul li:hover menu {
+    visibility: visible;
+    font-size: 0.9em;
+}
+
+#content ul li:hover menu a{
+    padding: 0 5px;
+}
