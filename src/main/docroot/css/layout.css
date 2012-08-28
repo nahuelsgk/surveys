@@ -17,13 +17,15 @@ a:visited {
     color: #09C;
 }
 
-input {
+input[type=submit], input[type=button] {
     color: white;
     background-color: #019AD2;
     border-radius: 4px;
     -moz-border-radius: 4px;
     border: none;
     padding: 5px;
+    cursor: pointer;
+
 }
 
 body {
