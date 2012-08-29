@@ -6,55 +6,13 @@
     <link rel="stylesheet" href="css/reset.css">
     <link rel="stylesheet" href="css/layout.css">
     <script src="http://code.jquery.com/jquery-1.8.0.js"></script>
+    <script src="scripts/chirper.js"></script>
+    <script src="http://modernizr.com/downloads/modernizr.js"></script>
     <script type="text/javascript">
         document.createElement('header');
         document.createElement('menu');
         document.createElement('footer');
 
-        $(function(){
-            var tweets = [
-                {
-                    author: {
-                        name:"Jose Raya",
-                        username:"_joseraya",
-                        avatar:"img/avatar1.png"
-                    },
-                    date: "23 jul",
-                    message: "It works!"
-                },
-                {
-                    author: {
-                        name: "Jordi Pradel",
-                        username: "agile_jordi",
-                        avatar:"img/avatar4.png"
-                    },
-                    date: "24 jul",
-                    message: "Indeed! This is awesomeming awesome!"
-                },
-                {
-                    author: {
-                        name:"John Doe",
-                        username:"john_doe",
-                        avatar:"img/avatar2.png"
-                        },
-                    date: "20 jul",
-                    message: "A super awesome tweet by Jane, one of the users John follows... obviously. Text may have up to 140 characters so... use them all! I said all!"
-                }
-            ];
-            var chirp = $("#chirps li:first-child.template");
-            console.log(chirp);
-
-            $(tweets).each(function(){
-                var currentChirp = chirp.clone().appendTo("#chirps");
-                currentChirp.removeClass("template");
-                $("span.name",currentChirp).text(this.author.name);
-                $("span.username",currentChirp).text(this.author.username);
-                $("p",currentChirp).text(this.message);
-                $("date",currentChirp).text(this.date);
-                $("img",currentChirp).attr("src",this.author.avatar);
-        });
-
-        });
     </script>
 
 </head>
@@ -72,7 +30,7 @@
 <section id="content">
     <h1>Chirps</h1>
     <ul id="chirps">
-        <li class="template">
+        <li id="chirpTemplate" class="template">
             <date>date</date>
             <img src="img/avatar2.png">
             <address><span class="name">Name</span><span class="username">@username</span></address>
