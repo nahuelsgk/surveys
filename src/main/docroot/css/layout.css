@@ -21,6 +21,19 @@ a:visited {
     color: #09C;
 }
 
+p.error{
+    background-color: red;
+    color: white;
+    border-radius: 4px;
+    -moz-border-radius: 4px;
+    padding: 10px;
+    margin: 5px;
+}
+
+header p.error{
+    clear:left;
+}
+
 input[type=submit], input[type=button] {
     color: white;
     background-color: #019AD2;
@@ -63,7 +76,7 @@ header:after, section:after, #content ul li:after {
 
 header img {
     float: left;
-    margin-right: 1em;
+    margin: 1em;
 }
 
 header form.logout{
