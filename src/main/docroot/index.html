@@ -24,6 +24,15 @@
                 },
                 {
                     author: {
+                        name: "Jordi Pradel",
+                        username: "agile_jordi",
+                        avatar:"img/avatar4.png"
+                    },
+                    date: "24 jul",
+                    message: "Indeed! This is awesomeming awesome!"
+                },
+                {
+                    author: {
                         name:"John Doe",
                         username:"john_doe",
                         avatar:"img/avatar2.png"
@@ -32,11 +41,12 @@
                     message: "A super awesome tweet by Jane, one of the users John follows... obviously. Text may have up to 140 characters so... use them all! I said all!"
                 }
             ];
-            var chirp = $("#chirps li:first-child");
+            var chirp = $("#chirps li:first-child.template");
             console.log(chirp);
 
             $(tweets).each(function(){
                 var currentChirp = chirp.clone().appendTo("#chirps");
+                currentChirp.removeClass("template");
                 $("span.name",currentChirp).text(this.author.name);
                 $("span.username",currentChirp).text(this.author.username);
                 $("p",currentChirp).text(this.message);
@@ -62,7 +72,7 @@
 <section id="content">
     <h1>Chirps</h1>
     <ul id="chirps">
-        <li>
+        <li class="template">
             <date>date</date>
             <img src="img/avatar2.png">
             <address><span class="name">Name</span><span class="username">@username</span></address>
