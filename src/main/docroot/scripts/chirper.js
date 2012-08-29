@@ -1,20 +1,47 @@
-function addChirp(chirp){
-    var chirpElement = $("#chirpTemplate.template").clone().appendTo("#chirps").removeClass("template");
-    $("span.name",chirpElement).text(chirp.author.name);
-    $("span.username",chirpElement).text(chirp.author.username);
-    $("p",chirpElement).text(chirp.message);
-    $("date",chirpElement).text(chirp.date);
-    $("img",chirpElement).attr("src",chirp.author.avatar);
+(function(){
+
+var loggedUser = {
+    name: "John Doe",
+    username: "john_doe",
+    avatar: "/img/avatar1.png",
+    status: "The average John Doe, whose status is really, really boring."
+}
+
+var chirps = []
+
+function renderChirps(){
+
+    function addChirp(chirp){
+        var chirpElement = $("#chirpTemplate.template").clone().appendTo("#chirps").removeClass("template");
+        $("span.name",chirpElement).text(chirp.author.name);
+        $("span.username",chirpElement).text("@" + chirp.author.username);
+        $("p",chirpElement).text(chirp.message);
+        $("date",chirpElement).text(chirp.date);
+        $("img",chirpElement).attr("src",chirp.author.avatar);
+    }
+
+    $(chirps).each(function(){
+            addChirp(this);
+    });
+}
+
+function renderLoggedUser(){
+    $("header h1").text(loggedUser.name);
+    $("header h2").text("@" + loggedUser.username);
+    $("header p.status").text(loggedUser.status);
+    $("header img").attr("src",loggedUser.avatar)
 }
 
 $(function(){
+
+    renderLoggedUser();
+
     var url = "/api/chirps";
     $.ajax({
         url: url,
-        success: function(tweets,textStatus,jqXHR){
-            $(tweets).each(function(){
-                    addChirp(this);
-            });
+        success: function(newChirps,textStatus,jqXHR){
+            chirps = newChirps;
+            renderChirps();
         },
         dataType: "json",
         error: function(jqXHR, textStatus, error){
@@ -28,3 +55,6 @@ $(function(){
             console.debug("Error",error)
         }})
 });
+
+
+})();
