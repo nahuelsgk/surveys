@@ -8,37 +8,9 @@ function addChirp(chirp){
 }
 
 $(function(){
-    var tweets = [
-        {
-            author: {
-                name:"Jose Raya",
-                username:"_joseraya",
-                avatar:"img/avatar1.png"
-            },
-            date: "23 jul",
-            message: "It works!"
-        },
-        {
-            author: {
-                name: "Jordi Pradel",
-                username: "agile_jordi",
-                avatar:"img/avatar4.png"
-            },
-            date: "24 jul",
-            message: "Indeed! This is awesomeming awesome!"
-        },
-        {
-            author: {
-                name:"John Doe",
-                username:"john_doe",
-                avatar:"img/avatar2.png"
-                },
-            date: "20 jul",
-            message: "A super awesome tweet by Jane, one of the users John follows... obviously. Text may have up to 140 characters so... use them all! I said all!"
-        }
-    ];
-    $(tweets).each(function(){
-        addChirp(this);
-    });
-
+    $.getJSON("/api/chirps", function(tweets,textStatus,jqXHR){
+        $(tweets).each(function(){
+                addChirp(this);
+        });
+    })
 });
