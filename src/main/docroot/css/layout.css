@@ -51,12 +51,11 @@ header, menu.main, section{
 
 header {
   padding: 10px;
-  margin: 2% 0;
+  margin: 15px 0;
 
 }
 
-
-header:after {
+header:after, section:after, #content ul li:after {
   content: "";
   display: table;
   clear: both;
@@ -71,10 +70,14 @@ header form.logout{
     float:right;
 }
 
-menu.main, #copyright, #chirp {
+div#left{
     width: 28%;
+    margin-right: 2%;
     float: left;
     clear:left;
+}
+
+menu.main, #copyright, #chirp {
     margin-bottom: 10px;
 }
 
@@ -117,7 +120,7 @@ menu.main a:hover{
 
 #content {
     width: 70%;
-    float:right;
+    float:left;
 }
 
 #content h1 {
@@ -129,12 +132,6 @@ menu.main a:hover{
     padding: 5px 10px;
     border-bottom: 1px solid #EEE;
     position:relative;
-}
-
-#content ul li:after {
-    content: "";
-    display: table;
-    clear: both;
 }
 
 #content ul li img{
