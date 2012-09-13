@@ -2,6 +2,8 @@ import com.typesafe.startscript.StartScriptPlugin
 
 resolvers += "repo.novus snaps" at "http://repo.novus.com/snapshots/"
 
+resolvers += "scalatools" at "https://oss.sonatype.org/content/groups/scala-tools/"
+
 organization := "edu.upc.fib"
 
 name := "dsbw-1213T"
