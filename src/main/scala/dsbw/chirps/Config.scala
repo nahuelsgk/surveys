@@ -16,6 +16,6 @@ object Config {
   val dbPort = intEnvOrElse("MONGO_PORT",35997)
   val dbName = Properties.envOrElse("MONGO_DB_NAME","dsbw-1213t")
   val username = Properties.envOrElse("MONGO_USERNAME","dsbw2")
-  val pwd = envOrFail("MONGO_PASSWORD")
+  val pwd = Properties.envOrElse("MONGO_PASSWORD","")
 
 }
