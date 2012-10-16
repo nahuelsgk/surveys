@@ -9,54 +9,85 @@ import dsbw.json.JSON
 import javax.servlet.http.{HttpServletResponse, HttpServletRequest, HttpServlet}
 import io.Source
 import collection.JavaConversions.{enumerationAsScalaIterator, mapAsScalaMap}
+import java.io.PrintWriter
 
+/** Trait to be implemented by HTTP apis */
 trait Api{
   def service(method:String, uri:String, parameters:Map[String, List[String]] = Map(), headers:Map[String, String]=Map(), body:Option[JSON]=None):Response
 }
 
-
+/** Main servlet interfacing between Java Servlet APIs and the Api trait */
 class Servlet(api:Api) extends HttpServlet {
 
   override def service(request: HttpServletRequest, response: HttpServletResponse) {
-    val initialTimeMillis = System.currentTimeMillis()
-    response.setContentType("application/json")
-    response.setCharacterEncoding("utf-8")
-    response.setHeader("Access-Control-Allow-Origin","*")
-    val out: java.io.PrintWriter = response.getWriter
-    try {
-      if (request.getMethod == "OPTIONS") {
-        response.setHeader("Access-Control-Allow-Headers","Content-Type, Accept, X-Auth-Token, X-Requested-With")
-        response.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
-        response.setHeader("Access-Control-Max-Age","1728000");
-        //response.setHeader("Access-Control-Allow-Origin", "*")
-        response.setStatus(200)
-        return
+
+    def parseRequest(request: HttpServletRequest): Tuple3[Option[JSON],Map[String, List[String]],Map[String, String]] = {
+
+      def parseBody(request: HttpServletRequest): Option[JSON] = {
+        val sBody = Source.fromInputStream(request.getInputStream, "UTF-8").getLines().mkString("\n")
+        val body = if (sBody == "") {
+          None
+        } else {
+          Some(JSON(sBody))
+        }
+        body
       }
-      val sBody = Source.fromInputStream(request.getInputStream,"UTF-8").getLines().mkString("\n")
-      val body = if (sBody == "") { None } else {Some(JSON(sBody))}
-      val parameters:Map[String, List[String]] = request.getParameterMap.toMap.mapValues(_.toList)
-      val headers = request.getHeaderNames.map((h: String) => (h, request.getHeader(h))).toMap
-      // Perform request
-      val r = api.service(request.getMethod,request.getRequestURI, parameters, headers, body)
+
+      (parseBody(request),
+        request.getParameterMap.toMap.mapValues(_.toList),
+        request.getHeaderNames.map((h: String) => (h, request.getHeader(h))).toMap)
+
+    }
+
+    def setAccessControlHeaders(response: HttpServletResponse){
+      response.setHeader("Access-Control-Allow-Headers","Content-Type, Accept, X-Auth-Token, X-Requested-With")
+      response.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
+      response.setHeader("Access-Control-Max-Age","1728000")
+      //response.setHeader("Access-Control-Allow-Origin", "*")
+      response.setStatus(200)
+    }
+
+    def initializeResponse(response:HttpServletResponse): PrintWriter = {
+      response.setContentType("application/json")
+      response.setCharacterEncoding("utf-8")
+      response.setHeader("Access-Control-Allow-Origin","*")
+      response.getWriter
+    }
+
+    def writeResponse(r: Response) {
       response.setStatus(r.status.id)
       if (r.body.nonEmpty) {
         val json = JSON.toJSON(r.body.get)
         out println json.value
       }
-      logRequest(request,response,initialTimeMillis)
+    }
+
+
+    val initialTimeMillis = System.currentTimeMillis()
+
+    val out = initializeResponse(response)
+
+    try {
+
+      if (request.getMethod == "OPTIONS") {
+        setAccessControlHeaders(response)
+        return
+      }
+
+      val (body, parameters, headers) = parseRequest(request)
+
+      val r = api.service(request.getMethod,request.getRequestURI, parameters, headers, body)
+
+      writeResponse(r)
+
     } catch {
-      //      case e: ApiException => {
-      //        response.setStatus(e.code.id)
-      //        logRequest(request,response,initialTimeMillis)
-      //        e.printStackTrace()
-      //        out.println(e.getMessage)
-      //      }
       case e: Throwable => {
         response.setStatus(500)
-        logRequest(request,response,initialTimeMillis)
         e.printStackTrace()
         out.println("""{"error":"Internal error"}""")
       }
+    } finally {
+      logRequest(request,response,initialTimeMillis)
     }
   }
 
