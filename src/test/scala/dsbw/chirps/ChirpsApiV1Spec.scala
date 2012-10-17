@@ -19,8 +19,9 @@ class ChirpsApiV1Spec extends FlatSpec with Mocks with BeforeAndAfterEach {
     val api = new ChirpsApi(chirpsRepository,chirpersRepository)
   }
 
-  it should "list all chirps" in {
+  it should "return an empty list when listing all chirps and there are no chirps in the DB" in {
     new TestChirpsApi {
+      when(chirpsRepository.findAll).thenReturn(List())
       val chirps = api.listChirps
       assert(chirps === List())
     }
