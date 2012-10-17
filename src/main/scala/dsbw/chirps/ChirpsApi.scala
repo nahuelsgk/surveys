@@ -13,10 +13,7 @@ case class Author(name:String, username:String, avatar:String)
 case class Chirp(author:Author, date:Date, message:String)
 
 /** Chirps API */
-class ChirpsApi extends Api {
-  val db = new DB(dbHostName, dbPort, dbName, username, pwd)
-  val chirpsRepository = new ChirpsRepository(new ChirpsDao(db))
-  val chirpersRepository = new ChirpersRepository(new ChirpersDao(db))
+class ChirpsApi(chirpsRepository: ChirpsRepository,chirpersRepository: ChirpersRepository) extends Api {
 
   private def getChirperById(id:ObjectId) = chirpersRepository.findById(id).map(ar=>Author(ar.name,ar.username,ar.avatar))
 
@@ -33,7 +30,11 @@ class ChirpsApi extends Api {
 
 object ChirpsApp extends App {
 
-  val server = new Server(new ChirpsApi(), webServerPort)
+  val db = new DB(dbHostName, dbPort, dbName, username, pwd)
+  val chirpsRepository = new ChirpsRepository(new ChirpsDao(db))
+  val chirpersRepository = new ChirpersRepository(new ChirpersDao(db))
+
+  val server = new Server(new ChirpsApi(chirpsRepository,chirpersRepository), webServerPort)
   server.start()
 
 }

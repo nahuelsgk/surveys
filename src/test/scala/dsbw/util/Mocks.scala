@@ -1,12 +1,20 @@
 package dsbw.util
 
-/**
- * Created with IntelliJ IDEA.
- * User: jpradel
- * Date: 17/10/12
- * Time: 11:22
- * To change this template use File | Settings | File Templates.
- */
-class Mocks {
+import org.scalatest.mock.MockitoSugar
+import org.mockito.ArgumentCaptor
+import org.mockito.Matchers.anyObject
 
+trait Mocks extends MockitoSugar{
+  def v[T](value:T):T = {
+    org.mockito.Matchers.eq(value)
+  }
+  def default = {
+    org.mockito.Matchers.eq(null)
+  }
+
+  def ?[T]:T = anyObject()
+
+  def capture[T<: AnyRef](implicit mf: ClassManifest[T]):ArgumentCaptor[T] = {
+    ArgumentCaptor.forClass(mf.erasure.asInstanceOf[Class[T]])
+  }
 }

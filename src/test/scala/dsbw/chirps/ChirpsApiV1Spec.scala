@@ -12,5 +12,17 @@ import dsbw.util.Mocks
 
 class ChirpsApiV1Spec extends FlatSpec with Mocks with BeforeAndAfterEach {
 
+  trait TestChirpsApi{
 
+    val chirpsRepository = mock[ChirpsRepository]
+    val chirpersRepository = mock[ChirpersRepository]
+    val api = new ChirpsApi(chirpsRepository,chirpersRepository)
+  }
+
+  it should "list all chirps" in {
+    new TestChirpsApi {
+      val chirps = api.listChirps
+      assert(chirps === List())
+    }
+  }
 }
