@@ -54,7 +54,7 @@ class Servlet(api:Api) extends HttpServlet {
       response.getWriter
     }
 
-    def writeResponse(r: Response) {
+    def writeResponse(r: Response, out:PrintWriter) {
       response.setStatus(r.status.id)
       if (r.body.nonEmpty) {
         val json = JSON.toJSON(r.body.get)
@@ -78,7 +78,7 @@ class Servlet(api:Api) extends HttpServlet {
 
       val r = api.service(request.getMethod,request.getRequestURI, parameters, headers, body)
 
-      writeResponse(r)
+      writeResponse(r,out)
 
     } catch {
       case e: Throwable => {
