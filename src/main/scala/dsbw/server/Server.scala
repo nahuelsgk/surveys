@@ -1,6 +1,5 @@
 package dsbw.server
 
-import util.Properties
 import org.eclipse.jetty.server.{Server => JettyServer}
 import org.eclipse.jetty.servlet.{ServletHolder, ServletContextHandler}
 import org.eclipse.jetty.server.handler.{HandlerList, ResourceHandler}
