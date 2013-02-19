@@ -57,7 +57,7 @@ class Servlet(api:Api) extends HttpServlet {
     def writeResponse(r: Response, out:PrintWriter) {
       response.setStatus(r.status.id)
       if (r.body.nonEmpty) {
-        val json = JSON.toJSON(r.body.get)
+        val json = JSON.toJSON(r.body.get.asInstanceOf[AnyRef])
         out println json.value
       }
     }

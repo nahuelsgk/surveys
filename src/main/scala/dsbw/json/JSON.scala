@@ -1,10 +1,9 @@
 package dsbw.json
 
-import net.liftweb.json.JsonAST.render
-import net.liftweb.json.Extraction.decompose
-import net.liftweb.json._
-import net.liftweb.json
-
+import org.json4s.native.JsonMethods._
+import org.json4s._
+import org.json4s.native.Serialization
+import org.json4s.native.Serialization.write
 
 case class JSON(value: String) {}
 
@@ -32,11 +31,12 @@ object JSON {
   implicit val formats = Serialization.formats(NoTypeHints) //+ new EnumerationsSerializer(ErrorCode) + new EnumerationsSerializer(ParameterOrFieldErrorCode)
 
   //  def toJSON(a: Any) = MongoDBObject("obj"->a).get("obj").
-  implicit def toJSON(a: Any, prettyPrint: Boolean = true): JSON = {
+  implicit def toJSON[T <: AnyRef](a: T, prettyPrint: Boolean = true): JSON = {
+    implicit val formats = Serialization.formats(NoTypeHints)
     if (prettyPrint) {
-      JSON(pretty(render(decompose(a))))
+      JSON(write[T](a))
     } else {
-      JSON(compact(render(decompose(a))))
+      JSON(write[T](a))
     }
   }
 
