@@ -12,10 +12,10 @@ object Config {
   private def intEnvOrElse(propertyName:String, defaultValue:Int) = Properties.envOrElse(propertyName, defaultValue.toString).toInt
 
   val webServerPort = intEnvOrElse("PORT",8080)
-  val dbHostName = Properties.envOrElse("MONGO_HOST_NAME", "ds035997.mongolab.com")
-  val dbPort = intEnvOrElse("MONGO_PORT",35997)
-  val dbName = Properties.envOrElse("MONGO_DB_NAME","dsbw-1213t")
-  val username = Properties.envOrElse("MONGO_USERNAME","dsbw")
+  val dbHostName = Properties.envOrElse("MONGO_HOST_NAME", "ds039467.mongolab.com")
+  val dbPort = intEnvOrElse("MONGO_PORT",39467)
+  val dbName = Properties.envOrElse("MONGO_DB_NAME","dbsw-lab-grup4")
+  val username = Properties.envOrElse("MONGO_USERNAME","dsbw-lab-admin")
   val pwd = Properties.envOrElse("MONGO_PASSWORD","")
 
 }
