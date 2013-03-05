@@ -58,3 +58,13 @@ $(function(){
 
 
 })();
+
+var t=setInterval(getNewChirps,5000);
+function getNewChirps(){
+  $('#msgid').empty();
+  $('#msgid').css("opacity","100");
+  $('#msgid').append("Searching new chirps...");
+  $('#msgid').animate({ opacity: 0 }, 1500);
+}
+
+
