@@ -1,20 +1,36 @@
 <!DOCTYPE html>
 <html lang="en" xmlns="http://www.w3.org/1999/html">
 <head>
-    <title>Enquestator</title>
+    <title>Chirper</title>
     <meta charset="utf-8" />
     <link rel="stylesheet" href="css/reset.css">
     <link rel="stylesheet" href="css/layout.css">
     <!-- todo baixar jquery -->
     <script src="http://code.jquery.com/jquery-1.8.0.js"></script>
-    <script src="scripts/enquestator.js"></script>
+    <script src="scripts/chirper.js"></script>
     <script src="http://modernizr.com/downloads/modernizr.js"></script>
 </head>
 <body>
 <header>
+    <form action="#" class="logout">
+        <input type="submit" name="logout" id="logout" value="logout">
+    </form>
+    <img>
+    <h1>User real name</h1>
+    <h2>User username</h2>
+    <p class="status">User status</p>
+    <p class="error template">Error message here</p>
 </header>
 
 <div id="left">
+
+<section id="chirp">
+    <h1>Say something...</h1>
+    <form class="chirp">
+        <textarea></textarea>
+        <input type="submit" value="Chirp">
+    </form>
+</section>
 
 <menu class="main">
     <a href="#">Chirps</a>
