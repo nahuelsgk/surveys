@@ -5,13 +5,10 @@
     <meta charset="utf-8" />
     <link rel="stylesheet" href="css/reset.css">
     <link rel="stylesheet" href="css/layout.css">
-    <!-- todo baixar jquery -->
-    <script src="http://code.jquery.com/jquery-1.8.0.js"></script>
-    <script src="scripts/enquestator.js"></script>
-    <script src="http://modernizr.com/downloads/modernizr.js"></script>
 </head>
 <body>
 <header>
+    <h1>Enquestator</h1>
 </header>
 
 <div id="left">
@@ -29,24 +26,21 @@
 </div>
 
 <section id="content">
-    <h1>Chirps</h1><div id="msgid" style="display: inline;"></div>
-    <ul id="chirps">
-        <li id="chirpTemplate" class="template">
-            <date>date</date>
-            <img src="img/avatar2.png">
-            <address><span class="name">Name</span><span class="username">@username</span></address>
-            <p>Message</p>
-            <menu>
-                <a href="#">Reply</a>
-                <a href="#">Retweet</a>
-                <a href="#">Favorite</a>
-            </menu>
-        </li>
-    </ul>
+    <form id="create_survey_form" action="/survey" class="survey" method="POST">
+        <!-- todo: check -->
+        Title:<input type="text" name="title" id="title" placeholder="Survey title" required><br />
+        Since:<input type="date" name="since" id="since" required><br />
+        Until:<input type="date" name="until" id="until" required><br />
+        <input type="submit" name="submit" class="button" id="submit_btn" value="Send"><br />
+    </form>
 </section>
 
 <footer>
-
+    <!-- todo baixar jquery -->
+    <script src="http://code.jquery.com/jquery-1.8.0.js"></script>
+    <script src="http://malsup.github.com/jquery.form.js"></script>
+    <script src="scripts/enquestator.js"></script>
+    <script src="http://modernizr.com/downloads/modernizr.js"></script>
 </footer>
 </body>
 </html>

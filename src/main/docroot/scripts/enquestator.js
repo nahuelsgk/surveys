@@ -1,70 +1,35 @@
 (function(){
+    $(".button").click(function() {
 
-var loggedUser = {
-    name: "John Doe",
-    username: "john_doe",
-    avatar: "/img/avatar1.png",
-    status: "The average John Doe, whose status is really, really boring."
-}
-
-var chirps = []
-
-function renderChirps(){
-
-    function addChirp(chirp){
-        var chirpElement = $("#chirpTemplate.template").clone().appendTo("#chirps").removeClass("template");
-        $("span.name",chirpElement).text(chirp.author.name);
-        $("span.username",chirpElement).text("@" + chirp.author.username);
-        $("p",chirpElement).text(chirp.message);
-        $("date",chirpElement).text(chirp.date);
-        $("img",chirpElement).attr("src",chirp.author.avatar);
-    }
-
-    $(chirps).each(function(){
-            addChirp(this);
+//        var dataString = 'name='+ name + '&email=' + email + '&phone=' + phone;
+//        //alert (dataString);return false;
+//        var title = $("input#title").val();
+//        var since = $("input#since").val();
+//        var until = $("input#until").val();
+//        var dataString = 'title='+ title + '&since=' + since + '&until=' + until;
+//
+//        $.ajax({
+//        type: "POST",
+//        url: "/survey",
+//        data: dataString,
+//        success: function() {
+//            $('#create_survey_form').html("<div id='message'></div>");
+//            $('#message').html("<h2>Create Survey Form Submitted!</h2>")
+//            .append("<p>We will be in touch soon.</p>")
+//            .hide()
+//            .fadeIn(1500, function() {
+//                $('#message').append("<img id='checkmark' src='images/check.png' />");
+//            });
+//        }
+//        });
+        return false;
+    })
+    $('#create_survey_form').ajaxForm(function() {
+        alert("Thank you for your comment!");
     });
-}
 
-function renderLoggedUser(){
-    $("header h1").text(loggedUser.name);
-    $("header h2").text("@" + loggedUser.username);
-    $("header p.status").text(loggedUser.status);
-    $("header img").attr("src",loggedUser.avatar)
-}
 
-$(function(){
-
-    renderLoggedUser();
-
-    var url = "/api/chirps";
-    $.ajax({
-        url: url,
-        success: function(newChirps,textStatus,jqXHR){
-            chirps = newChirps;
-            renderChirps();
-        },
-        dataType: "json",
-        error: function(jqXHR, textStatus, error){
-            if(jqXHR && jqXHR.status==404){
-                $("<p>").addClass("error").text("Error getting the chirps... api server not found at " + url).appendTo("header")
-            } else {
-                $("<p>").addClass("error").text("Unknown error getting the chirps...").appendTo("header")
-            }
-            console.debug("Error!",jqXHR)
-            console.debug("Text status", textStatus)
-            console.debug("Error",error)
-        }})
-});
 
 
 })();
-
-var t=setInterval(getNewChirps,5000);
-function getNewChirps(){
-  $('#msgid').empty();
-  $('#msgid').css("opacity","100");
-  $('#msgid').append("Searching new chirps...");
-  $('#msgid').animate({ opacity: 0 }, 1500);
-}
-
 
