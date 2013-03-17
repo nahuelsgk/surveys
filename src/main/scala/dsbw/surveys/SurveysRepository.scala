@@ -4,7 +4,6 @@ import dsbw.mongo.MongoDao
 import org.bson.types.ObjectId
 import java.util.Date
 import com.mongodb.casbah.commons.MongoDBObject
-//import com.mongodb.casbah.Imports._
 import com.mongodb.casbah.query.Imports._
 
 /** A record representing the scheme of Surveys stored in the surveys collection */
