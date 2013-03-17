@@ -1,29 +1,29 @@
-package dsbw.chirps
+package dsbw.surveys
 
 import dsbw.server.{Server, HttpStatusCode, Response, Api}
 import dsbw.json.JSON
 import Config.{dbHostName, dbPort, dbName, username, pwd, webServerPort}
 
-/** Chirps API */
-class ChirpsApi(chirpsService:ChirpsService) extends Api {
+/* Surveys API */
+class SurveysApi(surveysService:SurveysService) extends Api {
 
   def service(method: String, uri: String, parameters: Map[String, List[String]] = Map(), headers: Map[String, String] = Map(), body: Option[JSON] = None): Response = {
+    println("--Called Service--");
     (method + " " + uri) match {
-      case "GET /api/chirps" => Response(HttpStatusCode.Ok, chirpsService.listChirps)
+      case "POST /api/survey" => Response(HttpStatusCode.Ok, surveysService.listSurveys)
       case _ => Response(HttpStatusCode.Ok, "Hello world!")
     }
   }
 
 }
 
-object ChirpsApp extends App {
+object SurveysApp extends App {
 
   val db = new DB(dbHostName, dbPort, dbName, username, pwd)
-  val chirpsRepository = new ChirpsRepository(new ChirpsDao(db))
-  val chirpersRepository = new ChirpersRepository(new ChirpersDao(db))
-  val chirpsService = new ChirpsService(chirpsRepository,chirpersRepository)
+  val surveysRepository = new SurveysRepository(new SurveysDao(db))
+  val surveysService = new SurveysService(surveysRepository)
 
-  val server = new Server(new ChirpsApi(chirpsService), webServerPort)
+  val server = new Server(new SurveysApi(surveysService), webServerPort)
   server.start()
 
 }
