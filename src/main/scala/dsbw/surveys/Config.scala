@@ -1,4 +1,4 @@
-package dsbw.chirps
+package dsbw.surveys
 
 import util.Properties
 
