@@ -4,7 +4,7 @@ import dsbw.server.{Server, HttpStatusCode, Response, Api}
 import dsbw.json.JSON
 import Config.{dbHostName, dbPort, dbName, username, pwd, webServerPort}
 
-/** Surveyss API */
+/* Surveys API */
 class SurveysApi(surveysService:SurveysService) extends Api {
 
   def service(method: String, uri: String, parameters: Map[String, List[String]] = Map(), headers: Map[String, String] = Map(), body: Option[JSON] = None): Response = {
