@@ -134,6 +134,7 @@ menu.main a:hover{
 #content {
     width: 70%;
     float:left;
+    padding:10px;
 }
 
 #content h1 {
@@ -194,4 +195,33 @@ menu.main a:hover{
 
 #content ul li:hover menu a{
     padding: 0 5px;
+}
+
+#content #create_survey_form ul li {
+    vertical-align: middle;
+    border-bottom: none;
+}
+
+#content #create_survey_form input {
+    margin:5px;
+    width: 200px;
+    float: left;
+}
+
+#content #create_survey_form ul {
+    list-style: none;
+}
+
+#content #create_survey_form ul form li {
+    width: 500px;
+    margin: 0 0 10px;
+    float: left;
+    clear:both;
+}
+
+#content #create_survey_form label {
+    float: left;
+    min-width: 60px;
+    padding: 5px 20px 0 0;
+    text-align: left;
 }
