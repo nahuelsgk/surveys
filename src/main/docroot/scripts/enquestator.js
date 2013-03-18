@@ -34,7 +34,6 @@ $(document).ready(function($) {
                 $('#since').attr('value', $('#until').attr('value'));
         }
     });
-
 });
 
 
