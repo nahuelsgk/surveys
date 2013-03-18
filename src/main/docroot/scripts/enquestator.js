@@ -4,7 +4,8 @@ $(document).ready(function($) {
     }
     //setting since and until to the current day
     d = new Date();
-    today = d.getFullYear() + '-' + formatNumber(d.getMonth() + 1) + '-' + formatNumber(d.getDate());
+    today = d.toISOString().substr(0,10);
+    
     $('#since').attr('value', today);
     $('#until').attr('value', today);
 
