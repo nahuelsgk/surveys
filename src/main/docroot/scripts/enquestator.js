@@ -43,6 +43,7 @@ function listSurveys() {
         dataType:"json",
         success: function(json) {
             $('h2').text('Surveys list');
+            $('#survey_description').text("");
 
             $('#create_survey_form').fadeOut();
         }
