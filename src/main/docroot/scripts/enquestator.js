@@ -51,6 +51,7 @@ function listSurveys() {
 }
 
 function createSurvey() {
+    $('h2').text('Create survey');
     $('#survey_description').text("Start now creating your new survey filling the gaps below.");
     $('#create_survey_form').fadeIn();
 }
