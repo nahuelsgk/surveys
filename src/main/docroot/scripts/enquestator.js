@@ -9,6 +9,14 @@ $(document).ready(function($) {
     $('#since').attr('value', today);
     $('#until').attr('value', today);
 
+    var pickerOpts = {
+        dateFormat: $.datepicker.ISO_8601
+    };
+
+    $( "#since" ).datepicker(pickerOpts);
+    $( "#until" ).datepicker(pickerOpts);
+
+
 
     $('#create_survey_form').ajaxForm(function() {
         if ($('#create_survey_form').attr('method') === 'PUT') {
