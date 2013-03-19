@@ -40,7 +40,7 @@ class SurveysService(surveysRepository: SurveysRepository) {
             //Es construeix la resposta amb la nova URI amb la id que ha proporcionat la BD
             val uri = "/api/survey/" + id
             val headers = Map("Location" -> uri)
-            Response(HttpStatusCode.Created, headers)
+            Response(HttpStatusCode.Created, headers, "{}")
         }
         else {
           Response(HttpStatusCode.BadRequest, null)

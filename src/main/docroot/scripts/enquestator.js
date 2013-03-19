@@ -1,10 +1,8 @@
 var createSurveyHTML;
 var surveysListHTML;
+var questionCounter = 1;
 
 $(document).ready(function($) {
-    formatNumber = function(number) {
-        return (number < 10) ?  '0' + number : number;
-    }
     //setting since and until to the current day
     d = new Date();
     today = d.toISOString().substr(0,10);
@@ -27,24 +25,51 @@ $(document).ready(function($) {
 
 
 
-    $('#submit_btn').click(function() {
-        $.ajax({
-            url: "/api/survey",
-            type: "POST",
+    $('#create_survey_form').submit(function() {
+        var form = $(this);
+        var request = $.ajax({
+            url: $(this).attr('action'),
+            type: $(this).attr('method'),
             data: JSON.stringify({
                 title : $('#title').val(),
                 since : $('#since').val(),
                 until : $('#until').val()
-            }),
-            dataType: "json"
-        }).done(function () {
-            console.log('sent request (POST)');
+            })
+        });
+
+        request.fail(function() {
+            console.log('request failed :/');
+        });
+        request.done(function (json) {
+            console.log('sent request, method : ' + form.attr('method'));
+
+            if (form.attr('method') === 'PUT') {
+                date = new Date();
+                $('h2').text('Survey updated at ' + date.getHours() + ':' + date.getMinutes() + ':' + date.getSeconds   ());
+            } else {
+                form.attr('method', 'PUT');
+                form.attr('action', json.getResponseHeader('location'));
+                $('#submit_btn').attr('value','Edit');
+
+                $('h2').text('Survey sent');
+                $('#survey_description').text('Click the edit button to update it');
+            }
         });
 
         return false;
     });
 
     createSurveyHTML = $('#dynamicContent').clone();
+
+    addQuestion = function() {
+        $('#question_list').append('<li><label for="question[' + questionCounter + ']">Question ' + questionCounter + '</label>' +
+            '<input type="text" name="question[' + questionCounter + '] class="question" placeholder="Write your question here" required /></li>'
+        );
+        questionCounter++;
+    };
+
+    $('#add_question').click(addQuestion);
+
 });
 
 function listSurveys() {
