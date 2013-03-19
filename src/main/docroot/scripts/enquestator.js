@@ -45,4 +45,22 @@ $(document).ready(function($) {
     });
 });
 
+function listSurveys() {
+    $.ajax({
+        url:"/api/surveys",
+        dataType:"json",
+        success: function(json) {
+            $('h2').text('Surveys list');
+            $('#survey_description').text("");
+
+            $('#create_survey_form').fadeOut();
+        }
+    });
+}
+
+function createSurvey() {
+    $('h2').text('Create survey');
+    $('#survey_description').text("Start now creating your new survey filling the gaps below.");
+    $('#create_survey_form').fadeIn();
+}
 
