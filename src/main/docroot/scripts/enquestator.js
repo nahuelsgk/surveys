@@ -37,4 +37,20 @@ $(document).ready(function($) {
     });
 });
 
+function listSurveys() {
+    $.ajax({
+        url:"/api/surveys",
+        dataType:"json",
+        success: function(json) {
+            $('#survey_description').text("Surveys List");
+
+            $('#create_survey_form').fadeOut();
+        }
+    });
+}
+
+function createSurvey() {
+    $('#survey_description').text("Start now creating your new survey filling the gaps below.");
+    $('#create_survey_form').fadeIn();
+}
 
