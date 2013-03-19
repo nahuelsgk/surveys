@@ -38,21 +38,50 @@ $(document).ready(function($) {
 });
 
 function listSurveys() {
+
+    cleanSurveys();
     $.ajax({
+        type:"GET",
         url:"/api/surveys",
         dataType:"json",
         success: function(json) {
+            var surveysHtmlIni = '<div id="surveysList"><ul>';
+            var surveysHtmlEnd = '</ul></div>';
+            var count = 0;
+            console.log("JSON: "+json);
+            $.each(json, function() {
+                var title = $(this).find("title").text();
+                if (title) {
+                    var html = '<li>'+title+'</li>';
+                    surveysHtmlIni = surveysHtmlIni + html;
+                    count = count +1;
+                }
+            });
+            if (count == 0) {
+                var html = '<li>No surveys today</li>';
+                surveysHtmlIni = surveysHtmlIni + html;
+            }
+            surveysHtmlIni = surveysHtmlIni + surveysHtmlEnd;
+            console.log("HTML: "+surveysHtmlIni);
             $('h2').text('Surveys list');
             $('#survey_description').text("");
-
             $('#create_survey_form').fadeOut();
+            $('#content').append(surveysHtmlIni);
         }
     });
 }
 
 function createSurvey() {
+    cleanSurveys();
     $('h2').text('Create survey');
     $('#survey_description').text("Start now creating your new survey filling the gaps below.");
     $('#create_survey_form').fadeIn();
 }
 
+function cleanSurveys() {
+    $('#surveysList').empty();
+}
+
+function cleanCreateSurvey() {
+
+}
