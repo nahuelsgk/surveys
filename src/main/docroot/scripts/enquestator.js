@@ -42,7 +42,7 @@ function listSurveys() {
         url:"/api/surveys",
         dataType:"json",
         success: function(json) {
-            $('#survey_description').text("Surveys List");
+            $('h2').text('Surveys list');
 
             $('#create_survey_form').fadeOut();
         }
