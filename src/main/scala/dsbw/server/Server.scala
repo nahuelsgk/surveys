@@ -59,6 +59,9 @@ class Servlet(api:Api) extends HttpServlet {
         val json = JSON.toJSON(r.body.get.asInstanceOf[AnyRef])
         out println json.value
       }
+      if (r.headers != null) {
+        response.setHeader("Location", r.headers)
+      }
     }
 
 

@@ -10,8 +10,8 @@ class SurveysApi(surveysService:SurveysService) extends Api {
   def service(method: String, uri: String, parameters: Map[String, List[String]] = Map(), headers: Map[String, String] = Map(), body: Option[JSON] = None): Response = {
     println("--Called Service--");
     (method + " " + uri) match {
-      case "POST /api/survey" => Response(HttpStatusCode.Ok, surveysService.listSurveys)
-      case _ => Response(HttpStatusCode.Ok, "Hello world!")
+      case "POST /api/survey" => Response(HttpStatusCode.Ok, "hi dude!", surveysService.listSurveys)
+      case _ => Response(HttpStatusCode.Ok, null,"Hello world!")
     }
   }
 

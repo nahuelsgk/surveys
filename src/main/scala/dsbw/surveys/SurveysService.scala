@@ -7,7 +7,7 @@ case class Question(question:String)
 
 class SurveysService(surveysRepository: SurveysRepository) {
 
-  def listSurveys(){
+  def listSurveys() {
     println("Hay que devolver una lista de encuestas")
   }
 }
