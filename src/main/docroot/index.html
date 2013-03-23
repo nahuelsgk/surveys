@@ -5,6 +5,9 @@
     <meta charset="utf-8" />
     <link rel="stylesheet" href="css/reset.css">
     <link rel="stylesheet" href="css/layout.css">
+    <link rel="stylesheet" href="http://code.jquery.com/ui/1.10.2/themes/smoothness/jquery-ui.css" />
+    <link rel="stylesheet" href="/resources/demos/style.css" />
+
 </head>
 <body>
 <header>
@@ -14,9 +17,8 @@
 <div id="left">
 
 <menu class="main">
-    <a href="#">Chirps</a>
-    <a href="#">Following</a>
-    <a href="#">Followers</a>
+    <a href="#" id="listSurveys" onclick="listSurveys()">List surveys</a>
+    <a href="#" id="createSurvey" onclick="createSurvey()">Create survey</a>
 </menu>
 
 <section id="copyright">
@@ -26,7 +28,7 @@
 </div>
 
 <section id="content">
-    <h2>Welcome to Enquestator!</h2>
+    <h2 id="contentTitle">Welcome to Enquestator!</h2>
     <p id="survey_description">Start now creating your new survey filling the gaps below.</p>
     <br />
     <form id="create_survey_form" action="/api/survey" class="survey" method="POST">
@@ -37,11 +39,11 @@
             </li>
             <li>
                 <label for="since">Since:</label>
-                <input type="date" name="since" id="since" required><br />
+                <input type="text" name="since" id="since" required><br />
             </li>
             <li>
                 <label for="until">Until:</label>
-                <input type="date" name="until" id="until" required><br />
+                <input type="text" name="until" id="until" required><br />
             </li>
             <li>
                 <input type="submit" name="submit" class="button" id="submit_btn" value="Create"><br />
@@ -52,7 +54,8 @@
 
 <footer>
     <!-- todo baixar jquery -->
-    <script src="http://code.jquery.com/jquery-1.8.0.js"></script>
+    <script src="externs/jquery-1.9.1.js"></script>
+    <script src="externs/jquery-ui.js"></script>
     <script src="http://malsup.github.com/jquery.form.js"></script>
     <script src="scripts/enquestator.js"></script>
     <script src="http://modernizr.com/downloads/modernizr.js"></script>
