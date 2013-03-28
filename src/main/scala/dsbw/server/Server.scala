@@ -60,7 +60,11 @@ class Servlet(api:Api) extends HttpServlet {
         out println json.value
       }
       if (r.headers != null) {
-        response.setHeader("Location", r.headers)
+        r.headers.keys.foreach { h =>
+            val s = h
+            val s2 = r.headers(h)
+           response.setHeader(s, s2)
+        }
       }
     }
 

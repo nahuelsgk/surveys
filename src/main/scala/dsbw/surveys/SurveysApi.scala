@@ -10,10 +10,13 @@ class SurveysApi(surveysService:SurveysService) extends Api {
   def service(method: String, uri: String, parameters: Map[String, List[String]] = Map(), headers: Map[String, String] = Map(), body: Option[JSON] = None): Response = {
 
     val patternGetSurveyId = "GET /api/survey/(\\d+)".r
+    val patternPutSurveyId = "PUT /api/survey/(\\w+)".r
+
     
     (method + " " + uri) match {
-      case "POST /api/survey" => Response(HttpStatusCode.Ok, "hi dude!", surveysService.createSurvey(body))
+      case "POST /api/survey" => surveysService.createSurvey(body)
       case patternGetSurveyId(id) => Response(HttpStatusCode.Ok, null, surveysService.getSurvey(id))
+      case patternPutSurveyId(id) => surveysService.putSurvey(body)
       case "GET /api/surveys" => Response(HttpStatusCode.Ok, null, surveysService.listSurveys())
       case _ => Response(HttpStatusCode.Ok, null,"Hello world!")
     }

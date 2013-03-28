@@ -1,5 +1,6 @@
 package dsbw.server
 
+
 object HttpStatusCode extends Enumeration{
 
   val Ok = Value(200)
@@ -16,11 +17,11 @@ object HttpStatusCode extends Enumeration{
 
 }
 
-case class Response private (status: HttpStatusCode.Value, headers:String, body:Option[Any]=None)
+case class Response private (status: HttpStatusCode.Value, headers:Map[String, String], body:Option[Any]=None)
 
 object Response{
-  def apply(status:HttpStatusCode.Value, headers:String) = new Response(status, headers)
-  def apply(status:HttpStatusCode.Value, headers:String, body:Any) = new Response(status,headers,Some(body))
+  def apply(status:HttpStatusCode.Value, headers:Map[String, String]) = new Response(status, headers)
+  def apply(status:HttpStatusCode.Value, headers:Map[String, String], body:Any) = new Response(status,headers,Some(body))
 }
 
 
