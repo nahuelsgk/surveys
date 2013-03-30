@@ -11,10 +11,10 @@ class SurveysApi(surveysService:SurveysService) extends Api {
     println("--Called Service--");
     (method + " " + uri) match {
       case "POST /api/survey" => Response(HttpStatusCode.Ok, surveysService.listSurveys)
+      case "GET /api/survey" => Response(HttpStatusCode.Ok, surveysService.listSurveys)
       case _ => Response(HttpStatusCode.Ok, "Hello world!")
     }
   }
-
 }
 
 object SurveysApp extends App {
