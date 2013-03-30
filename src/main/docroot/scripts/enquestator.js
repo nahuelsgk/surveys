@@ -21,20 +21,23 @@ $(document).ready(function($) {
 
 
 
-    $('#create_survey_form').ajaxForm(function() {
-        if ($('#create_survey_form').attr('method') === 'PUT') {
-            date = new Date();
-            $('h2').text('Survey updated at ' + date.getHours() + ':' + date.getMinutes() + ':' + date.getSeconds   ());
-        } else {
-            $('#create_survey_form').attr('method', 'PUT');
-            $('#submit_btn').attr('value','Edit');
+    $('#submit_btn').click(function() {
+        $.ajax({
+            url: "/api/survey",
+            type: "POST",
+            data: JSON.stringify({
+                title : $('#title').val(),
+                since : $('#since').val(),
+                until : $('#until').val()
+            }),
+            dataType: "json"
+        }).done(function () {
+            console.log('sent request (POST)');
+        });
 
-            $('h2').text('Survey sent');
-            $('#survey_description').text('Click the edit button to update it');
-        }
-        console.log('Sent Form with '+$('#create_survey_form').attr('method')+' Method');
-
+        return false;
     });
+
 
     $('#since').change(function() {
         if ($('#since').attr('value') > $('#until').attr('value')) {
