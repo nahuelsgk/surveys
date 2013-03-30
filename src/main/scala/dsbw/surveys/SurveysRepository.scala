@@ -9,7 +9,7 @@ import scala.collection.mutable.ListBuffer
 
 /** A record representing the scheme of Surveys stored in the surveys collection */
 //case class SurveysRecord(id: ObjectId, question:String, date:Date=new Date())
-case class SurveysRecord(_id: ObjectId= new org.bson.types.ObjectId(), title:String, start:String, end:String)
+case class SurveysRecord(_id: ObjectId= new org.bson.types.ObjectId(), title:String, since:String, until:String)
 
 /** Surveys Data Access Object */
 class SurveysDao(db:DB) extends MongoDao[SurveysRecord](db.surveys) {
@@ -32,6 +32,14 @@ class SurveysRepository(dao: SurveysDao) {
 
   def createSurvey(survey: SurveysRecord){
     dao.save(survey)
+  }
+
+  def updateSurvey(survey: SurveysRecord){
+    var query = Map[String,ObjectId]()
+    query += "_id" -> survey._id
+    dao.update(query,MongoDBObject("$set" -> (MongoDBObject("title" -> survey.title) ++ MongoDBObject("since" -> survey.since) ++ MongoDBObject("until" -> survey.until)) ),false)
+
+
   }
 
 
