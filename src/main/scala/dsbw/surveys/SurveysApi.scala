@@ -8,13 +8,20 @@ import Config.{dbHostName, dbPort, dbName, username, pwd, webServerPort}
 class SurveysApi(surveysService:SurveysService) extends Api {
 
   def service(method: String, uri: String, parameters: Map[String, List[String]] = Map(), headers: Map[String, String] = Map(), body: Option[JSON] = None): Response = {
-    println("--Called Service--");
+
+    val patternGetSurveyId = "GET /api/survey/(\\d+)".r
+    val patternPutSurveyId = "PUT /api/survey/(\\w+)".r
+
+    
     (method + " " + uri) match {
-      case "POST /api/survey" => Response(HttpStatusCode.Ok, surveysService.listSurveys)
-      case "GET /api/survey" => Response(HttpStatusCode.Ok, surveysService.listSurveys)
-      case _ => Response(HttpStatusCode.Ok, "Hello world!")
+      case "POST /api/survey" => surveysService.createSurvey(body)
+      case patternGetSurveyId(id) => Response(HttpStatusCode.Ok, null, surveysService.getSurvey(id))
+      case patternPutSurveyId(id) => surveysService.putSurvey(body)
+      case "GET /api/surveys" => Response(HttpStatusCode.Ok, null, surveysService.listSurveys())
+      case _ => Response(HttpStatusCode.Ok, null,"Hello world!")
     }
   }
+
 }
 
 object SurveysApp extends App {
