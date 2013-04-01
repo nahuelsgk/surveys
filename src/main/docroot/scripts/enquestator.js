@@ -64,19 +64,23 @@ function listSurveys() {
             var surveysHtmlEnd = '</ul></div>';
             var count = 0;
             console.log("JSON: "+json);
-            for(var i = 0; i < json.length; ++i){
-                var obj = json[i];
-                console.log("JSON["+i+"]: "+obj);
-                for(var key in obj){
-                    var attrName = key;
-                    var attrValue = obj[key];
-                    if (attrName == "title") {
-                       var html = '<li>'+title+'</li>';
-                       surveysHtmlIni = surveysHtmlIni + html;
-                       count = count +1;
+            $.each(json, function(key, value) {
+                if (key == "surveys") {
+                    var size = value.length;
+                    console.log("#surveys: "+size);
+                    for (var i = 0; i < size; ++i) {
+                        $.each(value[i], function(id, v) {
+                            if (id == "title") {
+                                console.log("TITLE: "+v);
+                                var html = '<li>'+title+'</li>';
+                                surveysHtmlIni = surveysHtmlIni + html;
+                                count = count +1;
+                            }
+                        });
                     }
                 }
-            }
+            });
+
             if (count == 0) {
                 var html = 'No surveys today';
                 surveysHtmlIni = surveysHtmlIni + html;
