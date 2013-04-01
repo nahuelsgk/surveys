@@ -69,9 +69,8 @@ class SurveysService(surveysRepository: SurveysRepository) {
             println("Survey updated: " + surveyRecord)
 
             //Es retorna OK si tot ha anat be
-            Response(HttpStatusCode.Ok, null)
-        }
-        else {
+            Response(HttpStatusCode.NoContent, null)
+        } else {
           Response(HttpStatusCode.BadRequest, null)
         }
       }
