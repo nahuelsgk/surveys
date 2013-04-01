@@ -4,13 +4,23 @@ import org.bson.types.ObjectId
 import java.util.Date
 import dsbw.json.JSON
 import dsbw.server.{HttpStatusCode, Response}
+import collection.mutable.ListBuffer
 
 case class Question(question:String)
 
 class SurveysService(surveysRepository: SurveysRepository) {
 
-  def listSurveys() {
-    println("We must return a list of surveys")
+  def listSurveys() : Response = {
+      val list = surveysRepository.listSurveys()
+      val listSurvey = new ListBuffer[Survey]
+
+      list.foreach((sur: SurveysRecord) =>  {
+          val aux = new Survey(sur.title, sur.since, sur.until, sur._id.toString);
+          listSurvey += aux }
+      )
+      val json = JSON.toJSON(listSurvey).value
+      println("body response: " + json)
+      Response(HttpStatusCode.Ok, null, json)
   }
 
   def createSurvey(body: Option[JSON]) : Response = {
@@ -19,10 +29,13 @@ class SurveysService(surveysRepository: SurveysRepository) {
         if (body.nonEmpty) {
             //Es parseja el body
             val survey = JSON.fromJSON[Survey](body.get)
-
-            //S'emmagatzema la nova Survey i s'obte la id que li ha assignat la BD
-            val id = "newSurvey"
             println("Survey parsed: " + survey)
+            //S'emmagatzema la nova Survey i s'obte la id que li ha assignat la BD
+
+            val surveyRecord = new SurveysRecord(title = survey.title, since = survey.since, until = survey.until)
+            println("Survey created: " + surveyRecord)
+            surveysRepository.createSurvey(surveyRecord)
+            val id = surveyRecord._id
 
             //Es construeix la resposta amb la nova URI amb la id que ha proporcionat la BD
             val uri = "/api/survey/" + id
@@ -41,7 +54,7 @@ class SurveysService(surveysRepository: SurveysRepository) {
     }
   }
 
-  def putSurvey(body: Option[JSON]) : Response = {
+  def putSurvey(id: String, body: Option[JSON]) : Response = {
       println("Request body: " + body)
       try  {
         if (body.nonEmpty) {
@@ -50,7 +63,10 @@ class SurveysService(surveysRepository: SurveysRepository) {
             val survey = JSON.fromJSON[Survey](body.get)
 
             //Es fa un update de la survey
-            println("Survey parsed: " + survey)
+            val objectId = new org.bson.types.ObjectId(id)
+            val surveyRecord = new SurveysRecord(_id = objectId, title = survey.title, since = survey.since, until = survey.until)
+            surveysRepository.updateSurvey(surveyRecord)
+            println("Survey updated: " + surveyRecord)
 
             //Es retorna OK si tot ha anat be
             Response(HttpStatusCode.Ok, null)

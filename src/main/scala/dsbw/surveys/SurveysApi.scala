@@ -16,8 +16,8 @@ class SurveysApi(surveysService:SurveysService) extends Api {
     (method + " " + uri) match {
       case "POST /api/survey" => surveysService.createSurvey(body)
       case patternGetSurveyId(id) => Response(HttpStatusCode.Ok, null, surveysService.getSurvey(id))
-      case patternPutSurveyId(id) => surveysService.putSurvey(body)
-      case "GET /api/surveys" => Response(HttpStatusCode.Ok, null, surveysService.listSurveys())
+      case patternPutSurveyId(id) => surveysService.putSurvey(id, body)
+      case "GET /api/surveys" => surveysService.listSurveys()
       case _ => Response(HttpStatusCode.Ok, null,"Hello world!")
     }
   }
