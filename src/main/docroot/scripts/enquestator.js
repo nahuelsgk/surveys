@@ -72,7 +72,7 @@ function listSurveys() {
                         $.each(value[i], function(id, v) {
                             if (id == "title") {
                                 console.log("TITLE: "+v);
-                                var html = '<li>'+title+'</li>';
+                                var html = '<li>'+v+'</li>';
                                 surveysHtmlIni = surveysHtmlIni + html;
                                 count = count +1;
                             }
