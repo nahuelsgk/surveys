@@ -12,12 +12,18 @@ $(document).ready(function($) {
     $('#since').attr('value', today);
     $('#until').attr('value', today);
 
-    var pickerOpts = {
-        dateFormat: $.datepicker.ISO_8601
-    };
-
-    $( "#since" ).datepicker(pickerOpts);
-    $( "#until" ).datepicker(pickerOpts);
+    $( "#since" ).datepicker({
+        dateFormat: $.datepicker.ISO_8601,
+        onClose: function( selectedDate ) {
+            $( "#until" ).datepicker( "option", "minDate", selectedDate );
+        }
+    });
+    $( "#until" ).datepicker({
+        dateFormat: $.datepicker.ISO_8601,
+        onClose: function( selectedDate ) {
+            $( "#since" ).datepicker( "option", "maxDate", selectedDate );
+        }
+    });
 
 
 
@@ -38,18 +44,6 @@ $(document).ready(function($) {
         return false;
     });
 
-
-    $('#since').change(function() {
-        if ($('#since').attr('value') > $('#until').attr('value')) {
-            $('#until').attr('value', $('#since').attr('value'));
-        }
-    });
-    $('#until').change(function() {
-        if ($('#since').attr('value') > $('#until').attr('value')) {
-                $('#since').attr('value', $('#until').attr('value'));
-        }
-    });
-
     createSurveyHTML = $('#dynamicContent').clone();
 });
 
@@ -64,19 +58,23 @@ function listSurveys() {
             var surveysHtmlEnd = '</ul></div>';
             var count = 0;
             console.log("JSON: "+json);
-            for(var i = 0; i < json.length; ++i){
-                var obj = json[i];
-                console.log("JSON["+i+"]: "+obj);
-                for(var key in obj){
-                    var attrName = key;
-                    var attrValue = obj[key];
-                    if (attrName == "title") {
-                       var html = '<li>'+title+'</li>';
-                       surveysHtmlIni = surveysHtmlIni + html;
-                       count = count +1;
+            $.each(json, function(key, value) {
+                if (key == "surveys") {
+                    var size = value.length;
+                    console.log("#surveys: "+size);
+                    for (var i = 0; i < size; ++i) {
+                        $.each(value[i], function(id, v) {
+                            if (id == "title") {
+                                console.log("TITLE: "+v);
+                                var html = '<li>'+v+'</li>';
+                                surveysHtmlIni = surveysHtmlIni + html;
+                                count = count +1;
+                            }
+                        });
                     }
                 }
-            }
+            });
+
             if (count == 0) {
                 var html = 'No surveys today';
                 surveysHtmlIni = surveysHtmlIni + html;
