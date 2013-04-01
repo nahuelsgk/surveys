@@ -58,29 +58,27 @@ function listSurveys() {
             var surveysHtmlEnd = '</ul></div>';
             var count = 0;
             console.log("JSON: "+json);
-            $.each(json, function(key, value) {
-                if (key == "surveys") {
-                    var size = value.length;
-                    console.log("#surveys: "+size);
-                    for (var i = 0; i < size; ++i) {
-                        $.each(value[i], function(id, v) {
-                            if (id == "title") {
-                                console.log("TITLE: "+v);
-                                var html = '<li>'+v+'</li>';
-                                surveysHtmlIni = surveysHtmlIni + html;
-                                count = count +1;
-                            }
-                        });
+            var obj = $.parseJSON(json);
+            var size = obj.length;
+            console.log("#surveys: "+size);
+            for (var i = 0; i < size; ++i) {
+                $.each(obj[i], function(id, v) {
+                    if (id == "title") {
+                        console.log("TITLE: "+v);
+                        var html = '<li>'+v+'</li>';
+                        surveysHtmlIni = surveysHtmlIni + html;
+                        count = count +1;
                     }
-                }
-            });
+                });
+            }
+
 
             if (count == 0) {
                 var html = 'No surveys today';
                 surveysHtmlIni = surveysHtmlIni + html;
             }
             surveysHtmlIni = surveysHtmlIni + surveysHtmlEnd;
-            console.log("HTML: "+surveysHtmlIni);
+            //console.log("HTML: "+surveysHtmlIni);
             surveysListHTML = surveysHtmlIni;
 
             displayContent('Surveys list', surveysListHTML);
