@@ -12,12 +12,18 @@ $(document).ready(function($) {
     $('#since').attr('value', today);
     $('#until').attr('value', today);
 
-    var pickerOpts = {
-        dateFormat: $.datepicker.ISO_8601
-    };
-
-    $( "#since" ).datepicker(pickerOpts);
-    $( "#until" ).datepicker(pickerOpts);
+    $( "#since" ).datepicker({
+        dateFormat: $.datepicker.ISO_8601,
+        onClose: function( selectedDate ) {
+            $( "#until" ).datepicker( "option", "minDate", selectedDate );
+        }
+    });
+    $( "#until" ).datepicker({
+        dateFormat: $.datepicker.ISO_8601,
+        onClose: function( selectedDate ) {
+            $( "#since" ).datepicker( "option", "maxDate", selectedDate );
+        }
+    });
 
 
 
@@ -36,18 +42,6 @@ $(document).ready(function($) {
         });
 
         return false;
-    });
-
-
-    $('#since').change(function() {
-        if ($('#since').attr('value') > $('#until').attr('value')) {
-            $('#until').attr('value', $('#since').attr('value'));
-        }
-    });
-    $('#until').change(function() {
-        if ($('#since').attr('value') > $('#until').attr('value')) {
-                $('#since').attr('value', $('#until').attr('value'));
-        }
     });
 
     createSurveyHTML = $('#dynamicContent').clone();
