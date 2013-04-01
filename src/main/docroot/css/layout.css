@@ -230,3 +230,7 @@ menu.main a:hover{
     padding: 5px 20px 0 0;
     text-align: left;
 }
+
+#questions {
+    display: none;
+}

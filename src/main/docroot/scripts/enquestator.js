@@ -53,6 +53,7 @@ $(document).ready(function($) {
 
                 $('h2').text('Survey sent');
                 $('#survey_description').text('Click the edit button to update it');
+
             }
         });
 

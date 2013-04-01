@@ -49,13 +49,14 @@
                 </li>
             </ul>
         </form>
-    
-    <!-- the action is /api/survey/{surveyId}/preguntes must be set when we know the surveyId -->
-    <form id="questions_form" action="/survey/1/question" class="survey" method="PUT">
-        <ul id="question_list">
-        </ul>
-    </form>
-    <image src="img/plus.png" class="plus" id="add_question" />
+
+        <div id="questions">
+            <form id="questions_form" action="/survey/1/question" class="survey" method="PUT">
+                <ul id="question_list">
+                </ul>
+            </form>
+            <image src="img/plus.png" class="plus" id="add_question" />
+        </div>
     </div>
 </section>
 
