@@ -61,7 +61,7 @@ $(document).ready(function($) {
         return false;
     });
 
-    createSurveyHTML = $('#dynamicContent').clone();
+    createSurveyHTML = $('#dynamicContent').clone(true);
 
     addQuestion = function() {
         $('#question_list').append('<li><label for="question[' + questionCounter + ']">Question ' + questionCounter + '</label>' +
@@ -73,6 +73,7 @@ $(document).ready(function($) {
     $('#add_question').click(addQuestion);
 
 });
+
 
 function listSurveys() {
 
@@ -117,6 +118,7 @@ function listSurveys() {
 function createSurvey() {
 
     displayContent('Create survey', createSurveyHTML);
+
 }
 
 
