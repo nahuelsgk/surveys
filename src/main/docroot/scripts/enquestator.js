@@ -67,7 +67,9 @@ function listSurveys() {
         url:"/api/surveys",
         dataType:"json",
         success: function(json) {
-            var surveysHtmlIni = '<div id="surveysList"><ul>';
+            var surveysHtmlIni = '<div id="surveysList">';
+            var header = '<h2 id="contentTitle">Surveys list</h2><ul>';
+            surveysHtmlIni += header;
             var surveysHtmlEnd = '</ul></div>';
             var count = 0;
             //console.log("JSON: "+json);
@@ -92,42 +94,36 @@ function listSurveys() {
             }
             surveysHtmlIni = surveysHtmlIni + surveysHtmlEnd;
             //console.log("HTML: "+surveysHtmlIni);
-            surveysListHTML = surveysHtmlIni;
 
-            displayContent('Surveys list', surveysListHTML, LIST_SURVEYS);
+            displayContent(surveysHtmlIni, LIST_SURVEYS);
 
         }
     });
 }
 
 function createSurvey() {
-
-    displayContent('Create survey', createSurveyHTML, CREATE_SURVEY);
-    initDatePicker();
-
+    cleanView(currentView);
+    $('#dynamicContent').show();
+    currentView = CREATE_SURVEY;
 }
 
 /*
   This function fills the div "content" with a H2 header containing the arg "title" and a html bloc attached below.
 */
-function displayContent(title, html, view)  {
+function displayContent(html, view)  {
    cleanView(currentView);
-   var header = '<h2 id="contentTitle">'+title+'</h2>';
-   $('#dynamicContent').append(header);
-   $('#dynamicContent').append(html);
+   $('#content').append(html);
    currentView = view;
 }
 
 function cleanView(view) {
-    //console.log("Removing view: "+view);
+    console.log("Removing view: "+view);
     switch(view) {
         case CREATE_SURVEY:
-            $('#contentTitle').remove();
-            createSurveyHTML = $('#dynamicContent').clone(true);
-            $('#dynamicContent').empty();
+            $('#dynamicContent').hide();
             break;
         case LIST_SURVEYS:
-            $('#dynamicContent').empty();
+            $('#surveysList').remove();
             break;
     }
 }
