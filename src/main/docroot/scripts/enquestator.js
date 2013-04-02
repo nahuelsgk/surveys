@@ -1,29 +1,13 @@
 var createSurveyHTML;
 var surveysListHTML;
+var currentView;
+var CREATE_SURVEY = 0;
+var LIST_SURVEYS = 1;
 var questionCounter = 1;
 
 $(document).ready(function($) {
-    //setting since and until to the current day
-    d = new Date();
-    today = d.toISOString().substr(0,10);
-    
-    $('#since').attr('value', today);
-    $('#until').attr('value', today);
 
-    $( "#since" ).datepicker({
-        dateFormat: $.datepicker.ISO_8601,
-        onClose: function( selectedDate ) {
-            $( "#until" ).datepicker( "option", "minDate", selectedDate );
-        }
-    });
-    $( "#until" ).datepicker({
-        dateFormat: $.datepicker.ISO_8601,
-        onClose: function( selectedDate ) {
-            $( "#since" ).datepicker( "option", "maxDate", selectedDate );
-        }
-    });
-
-
+    initDatePicker();
 
     $('#create_survey_form').submit(function() {
         var form = $(this);
@@ -62,6 +46,7 @@ $(document).ready(function($) {
     });
 
     createSurveyHTML = $('#dynamicContent').clone(true);
+    currentView = 0;
 
     addQuestion = function() {
         $('#question_list').append('<li><label for="question[' + questionCounter + ']">Question ' + questionCounter + '</label>' +
@@ -85,14 +70,14 @@ function listSurveys() {
             var surveysHtmlIni = '<div id="surveysList"><ul>';
             var surveysHtmlEnd = '</ul></div>';
             var count = 0;
-            console.log("JSON: "+json);
+            //console.log("JSON: "+json);
             var obj = $.parseJSON(json);
             var size = obj.length;
             console.log("#surveys: "+size);
             for (var i = 0; i < size; ++i) {
                 $.each(obj[i], function(id, v) {
                     if (id == "title") {
-                        console.log("TITLE: "+v);
+                        //console.log("TITLE: "+v);
                         var html = '<li>'+v+'</li>';
                         surveysHtmlIni = surveysHtmlIni + html;
                         count = count +1;
@@ -109,7 +94,7 @@ function listSurveys() {
             //console.log("HTML: "+surveysHtmlIni);
             surveysListHTML = surveysHtmlIni;
 
-            displayContent('Surveys list', surveysListHTML);
+            displayContent('Surveys list', surveysListHTML, LIST_SURVEYS);
 
         }
     });
@@ -117,19 +102,55 @@ function listSurveys() {
 
 function createSurvey() {
 
-    displayContent('Create survey', createSurveyHTML);
+    displayContent('Create survey', createSurveyHTML, CREATE_SURVEY);
+    initDatePicker();
 
 }
-
-
 
 /*
   This function fills the div "content" with a H2 header containing the arg "title" and a html bloc attached below.
 */
-function displayContent(title, html)  {
-   $('#contentTitle').remove();
-   $('#dynamicContent').empty();
+function displayContent(title, html, view)  {
+   cleanView(currentView);
    var header = '<h2 id="contentTitle">'+title+'</h2>';
    $('#dynamicContent').append(header);
    $('#dynamicContent').append(html);
+   currentView = view;
+}
+
+function cleanView(view) {
+    //console.log("Removing view: "+view);
+    switch(view) {
+        case CREATE_SURVEY:
+            $('#contentTitle').remove();
+            createSurveyHTML = $('#dynamicContent').clone(true);
+            $('#dynamicContent').empty();
+            break;
+        case LIST_SURVEYS:
+            $('#dynamicContent').empty();
+            break;
+    }
+}
+
+function initDatePicker() {
+    //setting since and until to the current day
+    d = new Date();
+    today = d.toISOString().substr(0,10);
+
+    $('#since').attr('value', today);
+    $('#until').attr('value', today);
+
+    $( "#since" ).datepicker({
+        dateFormat: $.datepicker.ISO_8601,
+        onClose: function( selectedDate ) {
+            $( "#until" ).datepicker( "option", "minDate", selectedDate );
+        }
+    });
+    $( "#until" ).datepicker({
+        dateFormat: $.datepicker.ISO_8601,
+        onClose: function( selectedDate ) {
+            $( "#since" ).datepicker( "option", "maxDate", selectedDate );
+        }
+    });
+
 }
