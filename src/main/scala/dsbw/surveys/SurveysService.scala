@@ -10,17 +10,16 @@ case class Question(question:String)
 
 class SurveysService(surveysRepository: SurveysRepository) {
 
-  def listSurveys() : Response = {
+  def listSurveys() : ListBuffer[Survey] = {
       val list = surveysRepository.listSurveys()
       val listSurvey = new ListBuffer[Survey]
 
       list.foreach((sur: SurveysRecord) =>  {
           val aux = new Survey(sur.title, sur.since, sur.until, sur._id.toString);
-          listSurvey += aux }
-      )
-      val json = JSON.toJSON(listSurvey).value
-      println("body response: " + json)
-      Response(HttpStatusCode.Ok, null, json)
+          listSurvey += aux
+      })
+
+      listSurvey
   }
 
   def createSurvey(survey: Survey) : String = {

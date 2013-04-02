@@ -8,16 +8,21 @@ import Config.{dbHostName, dbPort, dbName, username, pwd, webServerPort}
 /* Surveys API */
 class SurveysApi(surveysService:SurveysService) extends Api {
 
-    def service(method: String, uri: String, parameters: Map[String, List[String]] = Map(), headers: Map[String, String] = Map(), body: Option[JSON] = None): Response = {
-
+    def service(
+        method: String,
+        uri: String,
+        parameters: Map[String, List[String]] = Map(),
+        headers: Map[String, String] = Map(),
+        body: Option[JSON] = None
+    ): Response = {
         val PatternGetSurveyId = "GET /api/survey/(\\w+)".r
         val PatternPutSurveyId = "PUT /api/survey/(\\w+)".r
 
         (method + " " + uri) match {
             case "POST /api/survey" => postSurvey(body)
-            case PatternGetSurveyId(id) => Response(HttpStatusCode.Ok, null, surveysService.getSurvey(id))
+            case PatternGetSurveyId(id) => getSurveyById(id)
             case PatternPutSurveyId(id) => putSurvey(id, body)
-            case "GET /api/surveys" => surveysService.listSurveys()
+            case "GET /api/surveys" => getAllSurveys()
             case _ => Response(HttpStatusCode.NotFound)
         }
     }
@@ -71,6 +76,16 @@ class SurveysApi(surveysService:SurveysService) extends Api {
             }
             Response(HttpStatusCode.BadRequest)
         }
+    }
+
+    def getSurveyById(id: String): Response = {
+        Response(HttpStatusCode.Ok, null, surveysService.getSurvey(id))
+    }
+
+    def getAllSurveys(): Response = {
+        val json = JSON.toJSON(surveysService.listSurveys()).value
+        println("body response: " + json)
+        Response(HttpStatusCode.Ok, null, json)
     }
 }
 
