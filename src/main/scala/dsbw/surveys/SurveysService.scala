@@ -23,63 +23,19 @@ class SurveysService(surveysRepository: SurveysRepository) {
       Response(HttpStatusCode.Ok, null, json)
   }
 
-  def createSurvey(body: Option[JSON]) : Response = {
-    println("Request body: " + body)
-    try {
-        if (body.nonEmpty) {
-            //Es parseja el body
-            val survey = JSON.fromJSON[Survey](body.get)
-            println("Survey parsed: " + survey)
-            //S'emmagatzema la nova Survey i s'obte la id que li ha assignat la BD
-
-            val surveyRecord = new SurveysRecord(title = survey.title, since = survey.since, until = survey.until)
-            println("Survey created: " + surveyRecord)
-            surveysRepository.createSurvey(surveyRecord)
-            val id = surveyRecord._id
-
-            //Es construeix la resposta amb la nova URI amb la id que ha proporcionat la BD
-            val uri = "/api/survey/" + id
-            val headers = Map("Location" -> uri)
-            Response(HttpStatusCode.Created, headers, "{}")
-        }
-        else {
-          Response(HttpStatusCode.BadRequest, null)
-        }
-    }
-    catch {
-        case e : Throwable => {
-          println(e)
-        }
-        Response(HttpStatusCode.BadRequest, null)
-    }
+  def createSurvey(survey: Survey) : String = {
+      val surveyRecord = new SurveysRecord(title = survey.title, since = survey.since, until = survey.until)
+      surveysRepository.createSurvey(surveyRecord)
+      println("Survey created: " + surveyRecord)
+      surveyRecord._id.toString
   }
 
-  def putSurvey(id: String, body: Option[JSON]) : Response = {
-      println("Request body: " + body)
-      try  {
-        if (body.nonEmpty) {
+  def updateSurvey(id: String, survey: Survey) {
+      val objectId = new org.bson.types.ObjectId(id)
+      val surveyRecord = new SurveysRecord(_id = objectId, title = survey.title, since = survey.since, until = survey.until)
+      println("Survey updated: " + surveyRecord)
+      surveysRepository.updateSurvey(surveyRecord)
 
-            //Es parseja el body
-            val survey = JSON.fromJSON[Survey](body.get)
-
-            //Es fa un update de la survey
-            val objectId = new org.bson.types.ObjectId(id)
-            val surveyRecord = new SurveysRecord(_id = objectId, title = survey.title, since = survey.since, until = survey.until)
-            surveysRepository.updateSurvey(surveyRecord)
-            println("Survey updated: " + surveyRecord)
-
-            //Es retorna OK si tot ha anat be
-            Response(HttpStatusCode.NoContent, null)
-        } else {
-          Response(HttpStatusCode.BadRequest, null)
-        }
-      }
-      catch {
-        case e: Throwable => {
-          println(e)
-        }
-        Response(HttpStatusCode.BadRequest, null)
-      }
   }
 
   def getSurvey(id: String){
