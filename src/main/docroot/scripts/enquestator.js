@@ -34,7 +34,8 @@ $(document).ready(function($) {
                 title : $('#title').val(),
                 since : $('#since').val(),
                 until : $('#until').val()
-            })
+            }),
+            dataType: 'json'
         });
 
         request.fail(function() {
@@ -48,8 +49,8 @@ $(document).ready(function($) {
                 $('h2').text('Survey updated at ' + date.getHours() + ':' + date.getMinutes() + ':' + date.getSeconds   ());
             } else {
                 form.attr('method', 'PUT');
-                form.attr('action', json.getResponseHeader('location'));
-                $('#submit_btn').attr('value','Edit');
+                form.attr('action', request.getResponseHeader('location'));
+                $('#create_survey_form input[type=submit]').attr('value','Edit');
 
                 $('h2').text('Survey sent');
                 $('#survey_description').text('Click the edit button to update it');
