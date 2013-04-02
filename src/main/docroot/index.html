@@ -6,8 +6,6 @@
     <link rel="stylesheet" href="css/reset.css">
     <link rel="stylesheet" href="css/layout.css">
     <link rel="stylesheet" href="http://code.jquery.com/ui/1.10.2/themes/smoothness/jquery-ui.css" />
-    <link rel="stylesheet" href="/resources/demos/style.css" />
-
 </head>
 <body>
 <header>
@@ -47,20 +45,27 @@
                     <input type="text" name="until" id="until" required><br />
                 </li>
                 <li>
-                    <input type="submit" name="submit" class="button" id="submit_btn" value="Create"><br />
+                    <input type="submit" class="button" value="Create"><br />
                 </li>
             </ul>
         </form>
+
+        <div id="questions">
+            <form id="questions_form" action="/survey/1/question" class="survey" method="PUT">
+                <ul id="question_list">
+                </ul>
+            </form>
+            <image src="img/plus.png" class="plus" id="add_question" />
+        </div>
     </div>
 </section>
 
 <footer>
-    <!-- todo baixar jquery -->
     <script src="externs/jquery-1.9.1.js"></script>
     <script src="externs/jquery-ui.js"></script>
     <script src="http://malsup.github.com/jquery.form.js"></script>
-    <script src="scripts/enquestator.js"></script>
     <script src="http://modernizr.com/downloads/modernizr.js"></script>
+    <script src="scripts/enquestator.js"></script>
 </footer>
 </body>
 </html>

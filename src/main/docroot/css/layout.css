@@ -90,7 +90,7 @@ div#left{
     clear:left;
 }
 
-menu.main, #copyright, #chirp {
+menu.main, #copyright {
     margin-bottom: 10px;
 }
 
@@ -103,6 +103,11 @@ menu.main a{
 
 menu.main a:hover{
     background-color: #ffffff;
+}
+
+.plus {
+    float: right;
+    cursor: pointer;
 }
 
 #copyright{
@@ -224,4 +229,8 @@ menu.main a:hover{
     min-width: 60px;
     padding: 5px 20px 0 0;
     text-align: left;
+}
+
+#questions {
+    display: none;
 }
