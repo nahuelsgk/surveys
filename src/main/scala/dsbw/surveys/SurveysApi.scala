@@ -1,11 +1,11 @@
 package dsbw.surveys
 
-import dsbw.server.{Server, HttpStatusCode, Response, Api}
-import dsbw.json.JSON
 import Config.{dbHostName, dbPort, dbName, username, pwd, webServerPort}
+import dsbw.json.JSON
+import dsbw.server.{Server, HttpStatusCode, Response, Api}
 
 /* Surveys API */
-class SurveysApi(surveysService:SurveysService) extends Api {
+class SurveysApi(surveysService: SurveysService) extends Api {
 
     def service(
         method: String,
@@ -27,7 +27,7 @@ class SurveysApi(surveysService:SurveysService) extends Api {
     }
 
 
-    def postSurvey(body: Option[JSON]) : Response = {
+    def postSurvey(body: Option[JSON]): Response = {
         try {
             if (body.nonEmpty) {
                 //Es parseja el body
@@ -47,16 +47,16 @@ class SurveysApi(surveysService:SurveysService) extends Api {
             }
         }
         catch {
-            case e : Throwable => {
+            case e: Throwable => {
                 println(e)
             }
             Response(HttpStatusCode.BadRequest)
         }
     }
 
-    def putSurvey(id: String, body: Option[JSON]) : Response = {
+    def putSurvey(id: String, body: Option[JSON]): Response = {
         println("Request body: " + body)
-        try  {
+        try {
             if (body.nonEmpty) {
                 //Es parseja el body
                 val survey = JSON.fromJSON[Survey](body.get)

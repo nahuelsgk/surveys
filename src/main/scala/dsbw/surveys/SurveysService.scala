@@ -2,39 +2,39 @@ package dsbw.surveys
 
 import collection.mutable.ListBuffer
 
-case class Question(question:String)
+case class Question(question: String)
 
 class SurveysService(surveysRepository: SurveysRepository) {
 
-  def listSurveys() : ListBuffer[Survey] = {
-      val list = surveysRepository.listSurveys()
-      val listSurvey = new ListBuffer[Survey]
+    def listSurveys(): ListBuffer[Survey] = {
+        val list = surveysRepository.listSurveys()
+        val listSurvey = new ListBuffer[Survey]
 
-      list.foreach((sur: SurveysRecord) =>  {
-          val aux = new Survey(sur.title, sur.since, sur.until, sur._id.toString);
-          listSurvey += aux
-      })
+        list.foreach((sur: SurveysRecord) => {
+            val aux = new Survey(sur.title, sur.since, sur.until, sur._id.toString);
+            listSurvey += aux
+        })
 
-      listSurvey
-  }
+        listSurvey
+    }
 
-  def createSurvey(survey: Survey) : String = {
-      val surveyRecord = new SurveysRecord(title = survey.title, since = survey.since, until = survey.until)
-      surveysRepository.createSurvey(surveyRecord)
-      println("Survey created: " + surveyRecord)
-      surveyRecord._id.toString
-  }
+    def createSurvey(survey: Survey): String = {
+        val surveyRecord = new SurveysRecord(title = survey.title, since = survey.since, until = survey.until)
+        surveysRepository.createSurvey(surveyRecord)
+        println("Survey created: " + surveyRecord)
+        surveyRecord._id.toString
+    }
 
-  def updateSurvey(id: String, survey: Survey) {
-      val objectId = new org.bson.types.ObjectId(id)
-      val surveyRecord = new SurveysRecord(_id = objectId, title = survey.title, since = survey.since, until = survey.until)
-      println("Survey updated: " + surveyRecord)
-      surveysRepository.updateSurvey(surveyRecord)
+    def updateSurvey(id: String, survey: Survey) {
+        val objectId = new org.bson.types.ObjectId(id)
+        val surveyRecord = new SurveysRecord(_id = objectId, title = survey.title, since = survey.since, until = survey.until)
+        println("Survey updated: " + surveyRecord)
+        surveysRepository.updateSurvey(surveyRecord)
 
-  }
+    }
 
-  def getSurvey(id: String){
-    println("We must return a survey "+id)
-  }
+    def getSurvey(id: String) {
+        println("We must return a survey " + id)
+    }
 
 }
