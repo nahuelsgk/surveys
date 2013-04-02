@@ -17,10 +17,10 @@ object HttpStatusCode extends Enumeration{
 
 }
 
-case class Response private (status: HttpStatusCode.Value, headers:Map[String, String], body:Option[Any]=None)
+case class Response private (status: HttpStatusCode.Value, headers:Map[String, String] = Map(), body:Option[Any]=None)
 
 object Response{
-  def apply(status:HttpStatusCode.Value, headers:Map[String, String]) = new Response(status, headers)
+  def apply(status:HttpStatusCode.Value) = new Response(status)
   def apply(status:HttpStatusCode.Value, headers:Map[String, String], body:Any) = new Response(status,headers,Some(body))
 }
 
