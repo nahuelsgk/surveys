@@ -36,5 +36,4 @@ class SurveysService(surveysRepository: SurveysRepository) {
     def getSurvey(id: String) {
         println("We must return a survey " + id)
     }
-
 }
