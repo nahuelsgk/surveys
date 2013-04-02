@@ -232,5 +232,5 @@ menu.main a:hover{
 }
 
 #questions {
-    display: none;
+    display: inline;
 }

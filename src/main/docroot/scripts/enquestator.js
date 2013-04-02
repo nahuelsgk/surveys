@@ -5,28 +5,27 @@ var CREATE_SURVEY = 0;
 var LIST_SURVEYS = 1;
 var questionCounter = 1;
 
-$(document).ready(function($) {
-
-    initDatePicker();
-
-    $('#create_survey_form').submit(function() {
-        var form = $(this);
+/*send event generic: uri, method, json data, done callback*/
+function send_event(uri, method, data, done){
         var request = $.ajax({
-            url: $(this).attr('action'),
-            type: $(this).attr('method'),
-            data: JSON.stringify({
-                title : $('#title').val(),
-                since : $('#since').val(),
-                until : $('#until').val()
-            }),
+            url: uri,
+            type: method,
+            data: JSON.stringify(data),
             dataType: 'json'
         });
 
         request.fail(function() {
             console.log('request failed :/');
         });
-        request.done(function (json) {
-            console.log('sent request, method : ' + form.attr('method'));
+        request.done(done(request));
+};
+
+var submit_create_survey = function() {
+        var form = $(this);
+	var data = {title : $('#title').val(), since : $('#since').val(), until : $('#until').val()};
+	var method = 'POST';
+	var success_callback = function (request) {
+            console.log('sent request, method : ' + method);
 
             if (form.attr('method') === 'PUT') {
                 date = new Date();
@@ -40,10 +39,16 @@ $(document).ready(function($) {
                 $('#survey_description').text('Click the edit button to update it');
 
             }
-        });
-
+        };
+	send_event('/api/survey', method, data, success_callback);
         return false;
-    });
+};
+
+$(document).ready(function($) {
+
+    initDatePicker();
+
+    $('#create_survey_form').submit(submit_create_survey);
 
     createSurveyHTML = $('#dynamicContent').clone(true);
     currentView = 0;
