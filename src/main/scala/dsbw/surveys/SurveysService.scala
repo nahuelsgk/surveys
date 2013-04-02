@@ -1,9 +1,5 @@
 package dsbw.surveys
 
-import org.bson.types.ObjectId
-import java.util.Date
-import dsbw.json.JSON
-import dsbw.server.{HttpStatusCode, Response}
 import collection.mutable.ListBuffer
 
 case class Question(question:String)

@@ -1,6 +1,5 @@
 package dsbw.surveys
 
-import org.bson.types.ObjectId
 import dsbw.server.{Server, HttpStatusCode, Response, Api}
 import dsbw.json.JSON
 import Config.{dbHostName, dbPort, dbName, username, pwd, webServerPort}
