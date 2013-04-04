@@ -42,7 +42,8 @@ function submitCreateSurvey(){
 
                 $('h2').text('Survey sent');
                 $('#survey_description').text('Click the edit button to update it');
-
+                $('#questions').show();
+		$('#add_question').show();
             }
         };
 	sendEvent('/api/survey', method, data, success_callback, null);

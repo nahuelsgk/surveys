@@ -232,5 +232,9 @@ menu.main a:hover{
 }
 
 #questions {
-    display: inline;
+    display: none;
+}
+
+#add_question{
+    display: none;
 }
