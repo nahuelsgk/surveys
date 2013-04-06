@@ -7,12 +7,33 @@ var questionCounter = 1;
 var currentSurvey;
 
 /* Domain Objects */
-var Survey = function(name, startDate, finishDate){
-  this.name      = name;
-  this.initDate  = startDate;
-  this.finalDate = finishDate;
-  this.questions = new Array();
+function Survey () {
+    switch (arguments.length) {     //multiple constructors
+        case 3:
+            this.name = arguments[0];
+            this.initDate  = arguments[1];
+            this.finalDate = arguments[2];
+            this.questions = new Array();
+        break;
+        case 1:
+            var json = arguments[0];
+            this.name = json.title;
+            this.initDate  = json.since;
+            this.finalDate = json.until;
+            this.questions = new Array();
+        break;
+        default : /*NOP*/
+    }
+
+    this.listMe = function() {
+        var item = $('#listSurveyItem').clone(true);
+        item.attr('id','surveyItem');
+        item.attr('class',''); // remove the hidden class
+        item.text(this.name);
+        return item;
+    }
 }
+
 var Question = function(name, type, value){
   this.name  = name;
   this.type  = type;
@@ -45,27 +66,27 @@ function renderLastChangeNotification(){
 }
 
 function submitCreateSurvey(){
-        var form = $(this);
+    var form = $(this);
 	var data = {title : $('#title').val(), since : $('#since').val(), until : $('#until').val()};
 	var method = 'POST';
 	var done_callback = function (request) {
             console.log('sent request, method : ' + method);
             currentSurvey = new Survey( $('#title').val(), $('#since').val(), $('#until').val());
             if (form.attr('method') === 'PUT') {
-	        renderLastChangeNotification();
-            } else {
+	            renderLastChangeNotification();
+            }
+            else {
                 form.attr('method', 'PUT');
                 form.attr('action', request.getResponseHeader('location'));
                 $('#create_survey_form input[type=submit]').attr('value','Edit');
-
                 $('h2').text('Survey sent');
                 $('#survey_description').text('Click the edit button to update it');
                 $('#questions').show();
-		$('#add_question').show();
+		        $('#add_question').show();
             }
-        };
+    };
 	sendEvent('/api/survey', method, data, done_callback, null);
-        return false;
+    return false;
 };
 
 function renderAddNewQuestion(){
@@ -79,21 +100,15 @@ function renderListSurveys(listOfSurveys) {
     var header = $('<h2 id="contentTitle">Surveys list</h2>');
     surveysHtmlIni.append(header);
     var list = $('<ul/>');
+    surveysHtmlIni.append(list);
     var count = 0;
-    //console.log("JSON: "+json);
     var obj = $.parseJSON(listOfSurveys);
     var size = obj.length;
-    for (var i = 0; i < size; ++i) {
-        $.each(obj[i], function(id, v) {
-            if (id == "title") {
-                //console.log("TITLE: "+v);
-	        var surveyItem = $('<li class="listSurveyItem">'+v+'</li>');
-	        list.append(surveyItem);
-	        count = count +1; 
-	    }
-        });
+    for (var i = 0; i < size; ++i) {      // iteration over the all survey JSONs
+        var survey = new Survey(obj[i]);
+        list.append(survey.listMe());
+        count = count + 1;
     }
-    surveysHtmlIni.append(list);
     if (count == 0) {
         var noSurvey = $('<span>No surveys today</span>');
 	surveysHtmlIni.append(noSurvey);
@@ -108,6 +123,7 @@ function renderListSurveys(listOfSurveys) {
 function listSurveys() {
     sendEvent('/api/surveys', 'GET', null, null, renderListSurveys);
 }
+
 
 function createSurvey() {
     cleanView(currentView);
