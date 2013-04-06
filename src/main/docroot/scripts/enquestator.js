@@ -4,33 +4,55 @@ var currentView;
 var CREATE_SURVEY = 0;
 var LIST_SURVEYS = 1;
 var questionCounter = 1;
+var currentSurvey;
 
-$(document).ready(function($) {
+/* Domain Objects */
+var Survey = function(name, startDate, finishDate){
+  this.name      = name;
+  this.initDate  = startDate;
+  this.finalDate = finishDate;
+  this.questions = new Array();
+}
+var Question = function(name, type, value){
+  this.name  = name;
+  this.type  = type;
+  this.value = value;
+}
 
-    initDatePicker();
-
-    $('#create_survey_form').submit(function() {
-        var form = $(this);
+/*send event generic: uri, method, json data, done callback, success callback*/
+function sendEvent(uri, method, data, done, success){
         var request = $.ajax({
-            url: $(this).attr('action'),
-            type: $(this).attr('method'),
-            data: JSON.stringify({
-                title : $('#title').val(),
-                since : $('#since').val(),
-                until : $('#until').val()
-            }),
-            dataType: 'json'
+            url: uri,
+            type: method,
+            data: JSON.stringify(data),
+            dataType: 'json',
+	    success: function(data){
+	      if(success){
+	        success(data);
+              }
+	    }
         });
 
         request.fail(function() {
             console.log('request failed :/');
         });
-        request.done(function (json) {
-            console.log('sent request, method : ' + form.attr('method'));
+	if(done){request.done(done(request));}
+};
 
+function renderLastChangeNotification(){
+    date = new Date();
+    $('h2').text('Survey updated at ' + date.getHours() + ':' + date.getMinutes() + ':' + date.getSeconds   ());
+}
+
+function submitCreateSurvey(){
+        var form = $(this);
+	var data = {title : $('#title').val(), since : $('#since').val(), until : $('#until').val()};
+	var method = 'POST';
+	var done_callback = function (request) {
+            console.log('sent request, method : ' + method);
+            currentSurvey = new Survey( $('#title').val(), $('#since').val(), $('#until').val());
             if (form.attr('method') === 'PUT') {
-                date = new Date();
-                $('h2').text('Survey updated at ' + date.getHours() + ':' + date.getMinutes() + ':' + date.getSeconds   ());
+	        renderLastChangeNotification();
             } else {
                 form.attr('method', 'PUT');
                 form.attr('action', request.getResponseHeader('location'));
@@ -38,73 +60,53 @@ $(document).ready(function($) {
 
                 $('h2').text('Survey sent');
                 $('#survey_description').text('Click the edit button to update it');
-
+                $('#questions').show();
+		$('#add_question').show();
             }
-        });
-
+        };
+	sendEvent('/api/survey', method, data, done_callback, null);
         return false;
-    });
+};
 
-    createSurveyHTML = $('#dynamicContent').clone(true);
-    currentView = 0;
-
-    addQuestion = function() {
-        $('#question_list').append('<li><label for="question[' + questionCounter + ']">Question ' + questionCounter + '</label>' +
-            '<input type="text" name="question[' + questionCounter + '] class="question" placeholder="Write your question here" required /></li>'
-        );
-        questionCounter++;
-    };
-
-    $('#add_question').click(addQuestion);
-
-});
-
-
-function listSurveys() {
-
-    $.ajax({
-        type:"GET",
-        url:"/api/surveys",
-        dataType:"json",
-        success: function(json) {
-            var surveysHtmlIni = '<div id="surveysList">';
-            console.log("title: "+createTitle("hello"));
-            var header = '<ul>';
-            surveysHtmlIni += header;
-            var surveysHtmlEnd = '</ul></div>';
-            var count = 0;
-            //console.log("JSON: "+json);
-            var obj = $.parseJSON(json);
-            var size = obj.length;
-            console.log("#surveys: "+size);
-            for (var i = 0; i < size; ++i) {
-                $.each(obj[i], function(id, v) {
-                    if (id == "title") {
-                        //console.log("TITLE: "+v);
-                        var html = '<li>'+v+'</li>';
-                        surveysHtmlIni = surveysHtmlIni + html;
-                        count = count +1;
-                    }
-                });
-            }
-
-
-            if (count == 0) {
-                var html = 'No surveys today';
-                surveysHtmlIni = surveysHtmlIni + html;
-            }
-            surveysHtmlIni = surveysHtmlIni + surveysHtmlEnd;
-            //console.log("HTML: "+surveysHtmlIni);
-
-            displayContent(surveysHtmlIni, LIST_SURVEYS);
-
-        }
-    });
+function renderAddNewQuestion(){
+    $('#question_list').append('<li><label for="question[' + questionCounter + ']">Question ' + questionCounter + '</label>' +'<input type="text" name="question[' + questionCounter + '] class="question" placeholder="Write your question here" required /></li>');
+    questionCounter++;
 }
 
-function createTitle(text) {
-    var $title = $('.hidden title').clone();
-    return $title;
+
+function renderListSurveys(listOfSurveys) {
+    var surveysHtmlIni = $('<div id="surveysList">');
+    var header = $('<h2 id="contentTitle">Surveys list</h2>');
+    surveysHtmlIni.append(header);
+    var list = $('<ul/>');
+    var count = 0;
+    //console.log("JSON: "+json);
+    var obj = $.parseJSON(listOfSurveys);
+    var size = obj.length;
+    for (var i = 0; i < size; ++i) {
+        $.each(obj[i], function(id, v) {
+            if (id == "title") {
+                //console.log("TITLE: "+v);
+	        var surveyItem = $('<li class="listSurveyItem">'+v+'</li>');
+	        list.append(surveyItem);
+	        count = count +1; 
+	    }
+        });
+    }
+    surveysHtmlIni.append(list);
+    if (count == 0) {
+        var noSurvey = $('<span>No surveys today</span>');
+	surveysHtmlIni.append(noSurvey);
+    }
+    //Aixo s'hauria de arreglar millor
+    $('body').on('click', '.listSurveyItem', function(){
+      alert("Survey Item clicked. Must send and event with a render edit form");
+    });
+    displayContent(surveysHtmlIni, LIST_SURVEYS);
+}
+
+function listSurveys() {
+    sendEvent('/api/surveys', 'GET', null, null, renderListSurveys);
 }
 
 function createSurvey() {
@@ -153,6 +155,15 @@ function initDatePicker() {
         onClose: function( selectedDate ) {
             $( "#since" ).datepicker( "option", "maxDate", selectedDate );
         }
-    });
+   });
 
 }
+$(document).ready(function($) {
+    initDatePicker();
+    $('#create_survey_form').submit(submitCreateSurvey);
+    createSurveyHTML = $('#dynamicContent').clone(true);
+    currentView = 0;
+    $('#add_question').click(renderAddNewQuestion);
+});
+
+

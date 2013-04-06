@@ -238,3 +238,7 @@ menu.main a:hover{
 #questions {
     display: none;
 }
+
+#add_question{
+    display: none;
+}
