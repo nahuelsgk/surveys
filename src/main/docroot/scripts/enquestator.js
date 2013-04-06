@@ -68,7 +68,8 @@ function listSurveys() {
         dataType:"json",
         success: function(json) {
             var surveysHtmlIni = '<div id="surveysList">';
-            var header = '<h2 id="contentTitle">Surveys list</h2><ul>';
+            console.log("title: "+createTitle("hello"));
+            var header = '<ul>';
             surveysHtmlIni += header;
             var surveysHtmlEnd = '</ul></div>';
             var count = 0;
@@ -99,6 +100,11 @@ function listSurveys() {
 
         }
     });
+}
+
+function createTitle(text) {
+    var $title = $('.hidden title').clone();
+    return $title;
 }
 
 function createSurvey() {
