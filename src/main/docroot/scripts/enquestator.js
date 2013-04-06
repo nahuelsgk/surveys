@@ -20,6 +20,7 @@ function Survey () {
             this.name = json.title;
             this.initDate  = json.since;
             this.finalDate = json.until;
+            this.id = json.id;
             this.questions = new Array();
         break;
         default : /*NOP*/
@@ -27,8 +28,9 @@ function Survey () {
 
     this.listMe = function() {
         var item = $('#listSurveyItem').clone(true);
-        item.attr('id','surveyItem');
+        item.attr('id','');
         item.attr('class',''); // remove the hidden class
+        item.attr('name', this.id);
         item.text(this.name);
         return item;
     }
@@ -111,12 +113,8 @@ function renderListSurveys(listOfSurveys) {
     }
     if (count == 0) {
         var noSurvey = $('<span>No surveys today</span>');
-	surveysHtmlIni.append(noSurvey);
+	    surveysHtmlIni.append(noSurvey);
     }
-    //Aixo s'hauria de arreglar millor
-    $('body').on('click', '.listSurveyItem', function(){
-      alert("Survey Item clicked. Must send and event with a render edit form");
-    });
     displayContent(surveysHtmlIni, LIST_SURVEYS);
 }
 
@@ -141,7 +139,7 @@ function displayContent(html, view)  {
 }
 
 function cleanView(view) {
-    console.log("Removing view: "+view);
+    //console.log("Removing view: "+view);
     switch(view) {
         case CREATE_SURVEY:
             $('#dynamicContent').hide();
@@ -150,6 +148,11 @@ function cleanView(view) {
             $('#surveysList').remove();
             break;
     }
+}
+
+function showSurvey(id) {
+    console.log('in');
+    console.log("Showing survey: "+id);
 }
 
 function initDatePicker() {
