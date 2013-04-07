@@ -121,6 +121,12 @@ function renderListSurveys(listOfSurveys) {
         var noSurvey = $('<span>No surveys today</span>');
 	    surveysHtmlIni.append(noSurvey);
     }
+    $('body').on('click', '.surveyItem', function(){
+      var id = $(this).attr('name');
+      sendEvent('/api/survey/'+id, 'GET', null, null, null);
+    });
+
+
     displayContent(surveysHtmlIni, LIST_SURVEYS);
 }
 
