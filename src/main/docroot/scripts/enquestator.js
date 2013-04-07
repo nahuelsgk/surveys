@@ -1,25 +1,24 @@
-var createSurveyHTML;
-var surveysListHTML;
 var currentView;
 var CREATE_SURVEY = 0;
 var LIST_SURVEYS = 1;
 var questionCounter = 1;
 var currentSurvey;
+var surveys = new Object(); // Map for all the surveys retrieved
 
 /* Domain Objects */
 function Survey () {
     switch (arguments.length) {     //multiple constructors
         case 3:
-            this.name = arguments[0];
-            this.initDate  = arguments[1];
-            this.finalDate = arguments[2];
+            this.title = arguments[0];
+            this.since  = arguments[1];
+            this.until = arguments[2];
             this.questions = new Array();
         break;
         case 1:
             var json = arguments[0];
-            this.name = json.title;
-            this.initDate  = json.since;
-            this.finalDate = json.until;
+            this.title = json.title;
+            this.since  = json.since;
+            this.until = json.until;
             this.id = json.id;
             this.questions = new Array();
         break;
@@ -29,9 +28,9 @@ function Survey () {
     this.listMe = function() {
         var item = $('#listSurveyItem').clone(true);
         item.attr('id','');
-        item.attr('class',''); // remove the hidden class
+        item.attr('class','surveyItem'); // remove the hidden class
         item.attr('name', this.id);
-        item.text(this.name);
+        item.text(this.title);
         return item;
     }
 }
@@ -44,21 +43,21 @@ var Question = function(name, type, value){
 
 /*send event generic: uri, method, json data, done callback, success callback*/
 function sendEvent(uri, method, data, done, success){
-        var request = $.ajax({
-            url: uri,
-            type: method,
-            data: JSON.stringify(data),
-            dataType: 'json',
-	    success: function(data){
-	      if(success){
-	        success(data);
+    var request = $.ajax({
+        url: uri,
+        type: method,
+        data: JSON.stringify(data),
+        dataType: 'json',
+        success: function(data){
+          if(success){
+            success(data);
               }
-	    }
-        });
+        }
+    });
 
-        request.fail(function() {
-            console.log('request failed :/');
-        });
+    request.fail(function() {
+        console.log('request failed :/');
+    });
 	if(done){request.done(done(request));}
 };
 
@@ -72,20 +71,20 @@ function submitCreateSurvey(){
 	var data = {title : $('#title').val(), since : $('#since').val(), until : $('#until').val()};
 	var method = 'POST';
 	var done_callback = function (request) {
-            console.log('sent request, method : ' + method);
-            currentSurvey = new Survey( $('#title').val(), $('#since').val(), $('#until').val());
-            if (form.attr('method') === 'PUT') {
-	            renderLastChangeNotification();
-            }
-            else {
-                form.attr('method', 'PUT');
-                form.attr('action', request.getResponseHeader('location'));
-                $('#create_survey_form input[type=submit]').attr('value','Edit');
-                $('h2').text('Survey sent');
-                $('#survey_description').text('Click the edit button to update it');
-                $('#questions').show();
-		        $('#add_question').show();
-            }
+        console.log('sent request, method : ' + method);
+        currentSurvey = new Survey( $('#title').val(), $('#since').val(), $('#until').val());
+        if (form.attr('method') === 'PUT') {
+            renderLastChangeNotification();
+        }
+        else {
+            form.attr('method', 'PUT');
+            form.attr('action', request.getResponseHeader('location'));
+            $('#create_survey_form input[type=submit]').attr('value','Edit');
+            $('h2').text('Survey sent');
+            $('#survey_description').text('Click the edit button to update it');
+            $('#questions').show();
+            $('#add_question').show();
+        }
     };
 	sendEvent('/api/survey', method, data, done_callback, null);
     return false;
@@ -108,8 +107,15 @@ function renderListSurveys(listOfSurveys) {
     var size = obj.length;
     for (var i = 0; i < size; ++i) {      // iteration over the all survey JSONs
         var survey = new Survey(obj[i]);
-        list.append(survey.listMe());
-        count = count + 1;
+        if (typeof survey === 'undefined') {
+            console.log('undefined survey');
+        }
+        else {
+            var key = survey.id;
+            surveys[key] = survey;
+            list.append(survey.listMe());
+            count = count + 1;
+        }
     }
     if (count == 0) {
         var noSurvey = $('<span>No surveys today</span>');
@@ -129,13 +135,11 @@ function createSurvey() {
     currentView = CREATE_SURVEY;
 }
 
-/*
-  This function fills the div "content" with a H2 header containing the arg "title" and a html bloc attached below.
-*/
+
 function displayContent(html, view)  {
-   cleanView(currentView);
-   $('#content').append(html);
-   currentView = view;
+    cleanView(currentView);
+    $('#content').append(html);
+    currentView = view;
 }
 
 function cleanView(view) {
@@ -180,7 +184,6 @@ function initDatePicker() {
 $(document).ready(function($) {
     initDatePicker();
     $('#create_survey_form').submit(submitCreateSurvey);
-    createSurveyHTML = $('#dynamicContent').clone(true);
     currentView = 0;
     $('#add_question').click(renderAddNewQuestion);
 });
