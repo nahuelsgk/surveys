@@ -30,6 +30,8 @@ function Survey () {
         item.attr('id','');
         item.attr('class','surveyItem'); // remove the hidden class
         item.attr('name', this.id);
+	item.attr('data-since',this.since);
+	item.attr('data-until',this.until);
         item.text(this.title);
         return item;
     }
