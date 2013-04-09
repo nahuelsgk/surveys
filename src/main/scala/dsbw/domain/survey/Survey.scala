@@ -9,15 +9,12 @@ object StatesSurvey {
 
 }
 
-/*case class Survey(title: String, since: String, until: String,
+case class Survey(title: String, since: String, until: String,
                   id: String = "",
                   state: String = StatesSurvey.Pending,
                   questions: Map[Int, Question] = Map(),
                   answers: Map[Int, Answer] = Map()
                    ) {
-}*/
-
-case class Survey(title: String, since: String, until: String, id : String = "") {
   def writes(survey: Survey) = JSONObject (Map(
     "id" -> id,
     "title" -> title,
