@@ -17,7 +17,7 @@ function editSurvey() {
 }
 
 function surveyCreated(uri) {
-    console.log("URI: "+uri);
+    console.log("URI: "+uri.getResponseHeader('Location'));
     $('#editSurvey').attr('class','');
 }
 
