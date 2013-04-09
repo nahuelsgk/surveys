@@ -105,6 +105,10 @@ menu.main a:hover{
     background-color: #ffffff;
 }
 
+menu.main a.hidden{
+    display: none;
+}
+
 .plus {
     float: right;
     cursor: pointer;
