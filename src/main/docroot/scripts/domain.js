@@ -18,20 +18,17 @@ function Survey () {
         default : /*NOP*/
     }
 
-    this.listMe = function() {
-        var item = $('#listSurveyItem').clone(true);
-        item.attr('id','');
-        item.attr('class','surveyItem'); // remove the hidden class
-        item.attr('name', this.id);
-	    item.attr('data-since',this.since);
-	    item.attr('data-until',this.until);
-        item.text(this.title);
-        return item;
-    }
+
+
+
 }
 
-var Question = function(name, type, value){
-  this.name  = name;
-  this.type  = type;
-  this.value = value;
+function Question () {
+    switch (arguments.length) {
+        case 3:
+            this.id  = id;
+            this.type  = type;
+            this.order = order;
+        break;
+    }
 }

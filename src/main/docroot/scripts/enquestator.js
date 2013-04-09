@@ -5,26 +5,6 @@ var questionCounter = 1;
 var currentSurvey;
 var surveys = new Object(); // Map for all the surveys retrieved
 
-/*send event generic: uri, method, json data, done callback, success callback*/
-function sendEvent(uri, method, data, done, success){
-    var request = $.ajax({
-        url: uri,
-        type: method,
-        data: JSON.stringify(data),
-        dataType: 'json',
-        success: function(data){
-          if(success){
-            success(data);
-              }
-        }
-    });
-
-    request.fail(function() {
-        console.log('request failed :/');
-    });
-	if(done){request.done(done(request));}
-};
-
 function renderLastChangeNotification(){
     date = new Date();
     $('h2').text('Survey updated at ' + date.getHours() + ':' + date.getMinutes() + ':' + date.getSeconds   ());
@@ -77,7 +57,7 @@ function renderListSurveys(listOfSurveys) {
         else {
             var key = survey.id;
             surveys[key] = survey;
-            list.append(survey.listMe());
+            list.append(listSurvey(survey));
             count = count + 1;
         }
     }
@@ -127,6 +107,17 @@ function cleanView(view) {
 function showSurvey(id) {
     console.log('in');
     console.log("Showing survey: "+id);
+}
+
+function listSurvey(survey) {
+    var item = $('#listSurveyItem').clone(true);
+    item.attr('id','');
+    item.attr('class','surveyItem'); // remove the hidden class
+    item.attr('name', survey.id);
+    item.attr('data-since',survey.since);
+    item.attr('data-until',survey.until);
+    item.text(survey.title);
+    return item;
 }
 
 function initDatePicker() {
