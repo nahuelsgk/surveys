@@ -1,36 +1,18 @@
 package dsbw.domain.survey
 
 
-case class Answer(id: Int,
-                  idQuestion: Int,
-                  idClient: String,
-                  typeQ: String) {
+class Answer(idQuestion: Int, idClient: String) {
 
 }
 
-class AnswerText (id: Int,
-                  idQuestion: Int,
-                  idClient: String,
-                  typeQ: String,
-                  answer: String)
-    extends Answer(id, idQuestion, idClient, typeQ){
+case class AnswerText(idQuestion: Int, idClient: String, answer: String) extends Answer(idQuestion, idClient) {
 
 }
 
-class AnswerChoice (id: Int,
-                    idQuestion: Int,
-                    idClient: String,
-                    typeQ: String,
-                    answer: String)
-    extends Answer(id, idQuestion, idClient, typeQ){
+case class AnswerChoice(idQuestion: Int, idClient: String, answer: String) extends Answer(idQuestion, idClient) {
 
 }
 
-class AnswerMultiChoice (id: Int,
-                         idQuestion: Int,
-                         idClient: String,
-                         typeQ: String,
-                         answer: List[String])
-    extends Answer(id, idQuestion, idClient, typeQ){
+case class AnswerMultiChoice(idQuestion: Int, idClient: String, answer: List[String]) extends Answer(idQuestion, idClient) {
 
 }

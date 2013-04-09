@@ -3,22 +3,19 @@ import util.parsing.json.JSONObject
 
 
 object StatesSurvey {
-  val Pending = "pending"
-  val Accepted = "accepted"
-  val Rejected = "rejected"
-
+    val Creating = "creating"
+    val Pending = "pending"
+    val Accepted = "accepted"
+    val Rejected = "rejected"
 }
 
-case class Survey(title: String, since: String, until: String,
+case class Survey(title: String,
+                  since: String,
+                  until: String,
                   id: String = "",
-                  state: String = StatesSurvey.Pending,
+                  state: String = StatesSurvey.Creating,
                   questions: Map[Int, Question] = Map(),
                   answers: Map[Int, Answer] = Map()
                    ) {
-  def writes(survey: Survey) = JSONObject (Map(
-    "id" -> id,
-    "title" -> title,
-    "since" -> since,
-    "until" -> until
-  ))
+
 }

@@ -1,38 +1,18 @@
 package dsbw.domain.survey
 
-object TypeQuestion {
-    val Text = "text"
-    val Choice = "choice"
-    val MultiChoice = "multiChoice"
-}
-
-class Question(id: Int,
-                    typeQ: String,
-                    order: Int) {
+class Question(id: Int) {
 
 }
 
-case class QuestionText(id: Int,
-                        typeQ: String,
-                        order: Int,
-                        question: String)
-    extends Question (id, typeQ, order) {
+case class QuestionText(id: Int, question: String) extends Question (id) {
 
 }
 
-class QuestionChoice (id: Int,
-                      typeQ: String,
-                      order: Int,
-                      options: List[String])
-    extends Question (id, typeQ, order) {
+case class QuestionChoice (id: Int, options: List[String]) extends Question (id) {
 
 }
 
-class QuestionMultiChoice (id: Int,
-                           typeQ: String,
-                           order: Int,
-                           options: List[String])
-    extends Question (id, typeQ, order) {
+case class QuestionMultiChoice (id: Int, options: List[String]) extends Question (id) {
 
 }
 

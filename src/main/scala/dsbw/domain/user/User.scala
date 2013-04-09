@@ -8,4 +8,5 @@ case class User(id: String,
                 email: String,
                 surveys: List[Survey] = List()) {
 
+
 }

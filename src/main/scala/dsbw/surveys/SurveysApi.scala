@@ -18,8 +18,6 @@ class SurveysApi(surveysService: SurveysService) extends Api {
         headers: Map[String, String] = Map(),
         body: Option[JSON] = None
     ): Response = {
-
-
         (method + " " + uri) match {
             case "POST /api/survey" => postSurvey(body)
             case PatternGetSurveyId(id) => getSurveyById(id)
