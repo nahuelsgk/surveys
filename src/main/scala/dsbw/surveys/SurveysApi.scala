@@ -24,13 +24,13 @@ class SurveysApi(surveysService: SurveysService) extends Api {
             case "POST /api/survey" => postSurvey(body)
             case PatternGetSurveyId(id) => getSurveyById(id)
             case PatternPutSurveyId(id) => putSurvey(id, body)
-            case "GET /api/surveys" => getAllSurveys()
+            case "GET /api/surveys" => getAllSurveys
             case _ => Response(HttpStatusCode.NotFound)
         }
     }
 
 
-    def postSurvey(body: Option[JSON]): Response = {
+    private def postSurvey(body: Option[JSON]): Response = {
         try {
             if (body.nonEmpty) {
                 //Es parseja el body
@@ -57,7 +57,7 @@ class SurveysApi(surveysService: SurveysService) extends Api {
         }
     }
 
-    def putSurvey(id: String, body: Option[JSON]): Response = {
+    private def putSurvey(id: String, body: Option[JSON]): Response = {
         println("Request body: " + body)
         try {
             if (body.nonEmpty) {
@@ -79,14 +79,14 @@ class SurveysApi(surveysService: SurveysService) extends Api {
         }
     }
 
-    def getSurveyById(id: String): Response = {
+    private def getSurveyById(id: String): Response = {
         val myenq= surveysService.getSurvey(id);
         println("Return: "+ myenq.id);
         val tmp1= JSON.toJSON(myenq);
         Response(HttpStatusCode.Ok, null, tmp1);
     }
 
-    def getAllSurveys(): Response = {
+    private def getAllSurveys: Response = {
         val json = JSON.toJSON(surveysService.listSurveys()).value
         println("body response: " + json)
         Response(HttpStatusCode.Ok, null, json)
