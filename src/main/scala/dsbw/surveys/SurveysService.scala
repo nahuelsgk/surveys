@@ -1,8 +1,7 @@
 package dsbw.surveys
 
 import collection.mutable.ListBuffer
-
-case class Question(question: String)
+import dsbw.domain.survey.Survey
 
 class SurveysService(surveysRepository: SurveysRepository) {
 
