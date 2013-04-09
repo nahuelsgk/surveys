@@ -3,7 +3,7 @@ function Survey() {
     switch (arguments.length) {     //multiple constructors
         case 1:
             var json = arguments[0];
-            init(this,json.id,json.title,json.since,json.until,json.state);
+            init(this,json);
         break;
     }
 
@@ -15,14 +15,14 @@ function Survey() {
         answer[answer.id] = answer;
     }
 
-    function init(survey, title, since, until, id, state) {
-        survey.title = title;
-        survey.since  = since;
-        survey.until = until;
-        survey.id = id;
-        survey.state = state;
-        survey.questions = new Object(); // Map for all the survey's questions
-        survey.answers = new Object(); // Map for all the survey's answers
+    function init(survey, json) {
+        survey.title = json.title || 'No title';
+        survey.since  = json.since;
+        survey.until = json.until;
+        survey.id = json.id;
+        survey.state = json.state;
+        survey.questions = json.questions; // Map for all the survey's questions
+        survey.answers = json.answers; // Map for all the survey's answers
     }
 
 }
