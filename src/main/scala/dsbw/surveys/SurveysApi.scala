@@ -48,7 +48,7 @@ class SurveysApi(surveysService: SurveysService) extends Api {
         }
         catch {
             case e: Throwable => {
-                println(e)
+                println(e);
             }
             Response(HttpStatusCode.BadRequest)
         }
@@ -60,7 +60,6 @@ class SurveysApi(surveysService: SurveysService) extends Api {
             if (body.nonEmpty) {
                 //Es parseja el body
                 val survey = JSON.fromJSON[Survey](body.get)
-
                 surveysService.updateSurvey(id, survey)
 
                 //Es retorna OK si tot ha anat be
@@ -78,7 +77,10 @@ class SurveysApi(surveysService: SurveysService) extends Api {
     }
 
     def getSurveyById(id: String): Response = {
-        Response(HttpStatusCode.Ok, null, surveysService.getSurvey(id))
+        val myenq= surveysService.getSurvey(id);
+        println("Return: "+ myenq.id);
+        val tmp1= JSON.toJSON(myenq);
+        Response(HttpStatusCode.Ok, null, tmp1);
     }
 
     def getAllSurveys(): Response = {

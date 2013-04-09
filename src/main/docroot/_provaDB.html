@@ -5,18 +5,54 @@
     <meta charset="utf-8" />
     <link rel="stylesheet" href="css/reset.css">
     <link rel="stylesheet" href="css/layout.css">
+    <script type="text/javascript">
+        function doGet(){
+            var id= document.getElementById("id").value;
+            location.href= "./api/survey/"+ id;
+        }
+
+        function doPost(){
+            var title= document.getElementById("title").value;
+            var since= document.getElementById("since").value;
+            var until= document.getElementById("until").value;
+            var obj=
+                '{'+
+                '    "title": title, '+
+                '    "since": since, '+
+                '    "until": until '+
+                '}';
+
+            var form = document.createElement("form");
+            form.setAttribute("method", "POST");
+            form.setAttribute("action", "./api/survey");
+
+            var hiddenField = document.createElement("input");
+            hiddenField.setAttribute("type", "hidden");
+            hiddenField.setAttribute("name", "survey");
+            hiddenField.setAttribute("value", obj);
+            form.appendChild(hiddenField);
+            document.body.appendChild(form);
+            form.submit();
+           }
+    </script>
 </head>
 <body>
 <header>
     <h1>Prova DB</h1>
 </header>
 
-<section id="content">
-    <h2>Surveys from DB</h2>
-    <p>blah blah</p>
-    <form id="wop" action="/api/survey" class="survey" method="GET">
-        <input type="submit" name="submit" class="button" id="submit_btn" value="ok"><br />
-    </form>
+<section>
+    <h2>getSurvey</h2>
+    <p>id: <input type="text" name="id" id="id" value="" /></p>
+    <p><input type="button" name="submit" class="button" id="ok_get" value="ok" onclick="doGet();" /></p>
+</section>
+<br />
+<section>
+    <h2>getSurvey</h2>
+    <p>title: <input type="text" name="title" id="title" value="a" /></p>
+    <p>since: <input type="text" name="since" id="since" value="1" /></p>
+    <p>until: <input type="text" name="until" id="until" value="2" /></p>
+    <p><input type="button" name="submit" class="button" id="ok_post" value="ok" onclick="doPost();" /></p>
 </section>
 
 </body>

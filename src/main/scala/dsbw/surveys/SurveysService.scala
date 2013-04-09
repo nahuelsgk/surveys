@@ -1,6 +1,7 @@
 package dsbw.surveys
 
 import collection.mutable.ListBuffer
+import org.bson.types.ObjectId
 
 case class Question(question: String)
 
@@ -33,7 +34,9 @@ class SurveysService(surveysRepository: SurveysRepository) {
 
     }
 
-    def getSurvey(id: String) {
-        println("We must return a survey " + id)
+    def getSurvey(id: String) : Survey = {
+        println("Survey getted: "+ id);
+        val sur= surveysRepository.getSurvey(id);
+        new Survey(sur.title, sur.until, sur.since, id);
     }
 }
