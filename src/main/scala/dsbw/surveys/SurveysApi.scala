@@ -3,9 +3,13 @@ package dsbw.surveys
 import Config.{dbHostName, dbPort, dbName, username, pwd, webServerPort}
 import dsbw.json.JSON
 import dsbw.server.{Server, HttpStatusCode, Response, Api}
+import dsbw.domain.survey.Survey
 
 /* Surveys API */
 class SurveysApi(surveysService: SurveysService) extends Api {
+
+    val PatternGetSurveyId = "GET /api/survey/(\\w+)".r
+    val PatternPutSurveyId = "PUT /api/survey/(\\w+)".r
 
     def service(
         method: String,
@@ -14,8 +18,7 @@ class SurveysApi(surveysService: SurveysService) extends Api {
         headers: Map[String, String] = Map(),
         body: Option[JSON] = None
     ): Response = {
-        val PatternGetSurveyId = "GET /api/survey/(\\w+)".r
-        val PatternPutSurveyId = "PUT /api/survey/(\\w+)".r
+
 
         (method + " " + uri) match {
             case "POST /api/survey" => postSurvey(body)
