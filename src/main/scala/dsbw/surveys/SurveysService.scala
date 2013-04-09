@@ -4,8 +4,6 @@ import collection.mutable.ListBuffer
 import org.bson.types.ObjectId
 import dsbw.domain.survey.Survey
 
-case class Question(question: String)
-
 class SurveysService(surveysRepository: SurveysRepository) {
 
     def listSurveys(): ListBuffer[Survey] = {
