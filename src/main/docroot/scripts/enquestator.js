@@ -16,15 +16,25 @@ function editSurvey() {
     renderEditSurvey();
 }
 
-function surveyCreated(uri) {
-    console.log("URI: "+uri.getResponseHeader('Location'));
-    $('#editSurvey').attr('class','');
+function displaySurvey(request) {
+    //var obj = $.parseJSON(request);
+    //console.log("size: "+obj.length);
+    var survey = new Survey(request);
+    console.log("ID: "+survey.id);
+}
+
+function surveyCreated(uri,location) {
+    if (location !== 'none') {
+        console.log("URI: "+location);
+        $('#editSurvey').attr('class','');
+        sendEvent(location, 'GET', null, null, displaySurvey);
+    }
 }
 
 function submitCreateSurvey(){
 	var data = {title : $('#title').val(), since : $('#since').val(), until : $('#until').val()};
 	var method = 'POST';
-	sendEvent('/api/survey', method, data, surveyCreated, null);
+	sendEvent('/api/survey', method, data, null, surveyCreated);
     return false;
 };
 

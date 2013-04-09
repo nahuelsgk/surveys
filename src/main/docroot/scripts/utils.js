@@ -5,9 +5,10 @@ function sendEvent(uri, method, data, done, success){
         type: method,
         data: JSON.stringify(data),
         dataType: 'json',
-        success: function(data){
+        success: function(data, status, xhr){
+            var location = xhr.getResponseHeader('Location') || 'none';
             if(success){
-                success(data);
+                success(data,location);
             }
         }
     });
