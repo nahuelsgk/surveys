@@ -231,6 +231,19 @@ menu.main a:hover{
     text-align: left;
 }
 
+#content #surveysList ul li.surveyItem:hover{
+  background-color: #00f;
+  color: #fff;
+}
+
+.hidden {
+    display: none;
+}
+
 #questions {
+    display: none;
+}
+
+#add_question{
     display: none;
 }

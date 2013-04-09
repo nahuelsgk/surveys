@@ -1,12 +1,117 @@
-var createSurveyHTML;
-var surveysListHTML;
-var questionCounter = 1;
+var currentView;
+var CREATE_SURVEY = 0;
+var LIST_SURVEYS = 1;
+var EDIT_SURVEY = 2;
 
-$(document).ready(function($) {
+var surveys = new Object();
+
+function renderLastChangeNotification(){
+    date = new Date();
+    $('h2').text('Survey updated at ' + date.getHours() + ':' + date.getMinutes() + ':' + date.getSeconds   ());
+}
+
+function editSurvey() {
+
+    cleanView(currentView);
+    renderEditSurvey();
+}
+
+
+
+function submitCreateSurvey(){
+	var data = {title : $('#title').val(), since : $('#since').val(), until : $('#until').val()};
+	var method = 'POST';
+	console.log('calling create survey');
+	var done_callback = function surveyCreated(uri) {
+                            console.log("URI: "+uri);
+                            $('#editSurvey').attr('class','');
+                        };
+	sendEvent('/api/survey', method, data, done_callback, null);
+    return false;
+};
+
+
+function renderListSurveys(listOfSurveys) {
+    var surveysHtmlIni = $('<div id="surveysList">');
+    var header = $('<h2 id="contentTitle">Surveys list</h2>');
+    surveysHtmlIni.append(header);
+    var list = $('<ul/>');
+    surveysHtmlIni.append(list);
+    var count = 0;
+    var obj = $.parseJSON(listOfSurveys);
+    var size = obj.length;
+    for (var i = 0; i < size; ++i) {      // iteration over the all survey JSONs
+        var survey = new Survey(obj[i]);
+        if (typeof survey === 'undefined') {
+            console.log('undefined survey');
+        }
+        else {
+            var key = survey.id;
+            surveys[key] = survey;
+            list.append(listSurvey(survey));
+            count = count + 1;
+        }
+    }
+    if (count == 0) {
+        var noSurvey = $('<span>No surveys today</span>');
+	    surveysHtmlIni.append(noSurvey);
+    }
+    $('body').on('click', '.surveyItem', function(){
+      var id = $(this).attr('name');
+      sendEvent('/api/survey/'+id, 'GET', null, null, null);
+    });
+
+
+    displayContent(surveysHtmlIni, LIST_SURVEYS);
+}
+
+function listSurveys() {
+    sendEvent('/api/surveys', 'GET', null, null, renderListSurveys);
+}
+
+
+function createSurvey() {
+    cleanView(currentView);
+    $('#dynamicContent').show();
+    currentView = CREATE_SURVEY;
+}
+
+
+function displayContent(html, view)  {
+    cleanView(currentView);
+    $('#content').append(html);
+    currentView = view;
+}
+
+function cleanView(view) {
+    //console.log("Removing view: "+view);
+    switch(view) {
+        case CREATE_SURVEY:
+            $('#dynamicContent').hide();
+            break;
+        case LIST_SURVEYS:
+            $('#surveysList').remove();
+            break;
+    }
+}
+
+
+function listSurvey(survey) {
+    var item = $('#listSurveyItem').clone(true);
+    item.attr('id','');
+    item.attr('class','surveyItem'); // remove the hidden class
+    item.attr('name', survey.id);
+    item.attr('data-since',survey.since);
+    item.attr('data-until',survey.until);
+    item.text(survey.title);
+    return item;
+}
+
+function initDatePicker() {
     //setting since and until to the current day
     d = new Date();
     today = d.toISOString().substr(0,10);
-    
+
     $('#since').attr('value', today);
     $('#until').attr('value', today);
 
@@ -21,113 +126,18 @@ $(document).ready(function($) {
         onClose: function( selectedDate ) {
             $( "#since" ).datepicker( "option", "maxDate", selectedDate );
         }
-    });
+   });
 
+}
 
+function renderNewSurveyForm() {
+    initDatePicker();
+    currentView = CREATE_SURVEY;
+    $('#buttonSurveyCreate').click(submitCreateSurvey);
+}
 
-    $('#create_survey_form').submit(function() {
-        var form = $(this);
-        var request = $.ajax({
-            url: $(this).attr('action'),
-            type: $(this).attr('method'),
-            data: JSON.stringify({
-                title : $('#title').val(),
-                since : $('#since').val(),
-                until : $('#until').val()
-            }),
-            dataType: 'json'
-        });
-
-        request.fail(function() {
-            console.log('request failed :/');
-        });
-        request.done(function (json) {
-            console.log('sent request, method : ' + form.attr('method'));
-
-            if (form.attr('method') === 'PUT') {
-                date = new Date();
-                $('h2').text('Survey updated at ' + date.getHours() + ':' + date.getMinutes() + ':' + date.getSeconds   ());
-            } else {
-                form.attr('method', 'PUT');
-                form.attr('action', request.getResponseHeader('location'));
-                $('#create_survey_form input[type=submit]').attr('value','Edit');
-
-                $('h2').text('Survey sent');
-                $('#survey_description').text('Click the edit button to update it');
-
-            }
-        });
-
-        return false;
-    });
-
-    createSurveyHTML = $('#dynamicContent').clone();
-
-    addQuestion = function() {
-        $('#question_list').append('<li><label for="question[' + questionCounter + ']">Question ' + questionCounter + '</label>' +
-            '<input type="text" name="question[' + questionCounter + '] class="question" placeholder="Write your question here" required /></li>'
-        );
-        questionCounter++;
-    };
-
-    $('#add_question').click(addQuestion);
-
+$(document).ready(function($) {
+    renderNewSurveyForm();
 });
 
-function listSurveys() {
 
-    $.ajax({
-        type:"GET",
-        url:"/api/surveys",
-        dataType:"json",
-        success: function(json) {
-            var surveysHtmlIni = '<div id="surveysList"><ul>';
-            var surveysHtmlEnd = '</ul></div>';
-            var count = 0;
-            console.log("JSON: "+json);
-            var obj = $.parseJSON(json);
-            var size = obj.length;
-            console.log("#surveys: "+size);
-            for (var i = 0; i < size; ++i) {
-                $.each(obj[i], function(id, v) {
-                    if (id == "title") {
-                        console.log("TITLE: "+v);
-                        var html = '<li>'+v+'</li>';
-                        surveysHtmlIni = surveysHtmlIni + html;
-                        count = count +1;
-                    }
-                });
-            }
-
-
-            if (count == 0) {
-                var html = 'No surveys today';
-                surveysHtmlIni = surveysHtmlIni + html;
-            }
-            surveysHtmlIni = surveysHtmlIni + surveysHtmlEnd;
-            //console.log("HTML: "+surveysHtmlIni);
-            surveysListHTML = surveysHtmlIni;
-
-            displayContent('Surveys list', surveysListHTML);
-
-        }
-    });
-}
-
-function createSurvey() {
-
-    displayContent('Create survey', createSurveyHTML);
-}
-
-
-
-/*
-  This function fills the div "content" with a H2 header containing the arg "title" and a html bloc attached below.
-*/
-function displayContent(title, html)  {
-   $('#contentTitle').remove();
-   $('#dynamicContent').empty();
-   var header = '<h2 id="contentTitle">'+title+'</h2>';
-   $('#dynamicContent').append(header);
-   $('#dynamicContent').append(html);
-}

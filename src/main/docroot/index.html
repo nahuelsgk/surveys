@@ -16,6 +16,7 @@
 
 <menu class="main">
     <a href="#" id="listSurveys" onclick="listSurveys();">List surveys</a>
+    <a href="#" id="editSurvey" class="hidden" onclick="editSurvey();">Edit survey</a>
     <a href="#" id="createSurvey" onclick="createSurvey();">Create survey</a>
 </menu>
 
@@ -26,11 +27,11 @@
 </div>
 
 <section id="content">
-    <h2 id="contentTitle">Welcome to Enquestator!</h2>
     <div id="dynamicContent">
+        <h2 id="contentTitle">Welcome to Enquestator!</h2>
         <p id="survey_description">Start now creating your new survey filling the gaps below.</p>
         <br />
-        <form id="create_survey_form" action="/api/survey" class="survey" method="POST">
+        <form id="create_survey_form"  class="survey" >
             <ul>
                 <li>
                     <label for="title">Title:</label>
@@ -45,7 +46,7 @@
                     <input type="text" name="until" id="until" required><br />
                 </li>
                 <li>
-                    <input type="submit" class="button" value="Create"><br />
+                    <input type="button"  id="buttonSurveyCreate" value="Create"><br />
                 </li>
             </ul>
         </form>
@@ -66,6 +67,13 @@
     <script src="http://malsup.github.com/jquery.form.js"></script>
     <script src="http://modernizr.com/downloads/modernizr.js"></script>
     <script src="scripts/enquestator.js"></script>
+    <script src="scripts/domain.js"></script>
+    <script src="scripts/utils.js"></script>
 </footer>
+
+<!-- Here are some useful html templates -->
+<li class="hidden" id="listSurveyItem" data-since="" data-until=""></li>
+
+
 </body>
 </html>
