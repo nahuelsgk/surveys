@@ -3,6 +3,8 @@ var CREATE_SURVEY = 0;
 var LIST_SURVEYS = 1;
 var EDIT_SURVEY = 2;
 
+var surveys = new Object();
+
 function renderLastChangeNotification(){
     date = new Date();
     $('h2').text('Survey updated at ' + date.getHours() + ':' + date.getMinutes() + ':' + date.getSeconds   ());
