@@ -3,6 +3,7 @@ package dsbw.surveys
 import Config.{dbHostName, dbPort, dbName, username, pwd, webServerPort}
 import dsbw.json.JSON
 import dsbw.server.{Server, HttpStatusCode, Response, Api}
+import dsbw.domain.survey.Survey
 
 /* Surveys API */
 class SurveysApi(surveysService: SurveysService) extends Api {

@@ -1,4 +1,4 @@
-package dsbw.surveys
+package dsbw.domain.survey
 
 import util.parsing.json.JSONObject
 
