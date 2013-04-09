@@ -16,17 +16,15 @@ function editSurvey() {
     renderEditSurvey();
 }
 
-
+function surveyCreated(uri) {
+    console.log("URI: "+uri);
+    $('#editSurvey').attr('class','');
+}
 
 function submitCreateSurvey(){
 	var data = {title : $('#title').val(), since : $('#since').val(), until : $('#until').val()};
 	var method = 'POST';
-	console.log('calling create survey');
-	var done_callback = function surveyCreated(uri) {
-                            console.log("URI: "+uri);
-                            $('#editSurvey').attr('class','');
-                        };
-	sendEvent('/api/survey', method, data, done_callback, null);
+	sendEvent('/api/survey', method, data, surveyCreated, null);
     return false;
 };
 

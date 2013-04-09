@@ -6,14 +6,16 @@ function sendEvent(uri, method, data, done, success){
         data: JSON.stringify(data),
         dataType: 'json',
         success: function(data){
-          if(success){
-            success(data);
-              }
+            if(success){
+                success(data);
+            }
         }
     });
 
     request.fail(function() {
         console.log('request failed :/');
     });
-	if(done){request.done(done(request));}
+	if(done){
+	    request.done(done(request));
+	}
 };
