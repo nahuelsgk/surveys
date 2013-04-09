@@ -1,3 +1,5 @@
+var currentSurvey;
+
 /* Domain Objects */
 function Survey() {
     switch (arguments.length) {     //multiple constructors

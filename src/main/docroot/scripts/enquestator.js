@@ -1,43 +1,32 @@
 var currentView;
 var CREATE_SURVEY = 0;
 var LIST_SURVEYS = 1;
-var questionCounter = 1;
-var currentSurvey;
-var surveys = new Object(); // Map for all the surveys retrieved
+var EDIT_SURVEY = 2;
 
 function renderLastChangeNotification(){
     date = new Date();
     $('h2').text('Survey updated at ' + date.getHours() + ':' + date.getMinutes() + ':' + date.getSeconds   ());
 }
 
+function editSurvey() {
+
+    cleanView(currentView);
+    renderEditSurvey();
+}
+
+
+
 function submitCreateSurvey(){
-    var form = $(this);
 	var data = {title : $('#title').val(), since : $('#since').val(), until : $('#until').val()};
 	var method = 'POST';
-	var done_callback = function (request) {
-        console.log('sent request, method : ' + method);
-        currentSurvey = new Survey( $('#title').val(), $('#since').val(), $('#until').val());
-        if (form.attr('method') === 'PUT') {
-            renderLastChangeNotification();
-        }
-        else {
-            form.attr('method', 'PUT');
-            form.attr('action', request.getResponseHeader('location'));
-            $('#create_survey_form input[type=submit]').attr('value','Edit');
-            $('h2').text('Survey sent');
-            $('#survey_description').text('Click the edit button to update it');
-            $('#questions').show();
-            $('#add_question').show();
-        }
-    };
+	console.log('calling create survey');
+	var done_callback = function surveyCreated(uri) {
+                            console.log("URI: "+uri);
+                            $('#editSurvey').attr('class','');
+                        };
 	sendEvent('/api/survey', method, data, done_callback, null);
     return false;
 };
-
-function renderAddNewQuestion(){
-    $('#question_list').append('<li><label for="question[' + questionCounter + ']">Question ' + questionCounter + '</label>' +'<input type="text" name="question[' + questionCounter + '] class="question" placeholder="Write your question here" required /></li>');
-    questionCounter++;
-}
 
 
 function renderListSurveys(listOfSurveys) {
@@ -104,10 +93,6 @@ function cleanView(view) {
     }
 }
 
-function showSurvey(id) {
-    console.log('in');
-    console.log("Showing survey: "+id);
-}
 
 function listSurvey(survey) {
     var item = $('#listSurveyItem').clone(true);
@@ -142,11 +127,15 @@ function initDatePicker() {
    });
 
 }
-$(document).ready(function($) {
+
+function renderNewSurveyForm() {
     initDatePicker();
-    $('#create_survey_form').submit(submitCreateSurvey);
-    currentView = 0;
-    $('#add_question').click(renderAddNewQuestion);
+    currentView = CREATE_SURVEY;
+    $('#buttonSurveyCreate').click(submitCreateSurvey);
+}
+
+$(document).ready(function($) {
+    renderNewSurveyForm();
 });
 
 
