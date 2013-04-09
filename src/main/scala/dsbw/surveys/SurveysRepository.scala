@@ -4,6 +4,8 @@ import com.mongodb.casbah.commons.MongoDBObject
 import com.mongodb.casbah.query.Imports._
 import dsbw.mongo.MongoDao
 import scala.collection.mutable.ListBuffer
+import org.bson.types.ObjectId
+import com.mongodb.casbah.commons.TypeImports.ObjectId
 
 /** A record representing the scheme of Surveys stored in the surveys collection */
 case class SurveysRecord(_id: ObjectId = new org.bson.types.ObjectId(), title: String, since: String, until: String)
@@ -24,6 +26,7 @@ class SurveysRepository(dao: SurveysDao) {
         var surveysList = new ListBuffer[SurveysRecord]()
         while (surveysCursor.hasNext) {
             surveysList += surveysCursor.next()
+            println(surveysList);
         }
         return surveysList
     }
@@ -36,5 +39,9 @@ class SurveysRepository(dao: SurveysDao) {
         var query = Map[String, ObjectId]()
         query += "_id" -> survey._id
         dao.update(query, MongoDBObject("$set" -> (MongoDBObject("title" -> survey.title) ++ MongoDBObject("since" -> survey.since) ++ MongoDBObject("until" -> survey.until))), false)
+    }
+
+    def getSurvey(id: String) : SurveysRecord = {
+        dao.findOneByID(new ObjectId(id)).get;
     }
 }
