@@ -51,13 +51,6 @@
             </ul>
         </form>
 
-        <div id="questions">
-            <form id="questions_form" action="/survey/1/question" class="survey" method="PUT">
-                <ul id="question_list">
-                </ul>
-            </form>
-            <image src="img/plus.png" class="plus" id="add_question" />
-        </div>
     </div>
 </section>
 
@@ -74,6 +67,29 @@
 <!-- Here are some useful html templates -->
 <li class="hidden" id="listSurveyItem" data-since="" data-until=""></li>
 
+<div id="questions" class="hidden">
+    <form>
+    <ul id="questionList">
+    </ul>
+    </form>
+    <image src="img/plus.png" class="plus" id="add_question" />
+</div>
 
+<li class="hidden" id="newQuestion">
+    Question:
+    <textarea class="questionTextArea" rows="3" cols="70"> </textarea>
+    <br>
+    Question Type:
+    <select id="typeSelector">
+        <option value="text">Text</option>
+        <option value="choice">Choice</option>
+        <option value="multichoice">Multichoice</option>
+    </select>
+    <div id="typeInflator" class="hidden questionOptions">
+        <label for="qOptions">Options (separated by coma): </label>
+            <textarea class="options" id="qOptions" rows="1" cols="30">
+        </textarea>
+    </div>
+</li>
 </body>
 </html>

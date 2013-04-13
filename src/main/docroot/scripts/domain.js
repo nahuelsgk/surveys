@@ -1,4 +1,5 @@
 var currentSurvey;
+var questionCounter = 0;
 
 /* Domain Objects */
 function Survey() {

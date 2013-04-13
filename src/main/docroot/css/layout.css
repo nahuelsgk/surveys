@@ -114,6 +114,10 @@ menu.main a.hidden{
     cursor: pointer;
 }
 
+#questionsForm {
+    float: left;
+}
+
 #copyright{
   padding: 10px;
 }
@@ -244,10 +248,15 @@ menu.main a.hidden{
     display: none;
 }
 
-#questions {
-    display: none;
+.questionTextArea {
+    resize:vertical;
 }
 
-#add_question{
-    display: none;
+.options {
+    resize:none;
+    vertical-align: bottom;
+}
+
+.questionOptions {
+    vertical-align: middle;
 }

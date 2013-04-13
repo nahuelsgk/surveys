@@ -135,13 +135,57 @@ function initDatePicker() {
             $( "#since" ).datepicker( "option", "maxDate", selectedDate );
         }
    });
-
 }
 
 function renderNewSurveyForm() {
     initDatePicker();
     currentView = CREATE_SURVEY;
     $('#buttonSurveyCreate').click(submitCreateSurvey);
+    //enableAddQuestions();
+}
+
+function displayTypeOfQuestion(idQuestion,type) {
+    console.log('displaying type: '+type+" for question: "+idQuestion);
+    var divNameTo = '#'+TYPE_TAG+idQuestion;
+    switch(type) {
+        case TYPE_TEXT:
+            $(divNameTo).attr('class','hidden');
+        break;
+        case TYPE_CHOICE:
+            $(divNameTo).attr('class','questionOptions');
+        break;
+        case TYPE_MULTICHOICE:
+            $(divNameTo).attr('class','questionOptions');
+        break;
+    }
+}
+
+function addNewQuestion() {
+    var question = $('#newQuestion').clone();
+    question.attr('id',QUESTION_TAG+questionCounter);
+    question.attr('class','question');
+    $('#questionList').append(question);
+    var name = SELECTOR_TAG+questionCounter;
+    $('#typeSelector').attr('id',name);
+    $('#'+name).change(function() {
+        var idQuestion = $(this).parent().attr('id');
+        idQuestion = idQuestion.replace(QUESTION_TAG,'');
+        var selectorName = '#'+SELECTOR_TAG+idQuestion+' option:selected';
+        displayTypeOfQuestion(idQuestion,$(selectorName).val());
+    });
+    var divName = TYPE_TAG+questionCounter;
+    $('#typeInflator').attr('id',divName);
+    ++questionCounter;
+}
+
+function enableAddQuestions() {
+    var questions = $('#questions').clone();
+    questions.attr('id','');
+    questions.attr('class','');
+    $('#dynamicContent').append(questions);
+    $('#add_question').click(function() {
+        addNewQuestion();
+    });
 }
 
 $(document).ready(function($) {

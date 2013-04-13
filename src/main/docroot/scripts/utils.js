@@ -1,3 +1,13 @@
+//APP constants here
+var QUESTION_TAG = 'question_';
+var SELECTOR_TAG = 'selector_';
+var TYPE_TAG ='divType_';
+var OPTION_TAG ='option_';
+var TYPE_TEXT = 'text';
+var TYPE_CHOICE = 'choice';
+var TYPE_MULTICHOICE = 'multichoice';
+
+
 /*send event generic: uri, method, json data, done callback, success callback*/
 function sendEvent(uri, method, data, done, success){
     var request = $.ajax({
@@ -20,3 +30,4 @@ function sendEvent(uri, method, data, done, success){
 	    request.done(done(request));
 	}
 };
+
