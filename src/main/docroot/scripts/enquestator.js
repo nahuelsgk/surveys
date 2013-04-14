@@ -2,7 +2,7 @@ var currentView;
 var CREATE_SURVEY = 0;
 var LIST_SURVEYS = 1;
 var EDIT_SURVEY = 2;
-
+var currentSurvey;
 var surveys = new Object();
 
 function renderLastChangeNotification(){
@@ -10,34 +10,83 @@ function renderLastChangeNotification(){
     $('h2').text('Survey updated at ' + date.getHours() + ':' + date.getMinutes() + ':' + date.getSeconds   ());
 }
 
-function editSurvey() {
+function renderCreateForm(){
+     $('#dynamicContent').empty();
+    var template_form = $('#surveyForm').clone();
+    template_form.attr('class', '');
+    template_form.attr('id', 'editForm');
+    template_form.find('form').attr('id', 'create_survey_form');
+    $('#dynamicContent').append(template_form);
+    $('#dynamicContent').show();
+    initDatePicker();
+    currentView = CREATE_SURVEY;
+    $('#buttonSurveyCreate').click(submitCreateSurvey);
+    //Still needs a update action
+}
 
+function renderEditSurvey(survey){
     cleanView(currentView);
-    renderEditSurvey();
+    $('#dynamicContent').empty();
+    var template_form = $('#surveyForm').clone();
+    template_form.find('#contentTitle').html('Update your survey');
+    template_form.find('#survey_description').html('Fullfill your info to update');
+    template_form.attr('class', '');
+    template_form.attr('id', 'editForm');
+    template_form.find('form').attr('id', 'edit_survey_form');
+    console.log(survey);
+    template_form.find('#title').val(survey.title);
+    template_form.find('#since').val(survey.until);
+    template_form.find('#until').val(survey.since);
+    template_form.find('#buttonSurveyCreate').attr('value', 'Update');
+    template_form.find('#buttonSurveyCreate').attr('id', 'buttonEditSurvey');
+    $('#dynamicContent').append(template_form);
+    $('#dynamicContent').show();
+    initDatePicker();
+    enableAddQuestions();
+}
+
+function editSurvey() {
+    cleanView(currentView);
+    currentView = EDIT_SURVEY;
+    renderEditSurvey(currentSurvey);
 }
 
 function displaySurvey(request) {
-    //var obj = $.parseJSON(request);
-    //console.log("size: "+obj.length);
-    var survey = new Survey(request);
+    var obj = $.parseJSON(request.value);
+    var survey = new Survey(obj);
+    currentSurvey = survey;
+    console.log(survey);
     console.log("ID: "+survey.id);
+    renderEditSurvey(currentSurvey);
 }
 
-function surveyCreated(uri,location) {
+function surveyCreated(uri, location) {
     if (location !== 'none') {
         console.log("URI: "+location);
-        $('#editSurvey').attr('class','');
+        //$('#editSurvey').attr('class','');
+	showEditButton();
         sendEvent(location, 'GET', null, null, displaySurvey);
     }
 }
 
 function submitCreateSurvey(){
-	var data = {title : $('#title').val(), since : $('#since').val(), until : $('#until').val()};
-	var method = 'POST';
-	sendEvent('/api/survey', method, data, null, surveyCreated);
+    var data = {title : $('#title').val(), since : $('#since').val(), until : $('#until').val()};
+    var method = 'POST';
+    sendEvent('/api/survey', method, data, null, surveyCreated);
     return false;
-};
+}
 
+function showEditButton(){
+    $('#editSurvey').attr('class','');
+}
+
+function updateCurrentSurvey(survey){
+    console.log('updating Current Survey');
+    console.log(survey);
+    currentSurvey = $.parseJSON(survey.value);
+    showEditButton();
+    renderEditSurvey(currentSurvey);
+ }
 
 function renderListSurveys(listOfSurveys) {
     var surveysHtmlIni = $('<div id="surveysList">');
@@ -66,7 +115,7 @@ function renderListSurveys(listOfSurveys) {
     }
     $('body').on('click', '.surveyItem', function(){
       var id = $(this).attr('name');
-      sendEvent('/api/survey/'+id, 'GET', null, null, null);
+      sendEvent('/api/survey/'+id, 'GET', null, null, updateCurrentSurvey);
     });
 
 
@@ -80,7 +129,8 @@ function listSurveys() {
 
 function createSurvey() {
     cleanView(currentView);
-    $('#dynamicContent').show();
+    //$('#dynamicContent').show();
+    renderCreateForm();
     currentView = CREATE_SURVEY;
 }
 
@@ -95,11 +145,15 @@ function cleanView(view) {
     //console.log("Removing view: "+view);
     switch(view) {
         case CREATE_SURVEY:
+            $('#dynamicContent').empty();
             $('#dynamicContent').hide();
             break;
         case LIST_SURVEYS:
             $('#surveysList').remove();
             break;
+	case EDIT_SURVEY:
+	    $('#dynamicContent').empty();
+	    break;
     }
 }
 
@@ -137,12 +191,13 @@ function initDatePicker() {
    });
 }
 
-function renderNewSurveyForm() {
+
+/*function renderNewSurveyForm() {
     initDatePicker();
     currentView = CREATE_SURVEY;
     $('#buttonSurveyCreate').click(submitCreateSurvey);
     //enableAddQuestions();
-}
+}*/
 
 function displayTypeOfQuestion(idQuestion,type) {
     console.log('displaying type: '+type+" for question: "+idQuestion);
@@ -189,7 +244,8 @@ function enableAddQuestions() {
 }
 
 $(document).ready(function($) {
-    renderNewSurveyForm();
+    renderCreateForm();
+    //renderNewSurveyForm();
 });
 
 

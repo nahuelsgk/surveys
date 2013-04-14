@@ -210,29 +210,29 @@ menu.main a.hidden{
     padding: 0 5px;
 }
 
-#content #create_survey_form ul li {
+#content #create_survey_form ul li, #content #edit_survey_form ul li{
     vertical-align: middle;
     border-bottom: none;
 }
 
-#content #create_survey_form input {
+#content #create_survey_form input, #content #edit_survey_form input {
     margin:5px;
     width: 200px;
     float: left;
 }
 
-#content #create_survey_form ul {
+#content #create_survey_form ul, #content #edit_survey_form ul {
     list-style: none;
 }
 
-#content #create_survey_form ul form li {
+#content #create_survey_form ul form li, #content #edit_survey_form ul form li {
     width: 500px;
     margin: 0 0 10px;
     float: left;
     clear:both;
 }
 
-#content #create_survey_form label {
+#content #create_survey_form label, #content #edit_survey_form label {
     float: left;
     min-width: 60px;
     padding: 5px 20px 0 0;
