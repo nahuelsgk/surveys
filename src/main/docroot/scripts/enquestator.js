@@ -16,17 +16,25 @@ function editSurvey() {
     renderEditSurvey();
 }
 
+function displaySurvey(request) {
+    //var obj = $.parseJSON(request);
+    //console.log("size: "+obj.length);
+    var survey = new Survey(request);
+    console.log("ID: "+survey.id);
+}
 
+function surveyCreated(uri,location) {
+    if (location !== 'none') {
+        console.log("URI: "+location);
+        $('#editSurvey').attr('class','');
+        sendEvent(location, 'GET', null, null, displaySurvey);
+    }
+}
 
 function submitCreateSurvey(){
 	var data = {title : $('#title').val(), since : $('#since').val(), until : $('#until').val()};
 	var method = 'POST';
-	console.log('calling create survey');
-	var done_callback = function surveyCreated(uri) {
-                            console.log("URI: "+uri);
-                            $('#editSurvey').attr('class','');
-                        };
-	sendEvent('/api/survey', method, data, done_callback, null);
+	sendEvent('/api/survey', method, data, null, surveyCreated);
     return false;
 };
 
@@ -127,13 +135,57 @@ function initDatePicker() {
             $( "#since" ).datepicker( "option", "maxDate", selectedDate );
         }
    });
-
 }
 
 function renderNewSurveyForm() {
     initDatePicker();
     currentView = CREATE_SURVEY;
     $('#buttonSurveyCreate').click(submitCreateSurvey);
+    //enableAddQuestions();
+}
+
+function displayTypeOfQuestion(idQuestion,type) {
+    console.log('displaying type: '+type+" for question: "+idQuestion);
+    var divNameTo = '#'+TYPE_TAG+idQuestion;
+    switch(type) {
+        case TYPE_TEXT:
+            $(divNameTo).attr('class','hidden');
+        break;
+        case TYPE_CHOICE:
+            $(divNameTo).attr('class','questionOptions');
+        break;
+        case TYPE_MULTICHOICE:
+            $(divNameTo).attr('class','questionOptions');
+        break;
+    }
+}
+
+function addNewQuestion() {
+    var question = $('#newQuestion').clone();
+    question.attr('id',QUESTION_TAG+questionCounter);
+    question.attr('class','question');
+    $('#questionList').append(question);
+    var name = SELECTOR_TAG+questionCounter;
+    $('#typeSelector').attr('id',name);
+    $('#'+name).change(function() {
+        var idQuestion = $(this).parent().attr('id');
+        idQuestion = idQuestion.replace(QUESTION_TAG,'');
+        var selectorName = '#'+SELECTOR_TAG+idQuestion+' option:selected';
+        displayTypeOfQuestion(idQuestion,$(selectorName).val());
+    });
+    var divName = TYPE_TAG+questionCounter;
+    $('#typeInflator').attr('id',divName);
+    ++questionCounter;
+}
+
+function enableAddQuestions() {
+    var questions = $('#questions').clone();
+    questions.attr('id','');
+    questions.attr('class','');
+    $('#dynamicContent').append(questions);
+    $('#add_question').click(function() {
+        addNewQuestion();
+    });
 }
 
 $(document).ready(function($) {

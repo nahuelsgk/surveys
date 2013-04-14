@@ -105,9 +105,17 @@ menu.main a:hover{
     background-color: #ffffff;
 }
 
+menu.main a.hidden{
+    display: none;
+}
+
 .plus {
     float: right;
     cursor: pointer;
+}
+
+#questionsForm {
+    float: left;
 }
 
 #copyright{
@@ -240,10 +248,15 @@ menu.main a:hover{
     display: none;
 }
 
-#questions {
-    display: none;
+.questionTextArea {
+    resize:vertical;
 }
 
-#add_question{
-    display: none;
+.options {
+    resize:none;
+    vertical-align: bottom;
+}
+
+.questionOptions {
+    vertical-align: middle;
 }
