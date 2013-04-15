@@ -60,7 +60,14 @@ function updateSurvey() {
         console.log(index+") text: "+q.text+" type: "+q.type);
         addQuestionToSurvey(currentSurvey, q);
     });
-    console.log("obj: "+JSON.stringify(currentSurvey));
+    var jsonSurvey = JSON.stringify(currentSurvey);
+    console.log("obj: "+jsonSurvey);
+    var loc = '/api/survey/'+currentSurvey.id;
+    sendEvent(loc, 'PUT', jsonSurvey, null, surveyUpdated);
+}
+
+function surveyUpdated() {
+    console.log('survey updated correctly! :)');
 }
 
 function editSurvey() {
@@ -100,8 +107,8 @@ function showEditButton(){
 
 function updateCurrentSurvey(survey){
     console.log('updating Current Survey');
-    console.log(survey);
     currentSurvey = $.parseJSON(survey.value);
+    console.log(currentSurvey);
     showEditButton();
     renderEditSurvey(currentSurvey);
  }

@@ -24,23 +24,17 @@ function Survey() {
         survey.until = json.until;
         survey.id = json.id;
         survey.state = json.state;
-        survey.questions = json.questions; // Map for all the survey's questions
+        survey.questions = json.questions; // Array for all the survey's questions
         survey.answers = json.answers; // Map for all the survey's answers
         if (typeof survey.questions === 'undefined') {
-            survey.nQuestions = 0;
             survey.questions = new Array();
-        }
-        else {
-            //survey.nQuestions = json.questions.length();
         }
     }
 
 }
 
 function addQuestionToSurvey(survey, question) {
-    console.log('adding qusiont n: '+survey.nQuestions);
-    survey.questions[survey.nQuestions] = question;
-    survey.nQuestions = survey.nQuestions + 1;
+    survey.questions[survey.questions.length] = question;
 }
 
 function Question() {
