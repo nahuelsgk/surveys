@@ -14,7 +14,7 @@ case class Survey(title: String,
                   until: String,
                   id: String = "",
                   state: String = StatesSurvey.Creating,
-                  questions: Map[Int, Question] = Map(),
+                  questions: List[Question] = List(),
                   answers: Map[Int, Answer] = Map()
                    ) {
 
