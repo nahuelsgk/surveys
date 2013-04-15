@@ -2,6 +2,7 @@
 var QUESTION_TAG = 'question_';
 var SELECTOR_TAG = 'selector_';
 var TYPE_TAG ='divType_';
+var AREA_TAG ='textArea_';
 var OPTION_TAG ='option_';
 var TYPE_TEXT = 'text';
 var TYPE_CHOICE = 'choice';

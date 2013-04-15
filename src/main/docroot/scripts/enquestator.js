@@ -33,7 +33,7 @@ function renderEditSurvey(survey){
     template_form.attr('class', '');
     template_form.attr('id', 'editForm');
     template_form.find('form').attr('id', 'edit_survey_form');
-    console.log(survey);
+    //console.log(survey);
     template_form.find('#title').val(survey.title);
     template_form.find('#since').val(survey.until);
     template_form.find('#until').val(survey.since);
@@ -43,6 +43,24 @@ function renderEditSurvey(survey){
     $('#dynamicContent').show();
     initDatePicker();
     enableAddQuestions();
+    $('#buttonEditSurvey').click(function(){
+        updateSurvey();
+    });
+}
+
+function updateSurvey() {
+    console.log("Updating survey: "+currentSurvey.title);
+    currentSurvey.title = $('#title').val();
+    currentSurvey.since = $('#since').val();
+    currentSurvey.until = $('#until').val();
+    $('.question').each(function(index) {
+        var text = $(this).find('#'+AREA_TAG+index).val();
+        var type = $(this).find('#'+SELECTOR_TAG+index).val();
+        var q = new Question(type,index,text);
+        console.log(index+") text: "+q.text+" type: "+q.type);
+        addQuestionToSurvey(currentSurvey, q);
+    });
+    console.log("obj: "+JSON.stringify(currentSurvey));
 }
 
 function editSurvey() {
@@ -64,7 +82,7 @@ function surveyCreated(uri, location) {
     if (location !== 'none') {
         console.log("URI: "+location);
         //$('#editSurvey').attr('class','');
-	showEditButton();
+	    showEditButton();
         sendEvent(location, 'GET', null, null, displaySurvey);
     }
 }
@@ -222,6 +240,7 @@ function addNewQuestion() {
     $('#questionList').append(question);
     var name = SELECTOR_TAG+questionCounter;
     $('#typeSelector').attr('id',name);
+    $('#questionArea').attr('id',AREA_TAG+questionCounter);
     $('#'+name).change(function() {
         var idQuestion = $(this).parent().attr('id');
         idQuestion = idQuestion.replace(QUESTION_TAG,'');

@@ -26,16 +26,35 @@ function Survey() {
         survey.state = json.state;
         survey.questions = json.questions; // Map for all the survey's questions
         survey.answers = json.answers; // Map for all the survey's answers
+        if (typeof survey.questions === 'undefined') {
+            survey.nQuestions = 0;
+            survey.questions = new Array();
+        }
+        else {
+            //survey.nQuestions = json.questions.length();
+        }
     }
 
 }
 
+function addQuestionToSurvey(survey, question) {
+    console.log('adding qusiont n: '+survey.nQuestions);
+    survey.questions[survey.nQuestions] = question;
+    survey.nQuestions = survey.nQuestions + 1;
+}
+
 function Question() {
     switch (arguments.length) {
-        case 3:
+        case 4:
             this.id  = id;
             this.type  = type;
             this.order = order;
+            this.text = text;
+        break;
+        case 3:
+            this.type = arguments[0];
+            this.order = arguments[1];
+            this.text = arguments[2];
         break;
     }
 }
