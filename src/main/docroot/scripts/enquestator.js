@@ -26,6 +26,7 @@ function renderCreateForm(){
 
 function renderEditSurvey(survey){
     cleanView(currentView);
+    currentView = EDIT_SURVEY;
     $('#dynamicContent').empty();
     var template_form = $('#surveyForm').clone();
     template_form.find('#contentTitle').html('Update your survey');
@@ -118,6 +119,7 @@ function updateCurrentSurvey(survey){
  }
 
 function renderListSurveys(listOfSurveys) {
+
     var surveysHtmlIni = $('<div id="surveysList">');
     var header = $('<h2 id="contentTitle">Surveys list</h2>');
     surveysHtmlIni.append(header);
@@ -171,7 +173,7 @@ function displayContent(html, view)  {
 }
 
 function cleanView(view) {
-    //console.log("Removing view: "+view);
+    console.log("Removing view: "+view);
     switch(view) {
         case CREATE_SURVEY:
             $('#dynamicContent').empty();
