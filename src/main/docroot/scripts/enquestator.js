@@ -60,12 +60,12 @@ function updateSurvey() {
         $('.question').each(function(index) {
             var text = $(this).find('#'+AREA_TAG+index).val();
             var type = $(this).find('#'+SELECTOR_TAG+index).val();
-            var q = new Question(type,index,text);
+            var q = new Question(type,text);
             console.log(index+") text: "+q.text+" type: "+q.type);
             addQuestionToSurvey(currentSurvey, q);
         });
     }
-    var jsonSurvey = JSON.stringify(currentSurvey);
+    var jsonSurvey = currentSurvey;
     console.log("obj: "+jsonSurvey);
     var loc = '/api/survey/'+currentSurvey.id;
     sendEvent(loc, 'PUT', jsonSurvey, null, surveyUpdated);
