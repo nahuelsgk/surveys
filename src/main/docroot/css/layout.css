@@ -161,6 +161,7 @@ menu.main a.hidden{
     position:relative;
 }
 
+/*
 #content ul li img{
     width: 48px;
     height: 65px;
@@ -169,6 +170,7 @@ menu.main a.hidden{
     left:10px;
     margin-right: 10px;
 }
+*/
 
 #content ul li date{
     float:right;
@@ -259,4 +261,8 @@ menu.main a.hidden{
 
 .questionOptions {
     vertical-align: middle;
+}
+
+.deleteQuestion {
+    float:right;
 }

@@ -33,6 +33,10 @@ function Survey() {
 
 }
 
+function cleanQuestions(survey) {
+    survey.questions = new Array();
+}
+
 function addQuestionToSurvey(survey, question) {
     survey.questions[survey.questions.length] = question;
 }

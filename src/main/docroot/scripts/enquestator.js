@@ -53,13 +53,17 @@ function updateSurvey() {
     currentSurvey.title = $('#title').val();
     currentSurvey.since = $('#since').val();
     currentSurvey.until = $('#until').val();
-    $('.question').each(function(index) {
-        var text = $(this).find('#'+AREA_TAG+index).val();
-        var type = $(this).find('#'+SELECTOR_TAG+index).val();
-        var q = new Question(type,index,text);
-        console.log(index+") text: "+q.text+" type: "+q.type);
-        addQuestionToSurvey(currentSurvey, q);
-    });
+    var nQuestions = $('.question').length;
+    if (nQuestions > 0) {
+        cleanQuestions(currentSurvey);
+        $('.question').each(function(index) {
+            var text = $(this).find('#'+AREA_TAG+index).val();
+            var type = $(this).find('#'+SELECTOR_TAG+index).val();
+            var q = new Question(type,index,text);
+            console.log(index+") text: "+q.text+" type: "+q.type);
+            addQuestionToSurvey(currentSurvey, q);
+        });
+    }
     var jsonSurvey = JSON.stringify(currentSurvey);
     console.log("obj: "+jsonSurvey);
     var loc = '/api/survey/'+currentSurvey.id;
@@ -240,6 +244,14 @@ function displayTypeOfQuestion(idQuestion,type) {
     }
 }
 
+function deleteQuestion(question){
+    var parent = question.parent();
+    var id = question.attr('id').replace(DELETE_TAG,'');
+    //console.log("deleting question: "+id);
+    $('#questionList').children('#'+QUESTION_TAG+id).remove();
+
+}
+
 function addNewQuestion() {
     var question = $('#newQuestion').clone();
     question.attr('id',QUESTION_TAG+questionCounter);
@@ -248,6 +260,7 @@ function addNewQuestion() {
     var name = SELECTOR_TAG+questionCounter;
     $('#typeSelector').attr('id',name);
     $('#questionArea').attr('id',AREA_TAG+questionCounter);
+    $('#trash').attr('id',DELETE_TAG+questionCounter);
     $('#'+name).change(function() {
         var idQuestion = $(this).parent().attr('id');
         idQuestion = idQuestion.replace(QUESTION_TAG,'');
@@ -256,6 +269,9 @@ function addNewQuestion() {
     });
     var divName = TYPE_TAG+questionCounter;
     $('#typeInflator').attr('id',divName);
+    $('#'+DELETE_TAG+questionCounter).click(function() {
+        deleteQuestion($(this));
+    });
     ++questionCounter;
 }
 
