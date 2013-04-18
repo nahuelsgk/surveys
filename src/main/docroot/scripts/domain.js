@@ -42,12 +42,18 @@ function addQuestionToSurvey(survey, question) {
 }
 
 function Question() {
+    this.id  = "";  //default
     switch (arguments.length) {
         case 4:
             this.id  = id;
             this.questionType  = type;
             this.order = order;
             this.text = text;
+        break;
+        case 3:
+            this.questionType = arguments[0];
+            this.order = arguments[1];
+            this.text = arguments[2];
         break;
         case 2:
             this.questionType = arguments[0];

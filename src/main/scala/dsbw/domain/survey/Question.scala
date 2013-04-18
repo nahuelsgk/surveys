@@ -1,18 +1,43 @@
 package dsbw.domain.survey
 
-class Question(id: Int) {
+import org.bson.types.ObjectId
+import dsbw.surveys.QuestionRecord
 
+object TypeQuestion {
+    val Text = "text"
+    val Choice = "choice"
+    val MultiChoice = "multiChoice"
 }
 
-case class QuestionText(id: Int, question: String) extends Question (id) {
+class Question(
+                  id: String= ""
+                  , questionType: String= TypeQuestion.Text
+                  , order: Int= 1
+                  , text: String
+                  /*, options: Option[List[String]]= None*/
+                  ) {
 
-}
+    /* Recupera el ID o el genera si cal */
+    private def getId(): ObjectId = {
+        if (this.id.isEmpty || this.id== "")
+            return new ObjectId()
+        else
+            return new ObjectId(this.id)
+    }
 
-case class QuestionChoice (id: Int, options: List[String]) extends Question (id) {
+    /* Genera el record */
+    def toRecord(): QuestionRecord= {
+        new QuestionRecord(
+            _id = this.getId()
+            , questionType = this.questionType
+            , order = this.order
+            , text = this.text)
+    }
 
-}
-
-case class QuestionMultiChoice (id: Int, options: List[String]) extends Question (id) {
+    /* Print addicional */
+    def toString2(){
+        print("Q{"+ this.questionType+ ", "+ this.text+"}")
+    }
 
 }
 

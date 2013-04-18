@@ -63,6 +63,18 @@ class MongoDao[ObjectType <: AnyRef](collection: MongoCollection)(implicit mot: 
     salatDao.save(obj)
   }
 
+  /** Remove all elements from collection */
+  def removeAll(){
+    salatDao.collection.dropCollection()
+  }
+
+  /** Remove a document identified by its id from collection */
+  def remove(id:ObjectId){
+    salatDao.removeById(id)
+  }
+
+
+
 }
 
 case class DuplicateKeyException(collection:String, key:String) extends RuntimeException{
