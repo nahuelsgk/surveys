@@ -50,6 +50,10 @@ function renderEditSurvey(survey, createdNow){
         $('#notification').attr('class','hidden');
     }
     initDatePicker();
+    console.log('questions? '+survey.questions);
+    if (typeof survey.questions !== 'undefined') {
+        console.log('rendering questions...');
+    }
     enableAddQuestions();
     $('#buttonEditSurvey').hide();
     $('#updateSurvey').click(function(){
@@ -75,7 +79,7 @@ function updateSurvey() {
         });
     }
     var jsonSurvey = currentSurvey;
-    console.log("obj: "+jsonSurvey);
+    console.log("obj: "+JSON.stringify(jsonSurvey));
     var loc = '/api/survey/'+currentSurvey.id;
     sendEvent(loc, 'PUT', jsonSurvey, null, surveyUpdated);
 }
