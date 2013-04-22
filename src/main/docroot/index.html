@@ -16,7 +16,6 @@
 
 <menu class="main">
     <a href="#" id="listSurveys" onclick="listSurveys();">List surveys</a>
-    <a href="#" id="editSurvey" class="hidden" onclick="editSurvey();">Edit survey</a>
     <a href="#" id="createSurvey" onclick="createSurvey();">Create survey</a>
 </menu>
 
@@ -51,6 +50,10 @@
     </ul>
     </form>
     <image src="img/plus.png" class="plus" id="add_question" />
+    <br />
+    <input type="button"  id="publishSurvey" value="Publish" title="By publishing your survey users will be able to answer it">
+    <input type="button"  id="updateSurvey" value="Save" title="By saving your survey you will be able to publish it later">
+
 </div>
 
 <li class="hidden" id="newQuestion">
@@ -72,6 +75,8 @@
 </li>
 
 <div class="hidden" id="surveyForm">
+    <div class="hidden" id="notification">
+    </div>
  	<h2 id="contentTitle">Welcome to Enquestator!</h2>
         <p id="survey_description">Start now creating your new survey filling the gaps below.</p>
         <br />
