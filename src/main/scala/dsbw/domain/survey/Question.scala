@@ -9,6 +9,18 @@ object TypeQuestion {
     val MultiChoice = "multiChoice"
 }
 
+object Question {
+    /* Metode static per convertir QuestionRecord a Question */
+    def fromRecord(record: QuestionRecord) : Question = {
+         new Question(
+            id = record._id.toString,
+            questionType = record.questionType,
+            order = record.order,
+            text = record.text
+         )
+    }
+}
+
 class Question(
                   id: String= ""
                   , questionType: String= TypeQuestion.Text

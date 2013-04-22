@@ -85,7 +85,6 @@ class SurveysApi(surveysService: SurveysService) extends Api {
 
     private def getSurveyById(id: String): Response = {
         val myenq= surveysService.getSurvey(id);
-        println("Return: "+ myenq.id);
         val tmp1= JSON.toJSON(myenq);
         Response(HttpStatusCode.Ok, null, tmp1);
     }

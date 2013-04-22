@@ -1,4 +1,5 @@
 package dsbw.domain.survey
+
 import util.parsing.json.JSONObject
 import dsbw.surveys.{QuestionRecord, SurveysRecord}
 import org.bson.types.ObjectId
@@ -31,7 +32,7 @@ case class Survey(
     }
 
     /* Recupera el List de QuestionRecords */
-    private def getQuestionRecordList(): Option[List[QuestionRecord]]= {
+    private def getQuestionRecordList(): List[QuestionRecord]= {
         if (this.questions.nonEmpty){
             val l= this.questions.get
             val ll= ListBuffer[QuestionRecord]()
@@ -39,10 +40,10 @@ case class Survey(
                 ll+= q.toRecord()
             })
             println("LL: ("+ ll.toList.size+ ") "+ ll.toList)
-            return Option.apply(ll.toList)
+            return ll.toList
         }
         else{
-            return None
+            return List()
         }
     }
 
@@ -68,4 +69,27 @@ case class Survey(
         println("}")
     }
 
+}
+
+object Survey {
+
+
+    /* Metode static per convertir SurveyRecord a Survey */
+    def fromRecord(record: SurveysRecord) : Survey = {
+        val questions = new ListBuffer[Question]()
+        if(record.questions.nonEmpty) {
+            println("Class of questions: " + record.questions.getClass)
+            val listQ = record.questions
+            println("List of QUESTIONS to get: " + listQ)
+            listQ.foreach(q => questions += Question.fromRecord(q))
+        }
+        new Survey(
+            id = record._id.toString,
+            title = record.title,
+            since = record.since,
+            until = record.until,
+            state = record.state,
+            questions = Some(questions.toList)
+        )
+    }
 }

@@ -40,6 +40,6 @@ class SurveysService(surveysRepository: SurveysRepository) {
     def getSurvey(id: String) : Survey = {
         println("Survey getted: "+ id);
         val sur= surveysRepository.getSurvey(id);
-        new Survey(id, sur.title, sur.until, sur.since);
+        Survey.fromRecord(sur)
     }
 }

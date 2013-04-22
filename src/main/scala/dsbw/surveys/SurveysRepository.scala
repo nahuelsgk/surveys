@@ -16,7 +16,7 @@ case class SurveysRecord(
                             , since: String
                             , until: String
                             , state: String= StatesSurvey.Creating
-                            , questions: Option[List[QuestionRecord]]= None)
+                            , questions: List[QuestionRecord] = List())
 
 case class QuestionRecord(
                              _id: ObjectId = new org.bson.types.ObjectId()
@@ -55,8 +55,8 @@ class SurveysRepository(dao: SurveysDao) {
         query += "_id" -> survey._id
         dao.update(query, MongoDBObject("$set" -> (MongoDBObject("title" -> survey.title) ++ MongoDBObject("since" -> survey.since) ++ MongoDBObject("until" -> survey.until))), false)
         if (survey.questions.nonEmpty){
-            println("   - HIHA: "+ survey.questions.get+ "| "+ survey.questions.size+ "| "+ survey.questions)
-            insertQuestion(survey._id, survey.questions.get)
+            println("   - HIHA: "+ survey.questions+ "| "+ survey.questions.size+ "| "+ survey.questions)
+            insertQuestion(survey._id, survey.questions)
         }
         else{
             println("   - NO hiha Questions")
