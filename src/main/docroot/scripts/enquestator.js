@@ -24,7 +24,7 @@ function renderCreateForm(){
     //Still needs a update action
 }
 
-function renderEditSurvey(survey){
+function renderEditSurvey(survey, createdNow){
     cleanView(currentView);
     currentView = EDIT_SURVEY;
     $('#dynamicContent').empty();
@@ -42,9 +42,17 @@ function renderEditSurvey(survey){
     template_form.find('#buttonSurveyCreate').attr('id', 'buttonEditSurvey');
     $('#dynamicContent').append(template_form);
     $('#dynamicContent').show();
+    if (createdNow) {
+        $('#notification').text('Your survey has been created');
+        $('#notification').attr('class','success');
+    }
+    else {
+        $('#notification').attr('class','hidden');
+    }
     initDatePicker();
     enableAddQuestions();
-    $('#buttonEditSurvey').click(function(){
+    $('#buttonEditSurvey').hide();
+    $('#updateSurvey').click(function(){
         updateSurvey();
     });
 }
@@ -73,7 +81,9 @@ function updateSurvey() {
 }
 
 function surveyUpdated() {
-    console.log('survey updated correctly! :)');
+    $('#notification').text('Survey updated correctly!');
+    $('#notification').attr('class','info');
+
 }
 
 function editSurvey() {
@@ -88,7 +98,7 @@ function displaySurvey(request) {
     currentSurvey = survey;
     console.log(survey);
     console.log("ID: "+survey.id);
-    renderEditSurvey(currentSurvey);
+    renderEditSurvey(currentSurvey,true);
 }
 
 function surveyCreated(uri, location) {
