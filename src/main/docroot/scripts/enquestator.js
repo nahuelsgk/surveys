@@ -59,8 +59,9 @@ function updateSurvey() {
         cleanQuestions(currentSurvey);
         $('.question').each(function(index) {
             var text = $(this).find('#'+AREA_TAG+index).val();
+            var order = index;
             var type = $(this).find('#'+SELECTOR_TAG+index).val();
-            var q = new Question(type,text);
+            var q = new Question(type,order,text);
             console.log(index+") text: "+q.text+" type: "+q.type);
             addQuestionToSurvey(currentSurvey, q);
         });

@@ -29,6 +29,7 @@ class SurveysApi(surveysService: SurveysService) extends Api {
 
 
     private def postSurvey(body: Option[JSON]): Response = {
+        println("*** SurveysApi.postSurvey()")
         try {
             if (body.nonEmpty) {
                 //Es parseja el body
@@ -50,17 +51,21 @@ class SurveysApi(surveysService: SurveysService) extends Api {
         catch {
             case e: Throwable => {
                 println(e);
+                println(e.getStackTraceString)
             }
             Response(HttpStatusCode.BadRequest)
         }
     }
 
     private def putSurvey(id: String, body: Option[JSON]): Response = {
+        println("*** SurveysApi.putSurvey()")
         println("Request body: " + body)
         try {
             if (body.nonEmpty) {
                 //Es parseja el body
                 val survey = JSON.fromJSON[Survey](body.get)
+                println("Parsed body: "+ survey)
+                println("Parsed body 2: "+ survey.toString2)
                 surveysService.updateSurvey(id, survey)
 
                 //Es retorna OK si tot ha anat be
@@ -72,6 +77,7 @@ class SurveysApi(surveysService: SurveysService) extends Api {
         catch {
             case e: Throwable => {
                 println(e)
+                println(e.getStackTraceString)
             }
             Response(HttpStatusCode.BadRequest)
         }
@@ -85,6 +91,7 @@ class SurveysApi(surveysService: SurveysService) extends Api {
     }
 
     private def getAllSurveys: Response = {
+        println("*** SurveysApi.getAllSurveys()")
         val json = JSON.toJSON(surveysService.listSurveys()).value
         println("body response: " + json)
         Response(HttpStatusCode.Ok, null, json)
