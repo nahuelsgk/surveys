@@ -25,6 +25,7 @@ function renderCreateForm(){
 }
 
 function renderEditSurvey(survey, createdNow){
+    questionCounter = 0;
     cleanView(currentView);
     currentView = EDIT_SURVEY;
     $('#dynamicContent').empty();
@@ -50,29 +51,64 @@ function renderEditSurvey(survey, createdNow){
         $('#notification').attr('class','hidden');
     }
     initDatePicker();
-    console.log('questions? '+survey.questions);
-    if (typeof survey.questions !== 'undefined') {
-        console.log('rendering questions...');
-    }
     enableAddQuestions();
+    if (typeof survey.questions !== 'undefined') {
+        console.log('rendering ['+survey.questions.length +'] questions...');
+        for(i = 0; i < survey.questions.length; ++i) {
+            //console.log('original ID: '+survey.questions[i].id);
+            addQuestion(survey.questions[i]);
+        }
+
+    }
     $('#buttonEditSurvey').hide();
     $('#updateSurvey').click(function(){
         updateSurvey();
     });
 }
 
+function addQuestion(q) {
+
+    q.id = questionCounter;  //TODO: millorar
+
+    var question = $('#newQuestion').clone();
+    question.attr('id',QUESTION_TAG+q.id);
+    question.attr('class','question');
+    $('#questionList').append(question);
+    var name = SELECTOR_TAG+q.id;
+    var deleteTag = DELETE_TAG+q.id;
+    $('#typeSelector').attr('id',name);
+    $('#questionArea').attr('id',AREA_TAG+q.id);
+    $('#'+AREA_TAG+q.id).text(q.text);
+    $('#trash').attr('id',deleteTag);
+    $('#'+name).change(function() {
+        var idQuestion = $(this).parent().attr('id');
+        idQuestion = idQuestion.replace(QUESTION_TAG,'');
+        var selectorName = '#'+SELECTOR_TAG+idQuestion+' option:selected';
+        displayTypeOfQuestion(idQuestion,$(selectorName).val());
+    });
+    var divName = TYPE_TAG+q.id;
+    $('#typeInflator').attr('id',divName);
+    $('#'+deleteTag).click(function() {
+        deleteQuestion($(this));
+    });
+    ++questionCounter;
+}
+
 function updateSurvey() {
-    console.log("Updating survey: "+currentSurvey.title);
+    //console.log("Updating survey: "+currentSurvey.title);
     currentSurvey.title = $('#title').val();
     currentSurvey.since = $('#since').val();
     currentSurvey.until = $('#until').val();
     var nQuestions = $('.question').length;
+    console.log("nQuestions: "+nQuestions);
     if (nQuestions > 0) {
         cleanQuestions(currentSurvey);
         $('.question').each(function(index) {
-            var text = $(this).find('#'+AREA_TAG+index).val();
+            //var text = $(this).find('#'+AREA_TAG+index).val();     //TODO: index no esta be
+            var text = $(this).find('textarea').val();
             var order = index;
-            var type = $(this).find('#'+SELECTOR_TAG+index).val();
+            //var type = $(this).find('#'+SELECTOR_TAG+index).val();
+            var type = $('select').val();
             var q = new Question(type,order,text);
             console.log(index+") text: "+q.text+" type: "+q.type);
             addQuestionToSurvey(currentSurvey, q);
@@ -100,14 +136,14 @@ function displaySurvey(request) {
     var obj = $.parseJSON(request.value);
     var survey = new Survey(obj);
     currentSurvey = survey;
-    console.log(survey);
-    console.log("ID: "+survey.id);
+    //console.log(survey);
+    //console.log("ID: "+survey.id);
     renderEditSurvey(currentSurvey,true);
 }
 
 function surveyCreated(uri, location) {
     if (location !== 'none') {
-        console.log("URI: "+location);
+        //console.log("URI: "+location);
         //$('#editSurvey').attr('class','');
 	    showEditButton();
         sendEvent(location, 'GET', null, null, displaySurvey);
@@ -126,9 +162,9 @@ function showEditButton(){
 }
 
 function updateCurrentSurvey(survey){
-    console.log('updating Current Survey');
+    //console.log('updating Current Survey');
     currentSurvey = $.parseJSON(survey.value);
-    console.log(currentSurvey);
+    //console.log(currentSurvey);
     showEditButton();
     renderEditSurvey(currentSurvey);
  }
@@ -188,7 +224,7 @@ function displayContent(html, view)  {
 }
 
 function cleanView(view) {
-    console.log("Removing view: "+view);
+    //console.log("Removing view: "+view);
     switch(view) {
         case CREATE_SURVEY:
             $('#dynamicContent').empty();
@@ -264,7 +300,7 @@ function displayTypeOfQuestion(idQuestion,type) {
 function deleteQuestion(question){
     var parent = question.parent();
     var id = question.attr('id').replace(DELETE_TAG,'');
-    //console.log("deleting question: "+id);
+    console.log("deleting question: "+id);
     $('#questionList').children('#'+QUESTION_TAG+id).remove();
 
 }
