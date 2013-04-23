@@ -53,7 +53,7 @@ function renderEditSurvey(survey, createdNow){
     initDatePicker();
     enableAddQuestions();
     if (typeof survey.questions !== 'undefined') {
-        console.log('rendering ['+survey.questions.length +'] questions...');
+        //console.log('rendering ['+survey.questions.length +'] questions...');
         for(i = 0; i < survey.questions.length; ++i) {
             //console.log('original ID: '+survey.questions[i].id);
             addQuestion(survey.questions[i]);
