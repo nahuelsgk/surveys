@@ -307,3 +307,13 @@ menu.main a.hidden{
   background-color: #FFBABA;
   background-image: url('../img/error.png');
 }
+
+.deleteSurvey {
+    float:right;
+    width:20px;
+    display:none;
+}
+
+#content ul li:hover .deleteSurvey{
+    display:block;
+}

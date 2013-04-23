@@ -187,7 +187,8 @@ function renderListSurveys(listOfSurveys) {
         else {
             var key = survey.id;
             surveys[key] = survey;
-            list.append(listSurvey(survey));
+            var item = listSurvey(survey);
+            list.append(item);
             count = count + 1;
         }
     }
@@ -248,6 +249,13 @@ function listSurvey(survey) {
     item.attr('data-since',survey.since);
     item.attr('data-until',survey.until);
     item.text(survey.title);
+    var img = $('#deleteSurveyID').clone();
+    img.attr('id',survey.id);
+    img.attr('class','deleteSurvey');
+    img.click(function() {
+       $(this).parent().remove(); //TODO: borrar l'enquesta per id
+    });
+    item.append(img);
     return item;
 }
 
