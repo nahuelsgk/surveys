@@ -10,6 +10,7 @@ class SurveysApi(surveysService: SurveysService) extends Api {
 
     val PatternGetSurveyId = "GET /api/survey/(\\w+)".r
     val PatternPutSurveyId = "PUT /api/survey/(\\w+)".r
+    val PatternPutAnswers  = "PUT /api/survey/(\\w+)/answers".r
 
     def service(
         method: String,
@@ -21,6 +22,7 @@ class SurveysApi(surveysService: SurveysService) extends Api {
         (method + " " + uri) match {
             case "POST /api/survey" => postSurvey(body)
             case PatternGetSurveyId(id) => getSurveyById(id)
+ 	    case PatternPutAnswers(id)	=> putAnswers(id, body)
             case PatternPutSurveyId(id) => putSurvey(id, body)
             case "GET /api/surveys" => getAllSurveys
             case _ => Response(HttpStatusCode.NotFound)
@@ -55,6 +57,12 @@ class SurveysApi(surveysService: SurveysService) extends Api {
             }
             Response(HttpStatusCode.BadRequest)
         }
+    }
+
+    private def putAnswers(id: String, body: Option[JSON]): Response = {
+        println("*** SurveysApi.putAnswers()")
+	println("Request body: " + body)
+        Response(HttpStatusCode.BadRequest)
     }
 
     private def putSurvey(id: String, body: Option[JSON]): Response = {
@@ -95,6 +103,7 @@ class SurveysApi(surveysService: SurveysService) extends Api {
         println("body response: " + json)
         Response(HttpStatusCode.Ok, null, json)
     }
+
 }
 
 object SurveysApp extends App {
