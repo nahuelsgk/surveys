@@ -2,6 +2,7 @@ var currentView;
 var CREATE_SURVEY = 0;
 var LIST_SURVEYS = 1;
 var EDIT_SURVEY = 2;
+var ANSWER_SURVEY = 3;
 var currentSurvey;
 var surveys = new Object();
 
@@ -236,6 +237,9 @@ function cleanView(view) {
 	case EDIT_SURVEY:
 	    $('#dynamicContent').empty();
 	    break;
+	case ANSWER_SURVEY:
+	     $('#dynamicContent').empty();
+         break;
     }
 }
 
@@ -338,8 +342,127 @@ function enableAddQuestions() {
     });
 }
 
+function sendGetSurveyQuestions(id){
+    sendEvent('/api/survey/'+id, 'GET', null, null, getSurveyQuestions);
+}
+
+function getSurveyQuestions(request) {
+    var obj = $.parseJSON(request.value);
+    var survey = new Survey(obj);
+    currentSurvey = survey;
+    //console.log(survey);
+    //console.log("ID: "+survey.id);
+    renderSurveyAnswerForm(survey,true);
+}
+
+
+function renderAnswers() {
+    var answers = $('#answers').clone();
+    answers.attr('id','');
+    answers.attr('class','');
+    $('#dynamicContent').append(answers);
+}
+
+function addAnswerBox(q) {
+
+    q.id = answerCounter;
+
+    var question = $('#newAnswerBox').clone();
+    question.attr('class','question');
+    question.find('#questionText').html(answerCounter + ". " + q.text);
+    $('#answerList').append(question);
+    ++answerCounter;
+//    question.attr('id',QUESTION_TAG+q.id);
+//    question.attr('class','question');
+//    $('#questionList').append(question);
+//    var name = SELECTOR_TAG+q.id;
+//    var deleteTag = DELETE_TAG+q.id;
+//    $('#typeSelector').attr('id',name);
+//    $('#questionArea').attr('id',AREA_TAG+q.id);
+//    $('#'+AREA_TAG+q.id).text(q.text);
+//    $('#trash').attr('id',deleteTag);
+//    $('#'+name).change(function() {
+//        var idQuestion = $(this).parent().attr('id');
+//        idQuestion = idQuestion.replace(QUESTION_TAG,'');
+//        var selectorName = '#'+SELECTOR_TAG+idQuestion+' option:selected';
+//        displayTypeOfQuestion(idQuestion,$(selectorName).val());
+//    });
+//    var divName = TYPE_TAG+q.id;
+//    $('#typeInflator').attr('id',divName);
+//    $('#'+deleteTag).click(function() {
+//        deleteQuestion($(this));
+//    });
+//    ++questionCounter;
+}
+
+function renderSurveyAnswerForm(survey, createdNow){
+      answerCounter = 1;
+//    cleanView(currentView);
+      currentView = ANSWER_SURVEY;
+      $('#dynamicContent').empty();
+      var template_form = $('#answerForm').clone();
+      template_form.find('#surveyTitle').html(survey.title);
+      //template_form.find('#survey_description').html('Fullfill your info to update');
+      template_form.attr('class', '');
+      $('#dynamicContent').append(template_form);
+      $('#dynamicContent').show();
+      renderAnswers();
+      if (typeof survey.questions !== 'undefined') {
+            console.log('rendering ['+survey.questions.length +'] questions...');
+            for(i = 0; i < survey.questions.length; ++i) {
+                //console.log('original ID: '+survey.questions[i].id);
+                addAnswerBox(survey.questions[i]);
+            }
+      }
+      $('#publishSurveyAnswers').click(function(){
+            answerSurvey();
+      });
+}
+
+function answerSurvey() {
+    //console.log("Updating survey: "+currentSurvey.title);
+
+    var nQuestions = $('.question').length;
+    console.log("nQuestions: "+nQuestions);
+    $('.question').each(function(index) {
+
+
+    });
+//    if (nQuestions > 0) {
+//        cleanQuestions(currentSurvey);
+//        $('.question').each(function(index) {
+//            //var text = $(this).find('#'+AREA_TAG+index).val();     //TODO: index no esta be
+//            var text = $(this).find('textarea').val();
+//            var order = index;
+//            //var type = $(this).find('#'+SELECTOR_TAG+index).val();
+//            var type = $('select').val();
+//            var q = new Question(type,order,text);
+//            console.log(index+") text: "+q.text+" type: "+q.type);
+//            addQuestionToSurvey(currentSurvey, q);
+//        });
+//    }
+//    var jsonSurvey = currentSurvey;
+//    console.log("obj: "+JSON.stringify(jsonSurvey));
+//    var loc = '/api/survey/'+currentSurvey.id;
+//    sendEvent(loc, 'PUT', jsonSurvey, null, surveyUpdated);
+}
+
+
 $(document).ready(function($) {
-    renderCreateForm();
+    var prmstr = window.location.search.substr(1);
+    var prmarr = prmstr.split ("&");
+    var params = [];
+
+    for ( var i = 0; i < prmarr.length; i++) {
+        var tmparr = prmarr[i].split("=");
+        params[tmparr[0]] = tmparr[1];
+    }
+    if(params.id == null){
+        renderCreateForm();
+    }else{
+        sendGetSurveyQuestions(params.id)
+    }
+
     //renderNewSurveyForm();
 });
 

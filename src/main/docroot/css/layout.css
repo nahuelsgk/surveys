@@ -255,6 +255,11 @@ menu.main a.hidden{
     width:520px;
 }
 
+.answerTextArea {
+    resize:none;
+    width:520px;
+}
+
 .options {
     resize:none;
     vertical-align: bottom;
