@@ -4,6 +4,8 @@ import Config.{dbHostName, dbPort, dbName, username, pwd, webServerPort}
 import dsbw.json.JSON
 import dsbw.server.{Server, HttpStatusCode, Response, Api}
 import dsbw.domain.survey.Survey
+import dsbw.domain.survey.SurveyAnswer
+import dsbw.domain.survey.Answer
 
 /* Surveys API */
 class SurveysApi(surveysService: SurveysService) extends Api {
@@ -62,6 +64,10 @@ class SurveysApi(surveysService: SurveysService) extends Api {
     private def putAnswers(id: String, body: Option[JSON]): Response = {
         println("*** SurveysApi.putAnswers()")
 	println("Request body: " + body)
+	if(body.nonEmpty) {
+	    val surveyAnswers = JSON.fromJSON[SurveyAnswer](body.get)
+	    println("Survey Answer" + surveyAnswers )
+	}
         Response(HttpStatusCode.BadRequest)
     }
 
