@@ -91,6 +91,15 @@ function addQuestion(q) {
     $('#'+deleteTag).click(function() {
         deleteQuestion($(this));
     });
+    console.log('rendering question of type: '+q.questionType);
+    if (q.questionType === 'choice' || q.questionType === 'multichoice') {
+        $('#'+name).val(q.questionType);
+        displayTypeOfQuestion(q.id,q.questionType);
+        var divNameTo = '#'+TYPE_TAG+q.id;
+        for(j=0; j < q.options.length; ++j) {
+            addOptionChoice(q.id,divNameTo);     //TODO: completar la info del textarea amb les dades que calguin
+        }
+    }
     ++questionCounter;
 }
 
@@ -314,13 +323,17 @@ function displayTypeOfQuestion(idQuestion,type) {
     }
 }
 
+function addOptionChoice(idQuestion,divNameTo) {
+    var txt = $('#optionTemplate').clone();
+    txt.attr('id',idQuestion);
+    txt.attr('class','options');
+    $(divNameTo).find('#optionsInflator').append(txt);
+}
+
 function enableAddChoices(divNameTo,idQuestion) {
     $(divNameTo).attr('class','questionOptions');
     $(divNameTo).find('img').click(function() {
-        var txt = $('#optionTemplate').clone();
-        txt.attr('id',idQuestion);
-        txt.attr('class','options');
-        $(divNameTo).find('#optionsInflator').append(txt);
+        addOptionChoice(idQuestion, divNameTo);
     });
 }
 
