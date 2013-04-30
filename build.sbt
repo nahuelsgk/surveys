@@ -1,3 +1,7 @@
+import com.typesafe.startscript.StartScriptPlugin
+
+seq(StartScriptPlugin.startScriptForClassesSettings: _*)
+
 resolvers += "Sonatype OSS Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots"
 
 resolvers += "scalatools" at "https://oss.sonatype.org/content/groups/scala-tools/"
