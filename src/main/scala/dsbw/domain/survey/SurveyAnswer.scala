@@ -8,6 +8,6 @@ import collection.mutable.ListBuffer
 case class SurveyAnswer(
                      id: String = ""
                      , idClient: String
+		     , answersQuestions: Option[List[Answer]]= None
                      ) {
-
 }
