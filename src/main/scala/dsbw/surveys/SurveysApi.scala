@@ -66,7 +66,9 @@ class SurveysApi(surveysService: SurveysService) extends Api {
 	println("Request body: " + body)
 	if(body.nonEmpty) {
 	    val surveyAnswers = JSON.fromJSON[SurveyAnswer](body.get)
+	    println("Survey id: " + id)
 	    println("Survey Answer" + surveyAnswers)
+	    surveysService.saveAnswers(id, surveyAnswers)
 	}
         Response(HttpStatusCode.BadRequest)
     }

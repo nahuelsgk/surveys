@@ -16,7 +16,8 @@ case class SurveysRecord(
                             , since: String
                             , until: String
                             , state: String= StatesSurvey.Creating
-                            , questions: List[QuestionRecord] = List())
+                            , questions: List[QuestionRecord] = List()
+			    , answers: List[SurveyAnswerRecord] = List())
 
 case class QuestionRecord(
                              _id: ObjectId = new org.bson.types.ObjectId()
@@ -24,6 +25,10 @@ case class QuestionRecord(
                              , order: Int= 1
                              , text: String= ""
                              , options: Option[List[String]]= None)
+
+case class SurveyAnswerRecord(
+			     _id: ObjectId = new org.bson.types.ObjectId()
+			     , idClient: String)
 
 /** Surveys Data Access Object */
 class SurveysDao(db: DB) extends MongoDao[SurveysRecord](db.surveys) {
@@ -50,6 +55,9 @@ class SurveysRepository(dao: SurveysDao) {
         dao.save(survey)
     }
 
+    def saveAnswers(answer: SurveyAnswerRecord) {
+      
+    }
     def updateSurvey(survey: SurveysRecord) {
         var query = Map[String, ObjectId]()
         query += "_id" -> survey._id
