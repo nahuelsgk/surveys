@@ -63,6 +63,7 @@ class SurveysApi(surveysService: SurveysService) extends Api {
 
     private def putAnswers(id: String, body: Option[JSON]): Response = {
         println("*** SurveysApi.putAnswers()")
+	println("Survey id: "+id)
 	println("Request body: " + body)
 	if(body.nonEmpty) {
 	    val surveyAnswers = JSON.fromJSON[SurveyAnswer](body.get)

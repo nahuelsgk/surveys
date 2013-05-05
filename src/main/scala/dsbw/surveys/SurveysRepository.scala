@@ -55,10 +55,7 @@ class SurveysRepository(dao: SurveysDao) {
         dao.save(survey)
     }
 
-    def saveAnswers(answer: SurveyAnswerRecord) {
-      
-    }
-    def updateSurvey(survey: SurveysRecord) {
+   def updateSurvey(survey: SurveysRecord) {
         var query = Map[String, ObjectId]()
         query += "_id" -> survey._id
         dao.update(query, MongoDBObject("$set" -> (MongoDBObject("title" -> survey.title) ++ MongoDBObject("since" -> survey.since) ++ MongoDBObject("until" -> survey.until))), false)
@@ -94,6 +91,23 @@ class SurveysRepository(dao: SurveysDao) {
       questionList.foreach(question=>pushQuestion(question,query))
     }
 
+    def saveAnswers(surveyId: ObjectId, answer: SurveyAnswerRecord) {
+        var query = Map[String, ObjectId]()
+        query += "_id" -> surveyId
+        dao.update(
+	    query
+	    , MongoDBObject("$push" -> 
+	        (MongoDBObject("answers" -> 
+		    (
+		        MongoDBObject("id" -> answer._id) ++ 
+		        MongoDBObject("idClient" -> answer.idClient)
+		    )
+		    )
+		 )
+               )
+	    , false)
+    }
+ 
     def pushQuestion(q: QuestionRecord, query: Map[String,ObjectId]){
         println("q: "+ q+ " | "+ q.questionType+ ","+ q.text)
         dao.update(
