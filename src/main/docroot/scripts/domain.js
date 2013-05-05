@@ -15,7 +15,7 @@ function Survey() {
     }
 
     this.addAnswer = function(answer) {
-        answer[answer.id] = answer;
+        answersQuestions[answer.id] = answer;
     }
 
     function init(survey, json) {
@@ -41,6 +41,14 @@ function addQuestionToSurvey(survey, question) {
     survey.questions[survey.questions.length] = question;
 }
 
+function cleanAnswers(survey) {
+    survey.answersQuestions = new Array();
+}
+
+function addAnswerToSurvey(survey, answer) {
+    survey.answersQuestions[survey.answersQuestions.length] = answer;
+}
+
 function Question() {
     this.id  = "";  //default
     switch (arguments.length) {
@@ -63,12 +71,12 @@ function Question() {
 }
 
 function Answer() {
+    this.id= ""
     switch (arguments.length) {
         case 3:
-            this.id  = id;
-            this.idQuestion  = type;
-            this.idClient = order;
-            this.idType = type;
+            this.idQuestion  = arguments[0];
+            this.text = arguments[1];
+            this.idType = arguments[2];
         break;
     }
 }

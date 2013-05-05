@@ -372,27 +372,6 @@ function addAnswerBox(q) {
     question.find('#questionText').html(answerCounter + ". " + q.text);
     $('#answerList').append(question);
     ++answerCounter;
-//    question.attr('id',QUESTION_TAG+q.id);
-//    question.attr('class','question');
-//    $('#questionList').append(question);
-//    var name = SELECTOR_TAG+q.id;
-//    var deleteTag = DELETE_TAG+q.id;
-//    $('#typeSelector').attr('id',name);
-//    $('#questionArea').attr('id',AREA_TAG+q.id);
-//    $('#'+AREA_TAG+q.id).text(q.text);
-//    $('#trash').attr('id',deleteTag);
-//    $('#'+name).change(function() {
-//        var idQuestion = $(this).parent().attr('id');
-//        idQuestion = idQuestion.replace(QUESTION_TAG,'');
-//        var selectorName = '#'+SELECTOR_TAG+idQuestion+' option:selected';
-//        displayTypeOfQuestion(idQuestion,$(selectorName).val());
-//    });
-//    var divName = TYPE_TAG+q.id;
-//    $('#typeInflator').attr('id',divName);
-//    $('#'+deleteTag).click(function() {
-//        deleteQuestion($(this));
-//    });
-//    ++questionCounter;
 }
 
 function renderSurveyAnswerForm(survey, createdNow){
@@ -428,6 +407,26 @@ function answerSurvey() {
 
 
     });
+
+    var nAnswers = $('.answerTextArea').length;
+    console.log("nAnswers: "+nAnswers);
+    if (nAnswers > 0) {
+        cleanAnswers(currentSurvey);
+        $('.question').each(function(index) {
+            //var text = $(this).find('#'+AREA_TAG+index).val();     //TODO: index no esta be
+            var text = $(this).find('textarea').val();
+            var order = index;
+            var type = 'text'; //$('select').val();
+            var a = new Answer(order,text,type);
+            console.log(index+") text: "+a.text);
+            addAnswerToSurvey(currentSurvey, a);
+        });
+    }
+    var jsonSurvey = currentSurvey;
+    console.log("obj: "+JSON.stringify(jsonSurvey));
+    var loc = '/api/survey/'+currentSurvey.id+'/answers';
+    sendEvent(loc, 'POST', jsonSurvey, null, surveyUpdated);
+
 //    if (nQuestions > 0) {
 //        cleanQuestions(currentSurvey);
 //        $('.question').each(function(index) {

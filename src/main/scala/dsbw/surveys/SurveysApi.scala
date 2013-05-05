@@ -13,6 +13,7 @@ class SurveysApi(surveysService: SurveysService) extends Api {
     val PatternGetSurveyId = "GET /api/survey/(\\w+)".r
     val PatternPutSurveyId = "PUT /api/survey/(\\w+)".r
     val PatternPutAnswers  = "PUT /api/survey/(\\w+)/answers".r
+    val PatternPostAnswers  = "POST /api/survey/(\\w+)/answers".r
 
     def service(
         method: String,
@@ -24,7 +25,8 @@ class SurveysApi(surveysService: SurveysService) extends Api {
         (method + " " + uri) match {
             case "POST /api/survey" => postSurvey(body)
             case PatternGetSurveyId(id) => getSurveyById(id)
- 	    case PatternPutAnswers(id)	=> putAnswers(id, body)
+            case PatternPutAnswers(id)	=> putAnswers(id, body)
+            case PatternPostAnswers(id)	=> postAnswers(id, body)
             case PatternPutSurveyId(id) => putSurvey(id, body)
             case "GET /api/surveys" => getAllSurveys
             case _ => Response(HttpStatusCode.NotFound)
@@ -63,14 +65,28 @@ class SurveysApi(surveysService: SurveysService) extends Api {
 
     private def putAnswers(id: String, body: Option[JSON]): Response = {
         println("*** SurveysApi.putAnswers()")
-	println("Survey id: "+id)
-	println("Request body: " + body)
-	if(body.nonEmpty) {
-	    val surveyAnswers = JSON.fromJSON[SurveyAnswer](body.get)
-	    println("Survey id: " + id)
-	    println("Survey Answer" + surveyAnswers)
-	    surveysService.saveAnswers(id, surveyAnswers)
-	}
+        println("Survey id: "+id)
+        println("Request body: " + body)
+        if(body.nonEmpty) {
+            val surveyAnswers = JSON.fromJSON[SurveyAnswer](body.get)
+            println("Survey id: " + id)
+            println("Survey Answer" + surveyAnswers)
+            surveysService.saveAnswers(id, surveyAnswers)
+        }
+        Response(HttpStatusCode.BadRequest)
+    }
+
+    private def postAnswers(id: String, body: Option[JSON]): Response = {
+        println("*** SurveysApi.postAnswers()")
+        println("Survey id: "+id)
+        println("Request body: " + body)
+        if(body.nonEmpty) {
+            val surveyAnswers = JSON.fromJSON[SurveyAnswer](body.get)
+            println("Survey id: " + id)
+            println("Survey Answer" + surveyAnswers)
+            surveysService.saveAnswers(id, surveyAnswers)
+            Response(HttpStatusCode.NoContent)
+        }
         Response(HttpStatusCode.BadRequest)
     }
 

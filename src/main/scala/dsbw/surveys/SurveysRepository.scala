@@ -92,12 +92,13 @@ class SurveysRepository(dao: SurveysDao) {
     }
 
     def saveAnswers(surveyId: ObjectId, answer: SurveyAnswerRecord) {
+        println("saveAnswers()")
         var query = Map[String, ObjectId]()
         query += "_id" -> surveyId
         dao.update(
 	    query
 	    , MongoDBObject("$push" -> 
-	        (MongoDBObject("answers" -> 
+	        (MongoDBObject("surveysAnswers" ->
 		    (
 		        MongoDBObject("id" -> answer._id) ++ 
 		        MongoDBObject("idClient" -> answer.idClient)
