@@ -363,14 +363,15 @@ function renderAnswers() {
     $('#dynamicContent').append(answers);
 }
 
-function addAnswerBox(q) {
+function addAnswerBox(a) {
 
-    q.id = answerCounter;
+    a.id = answerCounter;
 
-    var question = $('#newAnswerBox').clone();
-    question.attr('class','question');
-    question.find('#questionText').html(answerCounter + ". " + q.text);
-    $('#answerList').append(question);
+    var answer = $('#newAnswerBox').clone();
+    answer.attr('class','question');
+    answer.find('#questionText').html(answerCounter + ". " + a.text);
+    answer.find('#answerTextArea').attr('id',AREA_TAG + answerCounter);
+    $('#answerList').append(answer);
     ++answerCounter;
 //    question.attr('id',QUESTION_TAG+q.id);
 //    question.attr('class','question');
@@ -421,13 +422,13 @@ function renderSurveyAnswerForm(survey, createdNow){
 
 function answerSurvey() {
     //console.log("Updating survey: "+currentSurvey.title);
-
+    var answer = new Answer("234",[]);
     var nQuestions = $('.question').length;
     console.log("nQuestions: "+nQuestions);
     $('.question').each(function(index) {
-
-
+        var answerText = $(this).find('textarea').val();
     });
+
 //    if (nQuestions > 0) {
 //        cleanQuestions(currentSurvey);
 //        $('.question').each(function(index) {
@@ -441,6 +442,8 @@ function answerSurvey() {
 //            addQuestionToSurvey(currentSurvey, q);
 //        });
 //    }
+        var jsonAnswer = answer;
+        console.log("answer = " + JSON.stringify(jsonAnswer));
 //    var jsonSurvey = currentSurvey;
 //    console.log("obj: "+JSON.stringify(jsonSurvey));
 //    var loc = '/api/survey/'+currentSurvey.id;

@@ -64,11 +64,9 @@ function Question() {
 
 function Answer() {
     switch (arguments.length) {
-        case 3:
-            this.id  = id;
-            this.idQuestion  = type;
-            this.idClient = order;
-            this.idType = type;
+        case 2:
+            this.idClient = arguments[0];
+            this.answered = arguments[1];
         break;
     }
 }
