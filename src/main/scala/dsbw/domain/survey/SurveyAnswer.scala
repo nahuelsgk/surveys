@@ -8,7 +8,7 @@ import collection.mutable.ListBuffer
 case class SurveyAnswer(
                      id: String = ""
                      , idClient: String
-		     , answersQuestions: Option[List[Answer]]= None
+		     , answered: Option[List[Answer]]= None
                      ) {
     /* Recupera el ID o el genera si cal */
     private def getId(): ObjectId = {
