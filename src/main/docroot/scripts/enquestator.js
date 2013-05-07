@@ -36,6 +36,13 @@ function renderEditSurvey(survey, createdNow){
     template_form.attr('id', 'editForm');
     template_form.find('form').attr('id', 'edit_survey_form');
     //console.log(survey);
+
+    var url = "http://localhost:8080/?id=" + survey.id;
+    $("#link").html(url);
+    url = url + "/admin";
+    $("#linkadmin").html(url);
+
+
     template_form.find('#title').val(survey.title);
     template_form.find('#since').val(survey.until);
     template_form.find('#until').val(survey.since);
