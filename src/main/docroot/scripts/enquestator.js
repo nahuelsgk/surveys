@@ -174,6 +174,7 @@ function surveyCreated(uri, location) {
         //console.log("URI: "+location);
         //$('#editSurvey').attr('class','');
 	    showEditButton();
+	    //@TODO Evitar dues peticionsseguides (POST + GET)
         sendEvent(location, 'GET', null, null, displaySurvey);
     }
 }
