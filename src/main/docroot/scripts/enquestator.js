@@ -39,8 +39,11 @@ function renderEditSurvey(survey, createdNow){
 
     var url = "http://localhost:8080/?id=" + survey.id;
     $("#link").html(url);
-    url = url + "/admin";
-    $("#linkadmin").html(url);
+    $("#link").attr("href",url);
+    var urlAdmin = url + "/admin";
+    $("#linkadmin").html(urlAdmin);
+    $("#linkadmin").attr("href",urlAdmin);
+
 
 
     template_form.find('#title').val(survey.title);
