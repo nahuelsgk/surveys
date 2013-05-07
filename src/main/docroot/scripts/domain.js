@@ -83,4 +83,3 @@ function Answer() {
         break;
     }
 }
-}
