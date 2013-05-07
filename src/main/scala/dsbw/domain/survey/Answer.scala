@@ -1,18 +1,19 @@
 package dsbw.domain.survey
+import dsbw.surveys.AnswerRecord
 
 
-case class Answer(idQuestion: Int) {
+case class Answer(
+		     idQuestion     : String,
+		     typeAnswer     : String,
+		     text           : String
+                 ) {
 
-}
-
-class AnswerText(idQuestion: Int, answer: String) extends Answer(idQuestion) {
-
-}
-
-class AnswerChoice(idQuestion: Int, answer: String) extends Answer(idQuestion) {
-
-}
-
-class AnswerMultiChoice(idQuestion: Int, answer: List[String]) extends Answer(idQuestion) {
+    def toRecord(): AnswerRecord = {
+        new AnswerRecord(
+	    idQuestion = this.idQuestion,
+	    typeAnswer = this.typeAnswer,
+	    text       = this.text
+	)
+    }
 
 }

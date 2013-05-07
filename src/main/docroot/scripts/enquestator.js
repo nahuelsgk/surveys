@@ -416,16 +416,15 @@ function answerSurvey() {
         answer.answered.push(new Answer(idQuestion,answerType,answerText));
         indexQuestion++;
     });
-
     var jsonAnswer = answer;
     console.log("answer = " + JSON.stringify(jsonAnswer));
     var loc = '/api/survey/'+currentSurvey.id;
-    sendEvent(loc, 'PUT', jsonAnswer, null, surveyUpdated);
+    sendEvent(loc, 'PUT', jsonAnswer, null, surveyAnswered);
 }
 
 function surveyAnswered(){
-    $('#notification').text('Survey answered!');
-    $('#notification').attr('class','info');
+    $('#notificationAnswer').text('Survey answered!');
+    $('#notificationAnswer').attr('class','info');
 }
 
 

@@ -15,7 +15,7 @@ function Survey() {
     }
 
     this.addAnswer = function(answer) {
-        answer[answer.id] = answer;
+        answersQuestions[answer.id] = answer;
     }
 
     function init(survey, json) {
@@ -39,6 +39,14 @@ function cleanQuestions(survey) {
 
 function addQuestionToSurvey(survey, question) {
     survey.questions[survey.questions.length] = question;
+}
+
+function cleanAnswers(survey) {
+    survey.answersQuestions = new Array();
+}
+
+function addAnswerToSurvey(survey, answer) {
+    survey.answersQuestions[survey.answersQuestions.length] = answer;
 }
 
 function Question() {
@@ -74,4 +82,5 @@ function Answer() {
             this.options = arguments[2];
         break;
     }
+}
 }

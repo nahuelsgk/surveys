@@ -31,8 +31,8 @@ class SurveysService(surveysRepository: SurveysRepository) {
 
     def saveAnswers(id: String, answers: SurveyAnswer) {
         println("*** SurveyService.saveAnswers()")
-	val surveyId = new org.bson.types.ObjectId(id)
-	println("On the survey" + surveyId)
+	    val surveyId = new org.bson.types.ObjectId(id)
+	    println("On the survey" + surveyId)
         println("Try to save survey answers: " + answers.toRecord())
         surveysRepository.saveAnswers(surveyId, answers.toRecord());
     }
