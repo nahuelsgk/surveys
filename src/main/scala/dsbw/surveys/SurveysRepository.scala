@@ -11,24 +11,30 @@ import dsbw.domain.survey.StatesSurvey
 
 /** A record representing the scheme of Surveys stored in the surveys collection */
 case class SurveysRecord(
-                            _id: ObjectId = new org.bson.types.ObjectId()
-                            , title: String
-                            , since: String
-                            , until: String
-                            , state: String= StatesSurvey.Creating
-                            , questions: List[QuestionRecord] = List()
-			    , answers: List[SurveyAnswerRecord] = List())
+                            _id         : ObjectId = new org.bson.types.ObjectId()
+                            , title     : String
+                            , since     : String
+                            , until     : String
+                            , state     : String= StatesSurvey.Creating
+                            , questions : List[QuestionRecord] = List()
+			                , answers   : List[SurveyAnswerRecord] = List())
 
 case class QuestionRecord(
-                             _id: ObjectId = new org.bson.types.ObjectId()
-                             , questionType: String= ""
-                             , order: Int= 1
-                             , text: String= ""
-                             , options: Option[List[String]]= None)
+                             _id            : ObjectId             = new org.bson.types.ObjectId()
+                             , questionType : String               = ""
+                             , order        : Int                  = 1
+                             , text         : String               = ""
+                             , options      : Option[List[String]] = None)
 
 case class SurveyAnswerRecord(
-			     _id: ObjectId = new org.bson.types.ObjectId()
-			     , idClient: String)
+			     idClient   : String
+			     , answered : List[AnswerRecord] = List())
+
+case class AnswerRecord(
+		         idQuestion  : String = ""
+			   , typeAnswer  : String = ""
+			   , text        : String = ""
+		       )
 
 /** Surveys Data Access Object */
 class SurveysDao(db: DB) extends MongoDao[SurveysRecord](db.surveys) {
@@ -81,12 +87,14 @@ class SurveysRepository(dao: SurveysDao) {
     }
 
     def insertQuestion(id: ObjectId, questionList: List[QuestionRecord]){
-        println("insertQuestion()"+ questionList.size)
+      println("insertQuestion()"+ questionList.size)
       var query = Map[String, ObjectId]()
       query += "_id" -> id
+
       // Delete all questions
       dao.update(query, MongoDBObject("$unset" -> (MongoDBObject("questions" -> "") )) ,false )
-        println("insertQuestion().update")
+      println("insertQuestion().update")
+
       // Insert questions
       questionList.foreach(question=>pushQuestion(question,query))
     }
@@ -98,14 +106,14 @@ class SurveysRepository(dao: SurveysDao) {
         dao.update(
 	    query
 	    , MongoDBObject("$push" -> 
-	        (MongoDBObject("surveysAnswers" ->
+	        (MongoDBObject("answers" ->
 		    (
-		        MongoDBObject("id" -> answer._id) ++ 
-		        MongoDBObject("idClient" -> answer.idClient)
+		        MongoDBObject("idClient" -> answer.idClient) ++
+			    MongoDBObject("answered" -> answer.answered)
 		    )
 		    )
 		 )
-               )
+         )
 	    , false)
     }
  

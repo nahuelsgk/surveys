@@ -34,8 +34,8 @@ case class Survey(
     /* Recupera el List de QuestionRecords */
     private def getQuestionRecordList(): List[QuestionRecord]= {
         if (this.questions.nonEmpty){
-            val l= this.questions.get
-            val ll= ListBuffer[QuestionRecord]()
+            val l  = this.questions.get
+            val ll = ListBuffer[QuestionRecord]()
             l.foreach(q => {
                 ll+= q.toRecord()
             })
