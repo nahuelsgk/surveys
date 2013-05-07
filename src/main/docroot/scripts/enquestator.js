@@ -96,8 +96,12 @@ function addQuestion(q) {
         $('#'+name).val(q.questionType);
         displayTypeOfQuestion(q.id,q.questionType);
         var divNameTo = '#'+TYPE_TAG+q.id;
+        var counter = 0;
         for(j=0; j < q.options.length; ++j) {
-            addOptionChoice(q.id,divNameTo);     //TODO: completar la info del textarea amb les dades que calguin
+            var tag_id = q.id + SEPARATOR + counter;
+            addOptionChoice(tag_id,divNameTo);     //TODO: completar la info del textarea amb les dades que calguin
+            ++counter;
+            $('#'+tag_id).text(q.options[j]);
         }
     }
     ++questionCounter;
