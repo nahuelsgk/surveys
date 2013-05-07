@@ -40,9 +40,7 @@ function renderEditSurvey(survey, createdNow){
     var url = "http://localhost:8080/?id=" + survey.id;
     $("#link").html(url);
     $("#link").attr("href",url);
-    var urlAdmin = url + "/admin";
-    $("#linkadmin").html(urlAdmin);
-    $("#linkadmin").attr("href",urlAdmin);
+
 
 
 
@@ -169,10 +167,13 @@ function displaySurvey(request) {
     renderEditSurvey(currentSurvey,true);
 }
 
-function surveyCreated(uri, location) {
+function surveyCreated(data, location) {
     if (location !== 'none') {
         //console.log("URI: "+location);
         //$('#editSurvey').attr('class','');
+        var url = "http://localhost:8080/?id=" + data.id + "&secret=" + data.secret;
+        $("#linkadmin").html(urlAdmin);
+        $("#linkadmin").attr("href",urlAdmin);
 	    showEditButton();
         sendEvent(location, 'GET', null, null, displaySurvey);
     }
@@ -393,6 +394,7 @@ function enableAddQuestions() {
 }
 
 $(document).ready(function($) {
+
     renderCreateForm();
     //renderNewSurveyForm();
 });
