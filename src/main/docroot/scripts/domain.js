@@ -79,8 +79,8 @@ function Answer() {
     switch (arguments.length){
         case 3:
             this.idQuestion = arguments[0];
-            this.type = arguments[1];
-            this.options = arguments[2];
+            this.typeAnswer = arguments[1];
+            this.text = arguments[2];
         break;
     }
 }

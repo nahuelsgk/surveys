@@ -11,7 +11,7 @@ import dsbw.domain.survey.StatesSurvey
 
 /** A record representing the scheme of Surveys stored in the surveys collection */
 case class SurveysRecord(
-                            _id         : ObjectId = new org.bson.types.ObjectId()
+                            _id         : ObjectId = new ObjectId()
                             , title     : String
                             , since     : String
                             , until     : String
@@ -20,18 +20,19 @@ case class SurveysRecord(
 			                , answers   : List[SurveyAnswerRecord] = List())
 
 case class QuestionRecord(
-                             _id            : ObjectId             = new org.bson.types.ObjectId()
+                             _id            : ObjectId             = new ObjectId()
                              , questionType : String               = ""
                              , order        : Int                  = 1
                              , text         : String               = ""
                              , options      : Option[List[String]] = None)
 
 case class SurveyAnswerRecord(
-			     idClient   : String
-			     , answered : List[AnswerRecord] = List())
+                                 idClient       : ObjectId = new ObjectId()
+                                 , stateAnswer  : String
+			                     , answered     : List[AnswerRecord] = List())
 
 case class AnswerRecord(
-		         idQuestion  : String = ""
+		         idQuestion  : ObjectId = new ObjectId()
 			   , typeAnswer  : String = ""
 			   , text        : String = ""
 		       )
@@ -99,24 +100,6 @@ class SurveysRepository(dao: SurveysDao) {
       questionList.foreach(question=>pushQuestion(question,query))
     }
 
-    def saveAnswers(surveyId: ObjectId, answer: SurveyAnswerRecord) {
-        println("saveAnswers()")
-        var query = Map[String, ObjectId]()
-        query += "_id" -> surveyId
-        dao.update(
-	    query
-	    , MongoDBObject("$push" -> 
-	        (MongoDBObject("answers" ->
-		    (
-		        MongoDBObject("idClient" -> answer.idClient) ++
-			    MongoDBObject("answered" -> answer.answered)
-		    )
-		    )
-		 )
-         )
-	    , false)
-    }
- 
     def pushQuestion(q: QuestionRecord, query: Map[String,ObjectId]){
         println("q: "+ q+ " | "+ q.questionType+ ","+ q.text)
         dao.update(
@@ -129,9 +112,55 @@ class SurveysRepository(dao: SurveysDao) {
                         ++ MongoDBObject("text" -> q.text)
                         //++ MongoDBObject("options" -> q.options)
                         )
-                    )
                 )
+                    )
             )
             ,false)
+    }
+
+    def saveAnswers(surveyId: ObjectId, answer: SurveyAnswerRecord) {
+        println("*** SurveysRepository.saveAnswers()")
+        var query = Map[String, ObjectId]()
+        query += "_id" -> surveyId
+        dao.update(
+            query
+            , MongoDBObject("$push" ->
+                (MongoDBObject("answers" ->
+                    (
+                        MongoDBObject("idClient" -> answer.idClient)
+                        ++ MongoDBObject("stateAnswer" -> answer.stateAnswer)
+                    )
+                )
+                )
+             )
+            , false)
+
+        // Insert answers
+        try{
+            val subquery= Map("_id" -> surveyId, "answers.idClient" -> answer.idClient)
+            answer.answered.foreach(
+                a=>
+                dao.update(
+                        subquery
+                        , MongoDBObject("$push" ->
+                            (MongoDBObject("answers.$.answered" ->
+                                (
+                                    MongoDBObject("idQuestion" -> a.idQuestion)
+                                    ++ MongoDBObject("typeAnswer" -> a.typeAnswer)
+                                    ++ MongoDBObject("text"-> a.text)
+                                )
+                            )
+                        )
+                    )
+                    , false)
+            )
+
+            println(subquery)
+        } catch{
+            case e:Throwable => {
+                println(e)
+                println(e.getStackTraceString)
+            }
+        }
     }
 }

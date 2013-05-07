@@ -420,7 +420,7 @@ function answerSurvey() {
     answer.stateAnswer = "done";
     var jsonAnswer = answer;
     console.log("answer = " + JSON.stringify(jsonAnswer));
-    var loc = '/api/survey/'+currentSurvey.id;
+    var loc = '/api/survey/'+currentSurvey.id+ '/answers/';
     sendEvent(loc, 'PUT', jsonAnswer, null, surveyAnswered);
 }
 

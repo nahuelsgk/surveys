@@ -5,8 +5,15 @@ import dsbw.surveys.{QuestionRecord, SurveysRecord, SurveyAnswerRecord, AnswerRe
 import org.bson.types.ObjectId
 import collection.mutable.ListBuffer
 
+
+object TypeStateAnswer {
+    val Responding = "responding"
+    val Done = "done"
+}
+
 case class SurveyAnswer(
-                     idClient   : String               = new ObjectId().toString
+                     var idClient   : String               = ""
+                     , stateAnswer : String= TypeStateAnswer.Responding
 		             , answered : Option[List[Answer]] = None
                      ) {
 
@@ -35,8 +42,13 @@ case class SurveyAnswer(
 
     def toRecord(): SurveyAnswerRecord = {
 	  new SurveyAnswerRecord(
-	    idClient = this.idClient,
+	    idClient = this.getIdClient(),
+        stateAnswer = this.stateAnswer,
 	    answered = getAnswersRecordList()
 	  )
+    }
+
+    def setId(id: ObjectId){
+        this.idClient= id.toString()
     }
 }

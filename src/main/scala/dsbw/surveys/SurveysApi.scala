@@ -6,14 +6,15 @@ import dsbw.server.{Server, HttpStatusCode, Response, Api}
 import dsbw.domain.survey.Survey
 import dsbw.domain.survey.SurveyAnswer
 import dsbw.domain.survey.Answer
+import org.bson.types.ObjectId
 
 /* Surveys API */
 class SurveysApi(surveysService: SurveysService) extends Api {
 
-    val PatternGetSurveyId = "GET /api/survey/(\\w+)".r
-    val PatternPutSurveyId = "PUT /api/survey/(\\w+)".r
-    val PatternPutAnswers  = "PUT /api/survey/(\\w+)/answers".r
-    val PatternPostAnswers  = "POST /api/survey/(\\w+)/answers".r
+    val PatternGetSurveyId  = "GET /api/survey/(\\w+)".r
+    val PatternPutSurveyId  = "PUT /api/survey/(\\w+)".r
+    val PatternPutAnswers   = "PUT /api/survey/(\\w+)/answers/".r // /(\\w+)".r
+    val PatternPostAnswers  = "POST /api/survey/(\\w+)/answers/".r
 
     def service(
         method: String,
@@ -25,8 +26,9 @@ class SurveysApi(surveysService: SurveysService) extends Api {
         (method + " " + uri) match {
             case "POST /api/survey" => postSurvey(body)
             case PatternGetSurveyId(id) => getSurveyById(id)
-            case PatternPutAnswers(id)	=> putAnswers(id, body)
-            case PatternPostAnswers(id)	=> postAnswers(id, body)
+            //case PatternPutAnswers(idSurvey, idUser) => putAnswers(idSurvey, idUser)
+            case PatternPutAnswers(idSurvey) => putAnswers(idSurvey, body)
+            case PatternPostAnswers(idSurvey)=> postAnswers(idSurvey, body)
             case PatternPutSurveyId(id) => putSurvey(id, body)
             case "GET /api/surveys" => getAllSurveys
             case _ => Response(HttpStatusCode.NotFound)
@@ -63,31 +65,48 @@ class SurveysApi(surveysService: SurveysService) extends Api {
         }
     }
 
-    private def putAnswers(id: String, body: Option[JSON]): Response = {
+    //private def putAnswers(idSurvey: String, idUser: String, body: Option[JSON]): Response = {
+    private def putAnswers(idSurvey: String, body: Option[JSON]): Response = {
         println("*** SurveysApi.putAnswers()")
-        println("Survey id: "+id)
+        val idUser= new ObjectId();
+        println("Survey id: "+ idSurvey+ "; User id: "+ idUser)
         println("Request body: " + body)
+
         if(body.nonEmpty) {
             val surveyAnswers = JSON.fromJSON[SurveyAnswer](body.get)
-            println("Survey id: " + id)
-            println("Survey Answer" + surveyAnswers)
-            surveysService.saveAnswers(id, surveyAnswers)
+            surveyAnswers.setId(idUser);
+            println("Survey Answer: " + surveyAnswers)
+            surveysService.saveAnswers(idSurvey, surveyAnswers)
+            Response(HttpStatusCode.Ok, null, idUser);
         }
         Response(HttpStatusCode.BadRequest)
     }
 
-    private def postAnswers(id: String, body: Option[JSON]): Response = {
+    private def postAnswers(idSurvey: String, body: Option[JSON]): Response = {
         println("*** SurveysApi.postAnswers()")
-        println("Survey id: "+id)
+        println("Survey id: "+idSurvey)
         println("Request body: " + body)
-        if(body.nonEmpty) {
-            val surveyAnswers = JSON.fromJSON[SurveyAnswer](body.get)
-            println("Survey id: " + id)
-            println("Survey Answer" + surveyAnswers)
-            surveysService.saveAnswers(id, surveyAnswers)
-            Response(HttpStatusCode.NoContent)
+
+        try{
+            if(body.nonEmpty) {
+                val surveyAnswers = JSON.fromJSON[SurveyAnswer](body.get)
+                val idUser= new ObjectId();
+                println("Generated User id: "+ idUser)
+                surveyAnswers.setId(idUser);
+                println("Survey Answer: " + surveyAnswers)
+                surveysService.saveAnswers(idSurvey, surveyAnswers)
+                Response(HttpStatusCode.Ok);
+            }
+            else {
+                Response(HttpStatusCode.BadRequest)
+            }
+        }catch {
+            case e: Throwable => {
+                println(e)
+                println(e.getStackTraceString)
+            }
+            Response(HttpStatusCode.BadRequest)
         }
-        Response(HttpStatusCode.BadRequest)
     }
 
     private def putSurvey(id: String, body: Option[JSON]): Response = {
