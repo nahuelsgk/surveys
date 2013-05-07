@@ -23,7 +23,7 @@ case class QuestionRecord(
                              , questionType: String= ""
                              , order: Int= 1
                              , text: String= ""
-                             , options: Option[List[String]]= None)
+                             , options: List[String] = List())
 
 /** Surveys Data Access Object */
 class SurveysDao(db: DB) extends MongoDao[SurveysRecord](db.surveys) {
@@ -96,7 +96,7 @@ class SurveysRepository(dao: SurveysDao) {
                         ++*/ MongoDBObject("questionType" -> q.questionType)
                         //++ MongoDBObject("order" -> q.order)
                         ++ MongoDBObject("text" -> q.text)
-                        //++ MongoDBObject("options" -> q.options)
+                        ++ MongoDBObject("options" -> q.options)
                         )
                     )
                 )

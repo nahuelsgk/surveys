@@ -49,17 +49,24 @@ function Question() {
             this.questionType  = type;
             this.order = order;
             this.text = text;
+            this.options = new Array();
         break;
         case 3:
             this.questionType = arguments[0];
             this.order = arguments[1];
             this.text = arguments[2];
+            this.options = new Array();
         break;
         case 2:
             this.questionType = arguments[0];
             this.text = arguments[1];
+            this.options = new Array();
         break;
     }
+}
+
+function addOptionToQuestion(question, option) {
+    question.options[question.options.length] = option;
 }
 
 function Answer() {

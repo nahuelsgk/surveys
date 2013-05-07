@@ -42,7 +42,9 @@
 </footer>
 
 <!-- Here are some useful html templates -->
-<li class="hidden" id="listSurveyItem" data-since="" data-until=""></li>
+<li class="hidden" id="listSurveyItem" data-since="" data-until=""> </li>
+
+<img src="img/error.png" class="hidden" id="deleteSurveyID">
 
 <div class="hidden" id="questions">
     <label for="link">Your survey link:</label>
@@ -69,18 +71,13 @@
     Question Type:
     <select id="typeSelector">
         <option value="text">Text</option>
-        <!--
         <option value="choice">Choice</option>
         <option value="multichoice">Multichoice</option>
-        -->
     </select>
     <div id="typeInflator" class="hidden questionOptions">
-        <label for="spinner">How many options:</label>
-        <input id="spinner" name="value" /> <br />
-        <label for="qOptions">Options (separated by coma): </label>
-            <textarea class="options" id="qOptions" rows="1" cols="30">
-        </textarea>
-    </div>
+        <div id="optionsInflator">
+        </div>
+        <img src="img/add_option.png" class="add_question_icon">
 </li>
 
 <div class="hidden" id="surveyForm">
@@ -109,7 +106,9 @@
             </ul>
         </form>
 </div>
- 
+
+<textarea class="hidden" id="optionTemplate" rows="1" cols="30">
+</textarea>
 
 </body>
 </html>
