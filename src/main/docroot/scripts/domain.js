@@ -71,6 +71,7 @@ function Question() {
 }
 
 function AnswerList() {
+    this.stateAnswer = "";
     this.answered = new Array();
 }
 

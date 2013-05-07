@@ -416,6 +416,8 @@ function answerSurvey() {
         answer.answered.push(new Answer(idQuestion,answerType,answerText));
         indexQuestion++;
     });
+    // Finalitzem l'enquesta
+    answer.stateAnswer = "done";
     var jsonAnswer = answer;
     console.log("answer = " + JSON.stringify(jsonAnswer));
     var loc = '/api/survey/'+currentSurvey.id;
