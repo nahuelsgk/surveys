@@ -19,13 +19,14 @@ class SurveysService(surveysRepository: SurveysRepository) {
         listSurvey
     }
 
-    def createSurvey(survey: Survey): String = {
+    def createSurvey(survey: Survey): Map[String, String] = {
         println("*** SurveysService.createSurvey()")
         //val surveyRecord = new SurveysRecord(title = survey.title, since = survey.since, until = survey.until, state = survey.state)
         val surveyRecord= survey.toRecord()
         surveysRepository.createSurvey(surveyRecord)
         println("Survey created: " + surveyRecord)
-        surveyRecord._id.toString
+
+        Map("id" -> surveyRecord._id.toString, "secret" -> "bigotiSecret");
     }
 
     def updateSurvey(id: String, survey: Survey) {
@@ -34,7 +35,6 @@ class SurveysService(surveysRepository: SurveysRepository) {
         //val surveyRecord = new SurveysRecord(_id = objectId, title = survey.title, since = survey.since, until = survey.until)
         println("Survey updated: " + survey.toRecord())
         surveysRepository.updateSurvey(survey.toRecord())
-
     }
 
     def getSurvey(id: String) : Survey = {

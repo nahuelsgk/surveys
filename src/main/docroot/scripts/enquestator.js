@@ -175,6 +175,7 @@ function surveyCreated(data, location) {
         $("#linkadmin").html(urlAdmin);
         $("#linkadmin").attr("href",urlAdmin);
 	    showEditButton();
+	    //@TODO Evitar dues peticionsseguides (POST + GET)
         sendEvent(location, 'GET', null, null, displaySurvey);
     }
 }
