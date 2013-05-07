@@ -99,7 +99,7 @@ function addQuestion(q) {
         var counter = 0;
         for(j=0; j < q.options.length; ++j) {
             var tag_id = q.id + SEPARATOR + counter;
-            addOptionChoice(tag_id,divNameTo);     //TODO: completar la info del textarea amb les dades que calguin
+            addOptionChoice(tag_id,divNameTo);
             ++counter;
             $('#'+tag_id).text(q.options[j]);
         }
@@ -141,6 +141,7 @@ function updateSurvey() {
 function surveyUpdated() {
     $('#notification').text('Survey updated correctly!');
     $('#notification').attr('class','info');
+    window.scrollTo( 0, 0) ;
 
 }
 
@@ -328,10 +329,16 @@ function displayTypeOfQuestion(idQuestion,type) {
 }
 
 function addOptionChoice(idQuestion,divNameTo) {
-    var txt = $('#optionTemplate').clone();
+    var div = $('#optionTemplateBig').clone();
+    div.attr('id','div'+idQuestion);
+    div.attr('class','optionDiv');
+    var txt = div.find('#optionTemplate');
     txt.attr('id',idQuestion);
     txt.attr('class','options');
-    $(divNameTo).find('#optionsInflator').append(txt);
+    $(divNameTo).find('#optionsInflator').append(div);
+    $(div).find('img').click(function() {
+        $(this).parent().remove();
+    });
 }
 
 function enableAddChoices(divNameTo,idQuestion) {
