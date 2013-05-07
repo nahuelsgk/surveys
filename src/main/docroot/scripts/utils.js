@@ -8,6 +8,7 @@ var DELETE_TAG ='delete_';
 var TYPE_TEXT = 'text';
 var TYPE_CHOICE = 'choice';
 var TYPE_MULTICHOICE = 'multichoice';
+var SEPARATOR = '_';
 
 
 /*send event generic: uri, method, json data, done callback, success callback*/
