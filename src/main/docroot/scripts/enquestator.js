@@ -119,9 +119,10 @@ function updateSurvey() {
         $('.question').each(function(index) {
             //var text = $(this).find('#'+AREA_TAG+index).val();     //TODO: index no esta be
             var text = $(this).find('textarea').val();
+            text = $.trim(text);
             var order = index;
-            //var type = $(this).find('#'+SELECTOR_TAG+index).val();
-            var type = $('select').val();
+            var type = $(this).find('#'+SELECTOR_TAG+index).val();
+            //var type = $('select').val();
             var q = new Question(type,order,text);
             console.log(index+") text: "+q.text+" type: "+q.type);
             if (type === 'multichoice' || type === 'choice') {
