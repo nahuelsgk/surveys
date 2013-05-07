@@ -62,11 +62,16 @@ function Question() {
     }
 }
 
+function AnswerList() {
+    this.answered = new Array();
+}
+
 function Answer() {
-    switch (arguments.length) {
-        case 2:
-            this.idClient = arguments[0];
-            this.answered = arguments[1];
+    switch (arguments.length){
+        case 3:
+            this.idQuestion = arguments[0];
+            this.type = arguments[1];
+            this.options = arguments[2];
         break;
     }
 }

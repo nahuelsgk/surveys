@@ -373,27 +373,6 @@ function addAnswerBox(a) {
     answer.find('#answerTextArea').attr('id',AREA_TAG + answerCounter);
     $('#answerList').append(answer);
     ++answerCounter;
-//    question.attr('id',QUESTION_TAG+q.id);
-//    question.attr('class','question');
-//    $('#questionList').append(question);
-//    var name = SELECTOR_TAG+q.id;
-//    var deleteTag = DELETE_TAG+q.id;
-//    $('#typeSelector').attr('id',name);
-//    $('#questionArea').attr('id',AREA_TAG+q.id);
-//    $('#'+AREA_TAG+q.id).text(q.text);
-//    $('#trash').attr('id',deleteTag);
-//    $('#'+name).change(function() {
-//        var idQuestion = $(this).parent().attr('id');
-//        idQuestion = idQuestion.replace(QUESTION_TAG,'');
-//        var selectorName = '#'+SELECTOR_TAG+idQuestion+' option:selected';
-//        displayTypeOfQuestion(idQuestion,$(selectorName).val());
-//    });
-//    var divName = TYPE_TAG+q.id;
-//    $('#typeInflator').attr('id',divName);
-//    $('#'+deleteTag).click(function() {
-//        deleteQuestion($(this));
-//    });
-//    ++questionCounter;
 }
 
 function renderSurveyAnswerForm(survey, createdNow){
@@ -422,32 +401,31 @@ function renderSurveyAnswerForm(survey, createdNow){
 
 function answerSurvey() {
     //console.log("Updating survey: "+currentSurvey.title);
-    var answer = new Answer("234",[]);
-    var nQuestions = $('.question').length;
-    console.log("nQuestions: "+nQuestions);
+    var indexQuestion = 0;
+    var answer = new AnswerList();
+    var nAnswers = $('.question').length;
+    var answerText;
+    var answerType;
+    var idQuestion;
+    console.log("nAnswers: "+nAnswers);
     $('.question').each(function(index) {
-        var answerText = $(this).find('textarea').val();
+
+        idQuestion = currentSurvey.questions[indexQuestion].id;
+        answerType = currentSurvey.questions[indexQuestion].questionType;
+        answerText = $(this).find('textarea').val();
+        answer.answered.push(new Answer(idQuestion,answerType,answerText));
+        indexQuestion++;
     });
 
-//    if (nQuestions > 0) {
-//        cleanQuestions(currentSurvey);
-//        $('.question').each(function(index) {
-//            //var text = $(this).find('#'+AREA_TAG+index).val();     //TODO: index no esta be
-//            var text = $(this).find('textarea').val();
-//            var order = index;
-//            //var type = $(this).find('#'+SELECTOR_TAG+index).val();
-//            var type = $('select').val();
-//            var q = new Question(type,order,text);
-//            console.log(index+") text: "+q.text+" type: "+q.type);
-//            addQuestionToSurvey(currentSurvey, q);
-//        });
-//    }
-        var jsonAnswer = answer;
-        console.log("answer = " + JSON.stringify(jsonAnswer));
-//    var jsonSurvey = currentSurvey;
-//    console.log("obj: "+JSON.stringify(jsonSurvey));
-//    var loc = '/api/survey/'+currentSurvey.id;
-//    sendEvent(loc, 'PUT', jsonSurvey, null, surveyUpdated);
+    var jsonAnswer = answer;
+    console.log("answer = " + JSON.stringify(jsonAnswer));
+    var loc = '/api/survey/'+currentSurvey.id;
+    sendEvent(loc, 'PUT', jsonAnswer, null, surveyUpdated);
+}
+
+function surveyAnswered(){
+    $('#notification').text('Survey answered!');
+    $('#notification').attr('class','info');
 }
 
 
