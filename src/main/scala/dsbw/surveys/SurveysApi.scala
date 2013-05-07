@@ -32,25 +32,20 @@ class SurveysApi(surveysService: SurveysService) extends Api {
         println("*** SurveysApi.postSurvey()")
         try {
             if (body.nonEmpty) {
-                //Es parseja el body
-                val survey = JSON.fromJSON[Survey](body.get)
-                println("Survey parsed: " + survey)
-                //S'emmagatzema la nova Survey i s'obte la id que li ha assignat la BD
 
-                val id = surveysService.createSurvey(survey)
+                val surveyInfo = surveysService.createSurvey(JSON.fromJSON[Survey](body.get))
 
                 //Es construeix la resposta amb la nova URI amb la id que ha proporcionat la BD
-                val uri = "/api/survey/" + id
+                val uri = "/api/survey/" + surveyInfo("id")
                 val headers = Map("Location" -> uri)
-                Response(HttpStatusCode.Created, headers = headers, body = "{}")
-            }
-            else {
+                Response(HttpStatusCode.Created, headers = headers, body = JSON.toJSON[Map[String, String]](surveyInfo))
+            } else {
                 Response(HttpStatusCode.BadRequest)
             }
         }
         catch {
             case e: Throwable => {
-                println(e);
+                println(e)
                 println(e.getStackTraceString)
             }
             Response(HttpStatusCode.BadRequest)
