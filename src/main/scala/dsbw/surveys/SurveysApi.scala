@@ -13,7 +13,7 @@ class SurveysApi(surveysService: SurveysService) extends Api {
 
     val PatternGetSurveyId  = "GET /api/survey/(\\w+)".r
     val PatternPutSurveyId  = "PUT /api/survey/(\\w+)".r
-    val PatternPutAnswers   = "PUT /api/survey/(\\w+)/answers/".r // /(\\w+)".r
+    val PatternPutAnswers   = "PUT /api/survey/(\\w+)/answers/(\\w+)".r // no va!
     val PatternPostAnswers  = "POST /api/survey/(\\w+)/answers/".r
 
     def service(
@@ -27,7 +27,6 @@ class SurveysApi(surveysService: SurveysService) extends Api {
             case "POST /api/survey" => postSurvey(body)
             case PatternGetSurveyId(id) => getSurveyById(id)
             //case PatternPutAnswers(idSurvey, idUser) => putAnswers(idSurvey, idUser)
-            case PatternPutAnswers(idSurvey) => putAnswers(idSurvey, body)
             case PatternPostAnswers(idSurvey)=> postAnswers(idSurvey, body)
             case PatternPutSurveyId(id) => putSurvey(id, body)
             case "GET /api/surveys" => getAllSurveys
@@ -65,21 +64,29 @@ class SurveysApi(surveysService: SurveysService) extends Api {
         }
     }
 
-    //private def putAnswers(idSurvey: String, idUser: String, body: Option[JSON]): Response = {
-    private def putAnswers(idSurvey: String, body: Option[JSON]): Response = {
+    private def putAnswers(idSurvey: String, idUser: String, body: Option[JSON]): Response = {
         println("*** SurveysApi.putAnswers()")
-        val idUser= new ObjectId();
         println("Survey id: "+ idSurvey+ "; User id: "+ idUser)
         println("Request body: " + body)
 
+        try{
         if(body.nonEmpty) {
             val surveyAnswers = JSON.fromJSON[SurveyAnswer](body.get)
             surveyAnswers.setId(idUser);
             println("Survey Answer: " + surveyAnswers)
             surveysService.saveAnswers(idSurvey, surveyAnswers)
-            Response(HttpStatusCode.Ok, null, idUser);
+            Response(HttpStatusCode.NoContent);
         }
-        Response(HttpStatusCode.BadRequest)
+        else {
+            Response(HttpStatusCode.BadRequest)
+        }
+        }catch {
+            case e: Throwable => {
+                println(e)
+                println(e.getStackTraceString)
+            }
+            Response(HttpStatusCode.BadRequest)
+        }
     }
 
     private def postAnswers(idSurvey: String, body: Option[JSON]): Response = {
@@ -90,12 +97,12 @@ class SurveysApi(surveysService: SurveysService) extends Api {
         try{
             if(body.nonEmpty) {
                 val surveyAnswers = JSON.fromJSON[SurveyAnswer](body.get)
-                val idUser= new ObjectId();
+                val idUser= new ObjectId().toString;
                 println("Generated User id: "+ idUser)
                 surveyAnswers.setId(idUser);
                 println("Survey Answer: " + surveyAnswers)
                 surveysService.saveAnswers(idSurvey, surveyAnswers)
-                Response(HttpStatusCode.Ok);
+                Response(HttpStatusCode.Ok, null, idUser);
             }
             else {
                 Response(HttpStatusCode.BadRequest)

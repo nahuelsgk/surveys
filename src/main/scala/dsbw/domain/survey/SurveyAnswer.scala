@@ -48,7 +48,7 @@ case class SurveyAnswer(
 	  )
     }
 
-    def setId(id: ObjectId){
+    def setId(id: String){
         this.idClient= id.toString()
     }
 }
