@@ -11,20 +11,19 @@ import dsbw.domain.survey.StatesSurvey
 
 /** A record representing the scheme of Surveys stored in the surveys collection */
 case class SurveysRecord(
-                            _id         : ObjectId = new ObjectId()
-                            , title     : String
-                            , since     : String
-                            , until     : String
-                            , state     : String= StatesSurvey.Creating
-                            , questions : List[QuestionRecord] = List()
-			                , answers   : List[SurveyAnswerRecord] = List())
+                            _id: ObjectId = new org.bson.types.ObjectId()
+                            , title: String
+                            , since: String
+                            , until: String
+                            , state: String= StatesSurvey.Creating
+                            , questions: List[QuestionRecord] = List())
 
 case class QuestionRecord(
-                             _id            : ObjectId             = new ObjectId()
-                             , questionType : String               = ""
-                             , order        : Int                  = 1
-                             , text         : String               = ""
-                             , options      : Option[List[String]] = None)
+                             _id: ObjectId = new org.bson.types.ObjectId()
+                             , questionType: String= ""
+                             , order: Int= 1
+                             , text: String= ""
+                             , options: List[String] = List())
 
 case class SurveyAnswerRecord(
                                  idClient       : ObjectId = new ObjectId()
@@ -91,11 +90,9 @@ class SurveysRepository(dao: SurveysDao) {
       println("insertQuestion()"+ questionList.size)
       var query = Map[String, ObjectId]()
       query += "_id" -> id
-
       // Delete all questions
       dao.update(query, MongoDBObject("$unset" -> (MongoDBObject("questions" -> "") )) ,false )
       println("insertQuestion().update")
-
       // Insert questions
       questionList.foreach(question=>pushQuestion(question,query))
     }

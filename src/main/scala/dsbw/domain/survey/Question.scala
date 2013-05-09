@@ -16,7 +16,8 @@ object Question {
             id = record._id.toString,
             questionType = record.questionType,
             order = record.order,
-            text = record.text
+            text = record.text,
+            options = record.options
          )
     }
 }
@@ -26,7 +27,7 @@ class Question(
                   , questionType: String= TypeQuestion.Text
                   , order: Int= 1
                   , text: String
-                  /*, options: Option[List[String]]= None*/
+                  , options: List[String]= List()
                   ) {
 
     /* Recupera el ID o el genera si cal */
@@ -43,7 +44,8 @@ class Question(
             _id = this.getId()
             , questionType = this.questionType
             , order = this.order
-            , text = this.text)
+            , text = this.text
+            , options = this.options)
     }
 
     /* Print addicional */

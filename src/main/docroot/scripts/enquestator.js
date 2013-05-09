@@ -54,7 +54,7 @@ function renderEditSurvey(survey, createdNow){
     initDatePicker();
     enableAddQuestions();
     if (typeof survey.questions !== 'undefined') {
-        console.log('rendering ['+survey.questions.length +'] questions...');
+        //console.log('rendering ['+survey.questions.length +'] questions...');
         for(i = 0; i < survey.questions.length; ++i) {
             //console.log('original ID: '+survey.questions[i].id);
             addQuestion(survey.questions[i]);
@@ -92,6 +92,19 @@ function addQuestion(q) {
     $('#'+deleteTag).click(function() {
         deleteQuestion($(this));
     });
+    console.log('rendering question of type: '+q.questionType);
+    if (q.questionType === 'choice' || q.questionType === 'multichoice') {
+        $('#'+name).val(q.questionType);
+        displayTypeOfQuestion(q.id,q.questionType);
+        var divNameTo = '#'+TYPE_TAG+q.id;
+        var counter = 0;
+        for(j=0; j < q.options.length; ++j) {
+            var tag_id = q.id + SEPARATOR + counter;
+            addOptionChoice(tag_id,divNameTo);
+            ++counter;
+            $('#'+tag_id).text(q.options[j]);
+        }
+    }
     ++questionCounter;
 }
 
@@ -107,11 +120,17 @@ function updateSurvey() {
         $('.question').each(function(index) {
             //var text = $(this).find('#'+AREA_TAG+index).val();     //TODO: index no esta be
             var text = $(this).find('textarea').val();
+            text = $.trim(text);
             var order = index;
-            //var type = $(this).find('#'+SELECTOR_TAG+index).val();
-            var type = $('select').val();
+            var type = $(this).find('#'+SELECTOR_TAG+index).val();
+            //var type = $('select').val();
             var q = new Question(type,order,text);
             console.log(index+") text: "+q.text+" type: "+q.type);
+            if (type === 'multichoice' || type === 'choice') {
+                $(this).find('.options').each(function(ind) {
+                    addOptionToQuestion(q,$(this).val());
+                });
+            }
             addQuestionToSurvey(currentSurvey, q);
         });
     }
@@ -124,6 +143,7 @@ function updateSurvey() {
 function surveyUpdated() {
     $('#notification').text('Survey updated correctly!');
     $('#notification').attr('class','info');
+    window.scrollTo( 0, 0) ;
 
 }
 
@@ -165,7 +185,7 @@ function showEditButton(){
 function updateCurrentSurvey(survey){
     //console.log('updating Current Survey');
     currentSurvey = $.parseJSON(survey.value);
-    //console.log(currentSurvey);
+    console.log(currentSurvey);
     showEditButton();
     renderEditSurvey(currentSurvey);
  }
@@ -188,7 +208,8 @@ function renderListSurveys(listOfSurveys) {
         else {
             var key = survey.id;
             surveys[key] = survey;
-            list.append(listSurvey(survey));
+            var item = listSurvey(survey);
+            list.append(item);
             count = count + 1;
         }
     }
@@ -196,10 +217,10 @@ function renderListSurveys(listOfSurveys) {
         var noSurvey = $('<span>No surveys today</span>');
 	    surveysHtmlIni.append(noSurvey);
     }
-    $('body').on('click', '.surveyItem', function(){
+    /*$('body').on('click', '.surveyItem', function(){           //TODO: canviar!! sino s'afegeixen masses listeners
       var id = $(this).attr('name');
       sendEvent('/api/survey/'+id, 'GET', null, null, updateCurrentSurvey);
-    });
+    });     */
 
 
     displayContent(surveysHtmlIni, LIST_SURVEYS);
@@ -252,6 +273,17 @@ function listSurvey(survey) {
     item.attr('data-since',survey.since);
     item.attr('data-until',survey.until);
     item.text(survey.title);
+    var img = $('#deleteSurveyID').clone();
+    img.attr('id',survey.id);
+    img.attr('class','deleteSurvey');
+    img.click(function() {
+       $(this).parent().remove(); //TODO: borrar l'enquesta per id
+    });
+    item.append(img);
+    item.click(function() {
+        sendEvent('/api/survey/'+survey.id, 'GET', null, null, updateCurrentSurvey);
+    });
+
     return item;
 }
 
@@ -286,19 +318,39 @@ function initDatePicker() {
 }*/
 
 function displayTypeOfQuestion(idQuestion,type) {
-    console.log('displaying type: '+type+" for question: "+idQuestion);
+    //console.log('displaying type: '+type+" for question: "+idQuestion);
     var divNameTo = '#'+TYPE_TAG+idQuestion;
     switch(type) {
         case TYPE_TEXT:
             $(divNameTo).attr('class','hidden');
         break;
         case TYPE_CHOICE:
-            $(divNameTo).attr('class','questionOptions');
+            enableAddChoices(divNameTo,idQuestion);
         break;
         case TYPE_MULTICHOICE:
-            $(divNameTo).attr('class','questionOptions');
+            enableAddChoices(divNameTo,idQuestion);
         break;
     }
+}
+
+function addOptionChoice(idQuestion,divNameTo) {
+    var div = $('#optionTemplateBig').clone();
+    div.attr('id','div'+idQuestion);
+    div.attr('class','optionDiv');
+    var txt = div.find('#optionTemplate');
+    txt.attr('id',idQuestion);
+    txt.attr('class','options');
+    $(divNameTo).find('#optionsInflator').append(div);
+    $(div).find('img').click(function() {
+        $(this).parent().remove();
+    });
+}
+
+function enableAddChoices(divNameTo,idQuestion) {
+    $(divNameTo).attr('class','questionOptions');
+    $(divNameTo).find('img').click(function() {
+        addOptionChoice(idQuestion, divNameTo);
+    });
 }
 
 function deleteQuestion(question){

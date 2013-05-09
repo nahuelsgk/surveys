@@ -262,11 +262,15 @@ menu.main a.hidden{
 
 .options {
     resize:none;
-    vertical-align: bottom;
+    width:200px;
+    text-align: left;
+    margin-top: 5px;
 }
 
 .questionOptions {
     vertical-align: middle;
+    margin-top:5px;
+    width:230px;
 }
 
 .deleteQuestion {
@@ -311,4 +315,30 @@ menu.main a.hidden{
   color: #D8000C;
   background-color: #FFBABA;
   background-image: url('../img/error.png');
+}
+
+.deleteSurvey {
+    float:right;
+    width:20px;
+    display:none;
+}
+
+#content ul li:hover .deleteSurvey{
+    display:block;
+}
+
+.add_question_icon {
+    float:float;
+    width:20px;
+    margin-top:10px;
+}
+
+.deleteOption {
+    float:right;
+    margin-top:3px;
+    width:20px;
+}
+
+.optionDiv {
+    width:230px;
 }
