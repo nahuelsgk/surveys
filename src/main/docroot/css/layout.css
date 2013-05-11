@@ -255,17 +255,22 @@ menu.main a.hidden{
     width:520px;
 }
 
+.answerTextArea {
+    resize:none;
+    width:520px;
+}
+
 .options {
     resize:none;
     width:200px;
     text-align: left;
-    margin-right: 300px;
     margin-top: 5px;
 }
 
 .questionOptions {
     vertical-align: middle;
     margin-top:5px;
+    width:230px;
 }
 
 .deleteQuestion {
@@ -323,6 +328,17 @@ menu.main a.hidden{
 }
 
 .add_question_icon {
-    float:left;
+    float:float;
     width:20px;
+    margin-top:10px;
+}
+
+.deleteOption {
+    float:right;
+    margin-top:3px;
+    width:20px;
+}
+
+.optionDiv {
+    width:230px;
 }

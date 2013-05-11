@@ -80,6 +80,7 @@
         <div id="optionsInflator">
         </div>
         <img src="img/add_option.png" class="add_question_icon">
+    </div>
 </li>
 
 <div class="hidden" id="surveyForm">
@@ -88,7 +89,7 @@
  	<h2 id="contentTitle">Welcome to Enquestator!</h2>
         <p id="survey_description">Start now creating your new survey filling the gaps below.</p>
         <br />
-        <form id=""  class="survey" >
+        <form id="surveyFormList"  class="survey" >
             <ul>
                 <li>
                     <label for="title">Title:</label>
@@ -109,8 +110,39 @@
         </form>
 </div>
 
-<textarea class="hidden" id="optionTemplate" rows="1" cols="30">
-</textarea>
+<div id="optionTemplateBig" class="hidden">
+    <textarea class="hidden" id="optionTemplate" rows="1" cols="30" wrap=physical></textarea>
+    <img src="img/error.png" class="deleteOption">
+</div>
+
+<div class="hidden" id="answerForm">
+    <div class="hidden" id="notificationAnswer">
+    </div>
+    <h2 id="surveyTitle"></h2>
+    <br />
+    <form id=""  class="answer" >
+        <ul>
+
+        </ul>
+    </form>
+</div>
+
+<div class="hidden" id="answers">
+    <form>
+        <ul id="answerList">
+        </ul>
+    </form>
+    <br />
+    <input type="button"  id="saveSurveyAnswers" value="Save survey" title="Save and resume later">
+    <input type="button"  id="publishSurveyAnswers" value="Finish survey" title="Send your answers to survey administrator">
+</div>
+
+<li class="hidden" id="newAnswerBox">
+    <label id="questionText"></label>
+    <br>
+    <textarea class="answerTextArea" id="answerTextArea" rows="3" cols="30">
+    </textarea>
+</li>
 
 </body>
 </html>

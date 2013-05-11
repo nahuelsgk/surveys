@@ -25,6 +25,17 @@ case class QuestionRecord(
                              , text: String= ""
                              , options: List[String] = List())
 
+case class SurveyAnswerRecord(
+                                 idClient       : ObjectId = new ObjectId()
+                                 , stateAnswer  : String
+			                     , answered     : List[AnswerRecord] = List())
+
+case class AnswerRecord(
+		         idQuestion  : ObjectId = new ObjectId()
+			   , typeAnswer  : String = ""
+			   , text        : String = ""
+		       )
+
 /** Surveys Data Access Object */
 class SurveysDao(db: DB) extends MongoDao[SurveysRecord](db.surveys) {
 
@@ -50,7 +61,7 @@ class SurveysRepository(dao: SurveysDao) {
         dao.save(survey)
     }
 
-    def updateSurvey(survey: SurveysRecord) {
+   def updateSurvey(survey: SurveysRecord) {
         var query = Map[String, ObjectId]()
         query += "_id" -> survey._id
         dao.update(query, MongoDBObject("$set" -> (MongoDBObject("title" -> survey.title) ++ MongoDBObject("since" -> survey.since) ++ MongoDBObject("until" -> survey.until))), false)
@@ -76,12 +87,12 @@ class SurveysRepository(dao: SurveysDao) {
     }
 
     def insertQuestion(id: ObjectId, questionList: List[QuestionRecord]){
-        println("insertQuestion()"+ questionList.size)
+      println("insertQuestion()"+ questionList.size)
       var query = Map[String, ObjectId]()
       query += "_id" -> id
       // Delete all questions
       dao.update(query, MongoDBObject("$unset" -> (MongoDBObject("questions" -> "") )) ,false )
-        println("insertQuestion().update")
+      println("insertQuestion().update")
       // Insert questions
       questionList.foreach(question=>pushQuestion(question,query))
     }
@@ -98,9 +109,55 @@ class SurveysRepository(dao: SurveysDao) {
                         ++ MongoDBObject("text" -> q.text)
                         ++ MongoDBObject("options" -> q.options)
                         )
-                    )
                 )
+                    )
             )
             ,false)
+    }
+
+    def saveAnswers(surveyId: ObjectId, answer: SurveyAnswerRecord) {
+        println("*** SurveysRepository.saveAnswers()")
+        var query = Map[String, ObjectId]()
+        query += "_id" -> surveyId
+        dao.update(
+            query
+            , MongoDBObject("$push" ->
+                (MongoDBObject("answers" ->
+                    (
+                        MongoDBObject("idClient" -> answer.idClient)
+                        ++ MongoDBObject("stateAnswer" -> answer.stateAnswer)
+                    )
+                )
+                )
+             )
+            , false)
+
+        // Insert answers
+        try{
+            val subquery= Map("_id" -> surveyId, "answers.idClient" -> answer.idClient)
+            answer.answered.foreach(
+                a=>
+                dao.update(
+                        subquery
+                        , MongoDBObject("$push" ->
+                            (MongoDBObject("answers.$.answered" ->
+                                (
+                                    MongoDBObject("idQuestion" -> a.idQuestion)
+                                    ++ MongoDBObject("typeAnswer" -> a.typeAnswer)
+                                    ++ MongoDBObject("text"-> a.text)
+                                )
+                            )
+                        )
+                    )
+                    , false)
+            )
+
+            println(subquery)
+        } catch{
+            case e:Throwable => {
+                println(e)
+                println(e.getStackTraceString)
+            }
+        }
     }
 }

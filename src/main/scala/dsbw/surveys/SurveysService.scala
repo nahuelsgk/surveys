@@ -3,6 +3,7 @@ package dsbw.surveys
 import collection.mutable.ListBuffer
 import org.bson.types.ObjectId
 import dsbw.domain.survey.Survey
+import dsbw.domain.survey.SurveyAnswer
 
 class SurveysService(surveysRepository: SurveysRepository) {
 
@@ -27,6 +28,12 @@ class SurveysService(surveysRepository: SurveysRepository) {
         println("Survey created: " + surveyRecord)
 
         Map("id" -> surveyRecord._id.toString, "secret" -> "bigotiSecret");
+    }
+
+    def saveAnswers(id: String, answers: SurveyAnswer) {
+        println("*** SurveyService.saveAnswers()")
+        println("Try to save survey answers: " + answers.toRecord())
+        surveysRepository.saveAnswers(new ObjectId(id), answers.toRecord());
     }
 
     def updateSurvey(id: String, survey: Survey) {

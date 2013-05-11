@@ -1,18 +1,29 @@
 package dsbw.domain.survey
+import dsbw.surveys.AnswerRecord
+import org.bson.types.ObjectId
 
 
-class Answer(idQuestion: Int, idClient: String) {
+case class Answer(
+		     idQuestion     : String,
+		     typeAnswer     : String,
+		     text           : String
+                 ) {
 
-}
+    /* Recupera el ID o el genera si cal */
+    private def getIdQuestion(): ObjectId = {
+        if (this.idQuestion.isEmpty)
+            return new ObjectId()
+        else
+            //return new ObjectId(this.idQuestion)
+            return new ObjectId()
+    }
 
-case class AnswerText(idQuestion: Int, idClient: String, answer: String) extends Answer(idQuestion, idClient) {
-
-}
-
-case class AnswerChoice(idQuestion: Int, idClient: String, answer: String) extends Answer(idQuestion, idClient) {
-
-}
-
-case class AnswerMultiChoice(idQuestion: Int, idClient: String, answer: List[String]) extends Answer(idQuestion, idClient) {
+    def toRecord(): AnswerRecord = {
+        new AnswerRecord(
+	    idQuestion = this.getIdQuestion(),
+	    typeAnswer = this.typeAnswer,
+	    text       = this.text
+	)
+    }
 
 }

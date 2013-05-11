@@ -19,7 +19,7 @@ case class Survey(
                      , since: String
                      , until: String
                      , state: String = StatesSurvey.Creating
-                     , questions: List[Question] = List()
+                     , questions: Option[List[Question]]= None
                      , answers: Option[Map[Int, List[Answer]]]= None
                      ) {
 
@@ -33,12 +33,18 @@ case class Survey(
 
     /* Recupera el List de QuestionRecords */
     private def getQuestionRecordList(): List[QuestionRecord]= {
-            val ll= ListBuffer[QuestionRecord]()
-            questions.foreach(q => {
+        if (this.questions.nonEmpty){
+            val l  = this.questions.get
+            val ll = ListBuffer[QuestionRecord]()
+            l.foreach(q => {
                 ll+= q.toRecord()
             })
             println("LL: ("+ ll.toList.size+ ") "+ ll.toList)
             return ll.toList
+        }
+        else{
+            return List()
+        }
     }
 
     /* Genera el record */
@@ -57,7 +63,7 @@ case class Survey(
         println("Survey(" + this.getId()+ ", "+ this.title+ ", "+ this.since+ ", "+ this.until+ ", "+ this.state)
         print("      , questions[")
         if (this.questions.nonEmpty){
-            this.questions.foreach(q=> print(q.toString2+ ", "))
+            this.questions.get.foreach(q=> print(q.toString2+ ", "))
         }
         println("]")
         println("}")
@@ -83,7 +89,7 @@ object Survey {
             since = record.since,
             until = record.until,
             state = record.state,
-            questions = questions.toList
+            questions = Some(questions.toList)
         )
     }
 }
