@@ -44,6 +44,7 @@ function renderEditSurvey(survey, createdNow){
 
 
 
+
     template_form.find('#title').val(survey.title);
     template_form.find('#since').val(survey.until);
     template_form.find('#until').val(survey.since);
@@ -155,6 +156,10 @@ function surveyUpdated() {
 function editSurvey() {
     cleanView(currentView);
     currentView = EDIT_SURVEY;
+    var links = $('#links').clone();
+
+     $("#linkadmin").html("");
+     $("#linkadmin").attr("href","");
     renderEditSurvey(currentSurvey);
 }
 
@@ -171,7 +176,10 @@ function surveyCreated(data, location) {
     if (location !== 'none') {
         //console.log("URI: "+location);
         //$('#editSurvey').attr('class','');
-        var url = "http://localhost:8080/?id=" + data.id + "&secret=" + data.secret;
+        var obj = $.parseJSON(data.value);
+        var links = $('#links').clone();
+        links.attr('class','');
+        var urlAdmin = "http://localhost:8080/?id=" + obj.id + "&secret=" + obj.secret;
         $("#linkadmin").html(urlAdmin);
         $("#linkadmin").attr("href",urlAdmin);
 	    showEditButton();
@@ -196,6 +204,11 @@ function updateCurrentSurvey(survey){
     currentSurvey = $.parseJSON(survey.value);
     console.log(currentSurvey);
     showEditButton();
+    var links = $('#links').clone();
+    links.attr('class','hidden');
+
+    $("#linkadmin").html("");
+    $("#linkadmin").attr("href","");
     renderEditSurvey(currentSurvey);
  }
 
@@ -394,9 +407,39 @@ function enableAddQuestions() {
     });
 }
 
-$(document).ready(function($) {
+function renderForm() {
+      var prmstr = window.location.search.substr(1);
+      var prmarr = prmstr.split ("&");
+      var params = {};
 
-    renderCreateForm();
+      for ( var i = 0; i < prmarr.length; i++) {
+          var tmparr = prmarr[i].split("=");
+          params[tmparr[0]] = tmparr[1];
+      }
+      console.log(prmarr.length) ;
+      switch(prmarr.length) {
+        case 0:
+            renderCreateForm();
+            break;
+        case 1:
+            if(params.id) console.log("renderencuesta");
+            else renderCreateForm();
+            break;
+        case 2:
+            if(params.id && params.secret) console.log("rendereditsurvey");
+            else renderCreateForm();
+            break;
+        default:
+            renderCreateForm();
+            break;
+
+      }
+
+
+}
+
+$(document).ready(function($) {
+     renderForm();
     //renderNewSurveyForm();
 });
 
