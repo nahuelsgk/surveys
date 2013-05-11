@@ -33,8 +33,8 @@ case class SurveyAnswerRecord(
 case class AnswerRecord(
 		         idQuestion  : ObjectId = new ObjectId()
 			   , typeAnswer  : String = ""
-			   , text        : String = ""
-		       )
+			   , options     : List[String] = List()
+			   )
 
 /** Surveys Data Access Object */
 class SurveysDao(db: DB) extends MongoDao[SurveysRecord](db.surveys) {
@@ -142,9 +142,9 @@ class SurveysRepository(dao: SurveysDao) {
                         , MongoDBObject("$push" ->
                             (MongoDBObject("answers.$.answered" ->
                                 (
-                                    MongoDBObject("idQuestion" -> a.idQuestion)
-                                    ++ MongoDBObject("typeAnswer" -> a.typeAnswer)
-                                    ++ MongoDBObject("text"-> a.text)
+                                    MongoDBObject("idQuestion"    -> a.idQuestion)
+                                 ++ MongoDBObject("typeAnswer"    -> a.typeAnswer)
+                                 ++ MongoDBObject("options"       -> a.options)
                                 )
                             )
                         )
