@@ -107,7 +107,7 @@ class SurveysRepository(dao: SurveysDao) {
                         ++*/ MongoDBObject("questionType" -> q.questionType)
                         //++ MongoDBObject("order" -> q.order)
                         ++ MongoDBObject("text" -> q.text)
-                        //++ MongoDBObject("options" -> q.options)
+                        ++ MongoDBObject("options" -> q.options)
                         )
                 )
                     )
