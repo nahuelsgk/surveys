@@ -115,6 +115,19 @@ class SurveysRepository(dao: SurveysDao) {
             ,false)
     }
 
+    def putAnswers(surveyId: ObjectId, answer: SurveyAnswerRecord) {
+        println("*** SurveysRepository.putAnswers()")
+        var query = Map("_id" -> surveyId, "answers.idClient" -> answer.idClient)
+        dao.update(
+            query
+            , MongoDBObject("$pop" ->
+                (MongoDBObject("answers" -> 1))
+            )
+            , false)
+
+        saveAnswers(surveyId, answer)
+    }
+
     def saveAnswers(surveyId: ObjectId, answer: SurveyAnswerRecord) {
         println("*** SurveysRepository.saveAnswers()")
         var query = Map[String, ObjectId]()

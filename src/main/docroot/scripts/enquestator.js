@@ -493,8 +493,10 @@ $(document).ready(function($) {
     }
     if(params.id == null){
         renderCreateForm();
-    }else{
-        sendGetSurveyQuestions(params.id)
+    }else if(params.id!= null && params.user== null){
+        sendGetSurveyQuestions(params.id, null)
+    }else if(params.id!= null && params.user!= null){
+        sendGetSurveyQuestionsAndAnswers(params.id, params.user)
     }
 
     //renderNewSurveyForm();

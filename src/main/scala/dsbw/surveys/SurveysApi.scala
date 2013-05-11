@@ -13,7 +13,8 @@ class SurveysApi(surveysService: SurveysService) extends Api {
 
     val PatternGetSurveyId  = "GET /api/survey/(\\w+)".r
     val PatternPutSurveyId  = "PUT /api/survey/(\\w+)".r
-    val PatternPutAnswers   = "PUT /api/survey/(\\w+)/answers/(\\w+)".r // no va!
+    val PatternGetAnswers   = "GET /api/survey/(\\w+)/answers/(\\w+)/".r
+    val PatternPutAnswers   = "PUT /api/survey/(\\w+)/answers/(\\w+)/".r
     val PatternPostAnswers  = "POST /api/survey/(\\w+)/answers/".r
 
     def service(
@@ -25,8 +26,9 @@ class SurveysApi(surveysService: SurveysService) extends Api {
     ): Response = {
         (method + " " + uri) match {
             case "POST /api/survey" => postSurvey(body)
+            case PatternGetAnswers(idSurvey, idUser) => getSurveyUser(idSurvey, idUser, body)
             case PatternGetSurveyId(id) => getSurveyById(id)
-            //case PatternPutAnswers(idSurvey, idUser) => putAnswers(idSurvey, idUser)
+            case PatternPutAnswers(idSurvey, idUser) => putAnswers(idSurvey, idUser, body)
             case PatternPostAnswers(idSurvey)=> postAnswers(idSurvey, body)
             case PatternPutSurveyId(id) => putSurvey(id, body)
             case "GET /api/surveys" => getAllSurveys
@@ -64,6 +66,15 @@ class SurveysApi(surveysService: SurveysService) extends Api {
         }
     }
 
+    private def getSurveyUser(idSurvey: String, idUser: String, body: Option[JSON]): Response = {
+        println("*** SurveysApi.getSurveyUser()")
+        println("Survey id: "+ idSurvey+ "; User id: "+ idUser)
+        println("Request body: " + body)
+
+        println("Not implemented yet!")
+        Response(HttpStatusCode.Ok)
+    }
+
     private def putAnswers(idSurvey: String, idUser: String, body: Option[JSON]): Response = {
         println("*** SurveysApi.putAnswers()")
         println("Survey id: "+ idSurvey+ "; User id: "+ idUser)
@@ -74,7 +85,7 @@ class SurveysApi(surveysService: SurveysService) extends Api {
             val surveyAnswers = JSON.fromJSON[SurveyAnswer](body.get)
             surveyAnswers.setId(idUser);
             println("Survey Answer: " + surveyAnswers)
-            surveysService.saveAnswers(idSurvey, surveyAnswers)
+            surveysService.putAnswers(idSurvey, surveyAnswers)
             Response(HttpStatusCode.NoContent);
         }
         else {
