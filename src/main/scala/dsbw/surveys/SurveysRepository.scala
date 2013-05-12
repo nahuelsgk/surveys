@@ -7,7 +7,7 @@ import scala.collection.mutable.ListBuffer
 import org.bson.types.ObjectId
 import com.mongodb.casbah.commons.TypeImports.ObjectId
 import com.novus.salat.annotations.raw.Salat
-import dsbw.domain.survey.StatesSurvey
+import dsbw.domain.survey.{Survey, StatesSurvey}
 
 /** A record representing the scheme of Surveys stored in the surveys collection */
 case class SurveysRecord(
@@ -36,8 +36,21 @@ case class AnswerRecord(
 			   , text        : String = ""
 		       )
 
+case class UserRecord (
+                          _id: ObjectId = new ObjectId(),
+                          userName: String,
+                          password: String,
+                          email: String,
+                          surveys: List[String] = List()
+                          )
+
 /** Surveys Data Access Object */
 class SurveysDao(db: DB) extends MongoDao[SurveysRecord](db.surveys) {
+
+
+}
+
+class UsersDao(db: DB) extends MongoDao[UserRecord](db.users) {
 
 
 }
@@ -47,6 +60,7 @@ class SurveysDao(db: DB) extends MongoDao[SurveysRecord](db.surveys) {
  * A repository uses a DAO but doesn't expose all the DB centric API of the DAO
  */
 class SurveysRepository(dao: SurveysDao) {
+
     def listSurveys(): ListBuffer[SurveysRecord] = {
         println("*** SurveysRepository.listSurveys()")
         val surveysCursor = dao.findAll
@@ -159,5 +173,16 @@ class SurveysRepository(dao: SurveysDao) {
                 println(e.getStackTraceString)
             }
         }
+    }
+}
+
+class UsersRepository(dao: UsersDao) {
+
+    def createUser(userRecord: UserRecord) {
+        dao.save(userRecord)
+    }
+
+    def getUser(id: String) : UserRecord = {
+        dao.findOneByID(new ObjectId(id)).get;
     }
 }

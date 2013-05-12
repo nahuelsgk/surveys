@@ -7,14 +7,18 @@ import dsbw.domain.survey.Survey
 import dsbw.domain.survey.SurveyAnswer
 import dsbw.domain.survey.Answer
 import org.bson.types.ObjectId
+import dsbw.domain.user.User
+import javax.xml.ws
 
 /* Surveys API */
-class SurveysApi(surveysService: SurveysService) extends Api {
+class SurveysApi(surveysService: SurveysService, usersService: UsersService) extends Api {
 
     val PatternGetSurveyId  = "GET /api/survey/(\\w+)".r
     val PatternPutSurveyId  = "PUT /api/survey/(\\w+)".r
     val PatternPutAnswers   = "PUT /api/survey/(\\w+)/answers/(\\w+)".r // no va!
     val PatternPostAnswers  = "POST /api/survey/(\\w+)/answers/".r
+
+    val PatternGetUserId  = "GET /api/user/(\\w+)".r
 
     def service(
         method: String,
@@ -30,6 +34,8 @@ class SurveysApi(surveysService: SurveysService) extends Api {
             case PatternPostAnswers(idSurvey)=> postAnswers(idSurvey, body)
             case PatternPutSurveyId(id) => putSurvey(id, body)
             case "GET /api/surveys" => getAllSurveys
+            case "POST /api/user" => postUser(body)
+            case PatternGetUserId(id) => getUser(id)
             case _ => Response(HttpStatusCode.NotFound)
         }
     }
@@ -154,13 +160,36 @@ class SurveysApi(surveysService: SurveysService) extends Api {
         Response(HttpStatusCode.Ok, null, json)
     }
 
+    private def postUser(body: Option[JSON]): Response = {
+        if (body.isDefined) {
+            val user = JSON.fromJSON[User](body.get)
+            val id = usersService.createUser(user)
+
+
+            val uri = "/api/survey/" + id
+            val headers = Map("Location" -> uri)
+            Response(HttpStatusCode.Created, headers, "{}")
+        }
+        else {
+            Response(HttpStatusCode.BadRequest)
+        }
+    }
+
+    private def getUser(id: String): Response = {
+        val user = usersService.getUser(id)
+        val json = JSON.toJSON(user)
+        Response(HttpStatusCode.Ok, null, json)
+    }
+
 }
 
 object SurveysApp extends App {
     val db = new DB(dbHostName, dbPort, dbName, username, pwd)
     val surveysRepository = new SurveysRepository(new SurveysDao(db))
+    val usersRepository = new UsersRepository(new UsersDao(db))
     val surveysService = new SurveysService(surveysRepository)
+    val usersService = new UsersService(usersRepository)
 
-    val server = new Server(new SurveysApi(surveysService), webServerPort)
+    val server = new Server(new SurveysApi(surveysService, usersService), webServerPort)
     server.start()
 }
