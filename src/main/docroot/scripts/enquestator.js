@@ -5,6 +5,7 @@ var EDIT_SURVEY = 2;
 var ANSWER_SURVEY = 3;
 var currentSurvey;
 var surveys = new Object();
+var secret = new Object();
 
 function renderLastChangeNotification(){
     date = new Date();
@@ -144,6 +145,8 @@ function updateSurvey() {
         });
     }
     var jsonSurvey = currentSurvey;
+    jsonSurvey.secret = secret;
+
     console.log("obj: "+JSON.stringify(jsonSurvey));
     var loc = '/api/survey/'+currentSurvey.id;
     sendEvent(loc, 'PUT', jsonSurvey, null, surveyUpdated);
@@ -152,6 +155,13 @@ function updateSurvey() {
 function surveyUpdated() {
     $('#notification').text('Survey updated correctly!');
     $('#notification').attr('class','info');
+   /* if(info40x) {
+        $('#notification').text('You dont have permission to edit this survey');
+        $('#notification').attr('class','failure');
+    } else if(info20x) {
+        $('#notification').text('Survey updated correctly!');
+        $('#notification').attr('class','info');
+    }                 */
     window.scrollTo( 0, 0) ;
 
 }
@@ -160,9 +170,10 @@ function editSurvey() {
     cleanView(currentView);
     currentView = EDIT_SURVEY;
     var links = $('#links').clone();
+    //links.attr('class','hidden');
 
-     $("#linkadmin").html("");
-     $("#linkadmin").attr("href","");
+     //$("#linkadmin").html("");
+     //$("#linkadmin").attr("href","");
     renderEditSurvey(currentSurvey);
 }
 
@@ -182,7 +193,9 @@ function surveyCreated(data, location) {
         var obj = $.parseJSON(data.value);
         var links = $('#links').clone();
         links.attr('class','');
-        var urlAdmin = "http://localhost:8080/?id=" + obj.id + "&secret=" + obj.secret;
+        secret = obj.secret;
+        var urlAdmin = "http://localhost:8080/?id=" + obj.id + "&secret=" + secret;
+        console.log(urlAdmin);
         $("#linkadmin").html(urlAdmin);
         $("#linkadmin").attr("href",urlAdmin);
 	    showEditButton();
@@ -208,10 +221,10 @@ function updateCurrentSurvey(survey){
     console.log(currentSurvey);
     showEditButton();
     var links = $('#links').clone();
-    links.attr('class','hidden');
+    //links.attr('class','hidden');
 
-    $("#linkadmin").html("");
-    $("#linkadmin").attr("href","");
+    //$("#linkadmin").html("");
+    //$("#linkadmin").attr("href","");
     renderEditSurvey(currentSurvey);
  }
 
@@ -517,19 +530,26 @@ function renderForm() {
           var tmparr = prmarr[i].split("=");
           params[tmparr[0]] = tmparr[1];
       }
-      console.log(prmarr.length) ;
       switch(prmarr.length) {
         case 0:
             renderCreateForm();
             break;
         case 1:
-            if(params.id) sendGetSurveyQuestions(params.id);
+            if(params.id != null) sendGetSurveyQuestions(params.id);
             else renderCreateForm();
             break;
         case 2:
-            if(params.id && params.secret) console.log("rendereditsurvey");
+            if(params.id && params.secret) {
+                secret = params.secret;
+                sendEvent('/api/survey/'+params.id, 'GET', null, null, updateCurrentSurvey);
+            } else if(params.id && params.user) {
+                console.log("EditRespuestas");
+            }
             else renderCreateForm();
             break;
+
+
+
         default:
             renderCreateForm();
             break;
