@@ -3,10 +3,10 @@ package dsbw.domain.user
 import dsbw.domain.survey.Survey
 import dsbw.surveys.UserRecord
 
-case class User(id: String,
+case class User(id: String = "",
                 userName: String,
                 password: String,
-                email: String,
+                email: String = "",
                 surveys: List[String] = List()) {
 
     def toRecord(): UserRecord = {

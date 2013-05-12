@@ -61,6 +61,7 @@ class SurveysService(surveysRepository: SurveysRepository) {
 }
 
 class UsersService(usersRepository: UsersRepository) {
+
     def createUser(user: User) : String = {
         println("User to create: " + user)
         val userRecord = user.toRecord()
@@ -71,5 +72,16 @@ class UsersService(usersRepository: UsersRepository) {
     def getUser(id: String): User = {
         val user = usersRepository.getUser(id)
         User.fromRecord(user)
+    }
+
+    def login(user: User): String = {
+        val u = usersRepository.loginUser(user.userName, user.password)
+        println("User logged: " + u)
+        if (u.isDefined) {
+            u.get._id.toString
+        }
+        else {
+            return null
+        }
     }
 }

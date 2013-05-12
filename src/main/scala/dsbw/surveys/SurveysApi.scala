@@ -38,6 +38,7 @@ class SurveysApi(surveysService: SurveysService, usersService: UsersService) ext
             case "GET /api/surveys" => getAllSurveys
             case "POST /api/user" => postUser(body)
             case PatternGetUserId(id) => getUser(id)
+            case "POST /api/login" => loginUser(body)
             case _ => Response(HttpStatusCode.NotFound)
         }
     }
@@ -177,7 +178,7 @@ class SurveysApi(surveysService: SurveysService, usersService: UsersService) ext
             val id = usersService.createUser(user)
 
 
-            val uri = "/api/survey/" + id
+            val uri = "/api/user/" + id
             val headers = Map("Location" -> uri)
             Response(HttpStatusCode.Created, headers, "{}")
         }
@@ -192,6 +193,22 @@ class SurveysApi(surveysService: SurveysService, usersService: UsersService) ext
         Response(HttpStatusCode.Ok, null, json)
     }
 
+    private def loginUser(body: Option[JSON]): Response = {
+        if (body.isDefined) {
+            val user = JSON.fromJSON[User](body.get)
+            val id = usersService.login(user)
+
+            if(id != null)  {
+                val uri = "/api/user/" + id
+                val headers = Map("Location" -> uri)
+                Response(HttpStatusCode.Ok, headers, "{}")
+            }
+            else Response(HttpStatusCode.Unauthorized)
+        }
+        else {
+            Response(HttpStatusCode.BadRequest)
+        }
+    }
 }
 
 object SurveysApp extends App {

@@ -198,4 +198,9 @@ class UsersRepository(dao: UsersDao) {
     def getUser(id: String) : UserRecord = {
         dao.findOneByID(new ObjectId(id)).get;
     }
+
+    def loginUser(userName: String, pass: String): Option[UserRecord] = {
+        val query = Map("userName" -> userName, "password" -> pass)
+        dao.findOne(query)
+    }
 }
