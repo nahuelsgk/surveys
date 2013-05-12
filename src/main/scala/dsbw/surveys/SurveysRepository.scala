@@ -33,8 +33,8 @@ case class SurveyAnswerRecord(
 case class AnswerRecord(
 		         idQuestion  : ObjectId = new ObjectId()
 			   , typeAnswer  : String = ""
-			   , text        : String = ""
-		       )
+			   , options     : List[String] = List()
+			   )
 
 case class UserRecord (
                           _id: ObjectId = new ObjectId(),
@@ -129,6 +129,19 @@ class SurveysRepository(dao: SurveysDao) {
             ,false)
     }
 
+    def putAnswers(surveyId: ObjectId, answer: SurveyAnswerRecord) {
+        println("*** SurveysRepository.putAnswers()")
+        var query = Map("_id" -> surveyId, "answers.idClient" -> answer.idClient)
+        dao.update(
+            query
+            , MongoDBObject("$pop" ->
+                (MongoDBObject("answers" -> 1))
+            )
+            , false)
+
+        saveAnswers(surveyId, answer)
+    }
+
     def saveAnswers(surveyId: ObjectId, answer: SurveyAnswerRecord) {
         println("*** SurveysRepository.saveAnswers()")
         var query = Map[String, ObjectId]()
@@ -156,9 +169,9 @@ class SurveysRepository(dao: SurveysDao) {
                         , MongoDBObject("$push" ->
                             (MongoDBObject("answers.$.answered" ->
                                 (
-                                    MongoDBObject("idQuestion" -> a.idQuestion)
-                                    ++ MongoDBObject("typeAnswer" -> a.typeAnswer)
-                                    ++ MongoDBObject("text"-> a.text)
+                                    MongoDBObject("idQuestion"    -> a.idQuestion)
+                                 ++ MongoDBObject("typeAnswer"    -> a.typeAnswer)
+                                 ++ MongoDBObject("options"       -> a.options)
                                 )
                             )
                         )

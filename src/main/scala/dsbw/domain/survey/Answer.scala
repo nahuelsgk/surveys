@@ -4,9 +4,9 @@ import org.bson.types.ObjectId
 
 
 case class Answer(
-		     idQuestion     : String,
-		     typeAnswer     : String,
-		     text           : String
+		     idQuestion : String,
+		     typeAnswer : String,
+		     options    : List[String] = List()
                  ) {
 
     /* Recupera el ID o el genera si cal */
@@ -22,7 +22,7 @@ case class Answer(
         new AnswerRecord(
 	    idQuestion = this.getIdQuestion(),
 	    typeAnswer = this.typeAnswer,
-	    text       = this.text
+	    options    = this.options
 	)
     }
 

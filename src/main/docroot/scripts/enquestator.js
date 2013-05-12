@@ -419,31 +419,90 @@ function addAnswerBox(a) {
 
     a.id = answerCounter;
 
-    var answer = $('#newAnswerBox').clone();
+    var answer = $('#answerBox').clone();
     answer.attr('class','question');
+    answer.attr('id','answerBox' + answerCounter);
     answer.find('#questionText').html(answerCounter + ". " + a.text);
-    answer.find('#answerTextArea').attr('id',AREA_TAG + answerCounter);
+
+    var text = $('<textarea>').attr({class: 'answerTextArea', id: AREA_TAG + answerCounter, row: '3', cols: '30'})
+    answer.append(text);
     $('#answerList').append(answer);
     ++answerCounter;
 }
+
+function addAnswerRadio(question){
+    var radio;
+    var radioLabel;
+    var answer = $('#answerBox').clone();
+    answer.attr('class','question');
+    answer.attr('id','answerBox' + answerCounter);
+    answer.find('#questionText').html(answerCounter + ". " + question.text);
+    for(var i = 0; i < question.options.length; ++i){
+        radio = $('<input>').attr({
+              type: 'radio', name: 'question' + answerCounter, value: question.options[i], id: RADIO_TAG + answerCounter + '_' + i
+        });
+        radioLabel = $('<label>');
+        radioLabel.attr('for', RADIO_TAG + answerCounter + '_' + i);
+        radioLabel.text(question.options[i]);
+        answer.append(radio);
+        answer.append(radioLabel);
+        //$('#radio' + answerCounter + '_' + i).text("hola");
+        answer.append('<br>');
+    }
+    $('#answerList').append(answer);
+    ++answerCounter;
+}
+
+function addAnswerCheckBox(question){
+    var checkbox;
+    var checkboxLabel;
+    var answer = $('#answerBox').clone();
+    answer.attr('class','question');
+    answer.attr('id','answerBox' + answerCounter);
+    answer.find('#questionText').html(answerCounter + ". " + question.text);
+    for(var i = 0; i < question.options.length; ++i){
+        checkbox = $('<input>').attr({
+              type: 'checkbox', name: 'question' + answerCounter, value: question.options[i], id: CHECKBOX_TAG + answerCounter + '_' + i
+        });
+        checkboxLabel = $('<label>');
+        checkboxLabel.attr('for',CHECKBOX_TAG + answerCounter + '_' + i);
+        checkboxLabel.text(question.options[i]);
+        answer.append(checkbox);
+        answer.append(checkboxLabel);
+        //$('#radio' + answerCounter + '_' + i).text("hola");
+        answer.append('<br>');
+    }
+    $('#answerList').append(answer);
+    ++answerCounter;
+}
+
 
 function renderSurveyAnswerForm(survey, createdNow){
       answerCounter = 1;
 //    cleanView(currentView);
       currentView = ANSWER_SURVEY;
       $('#dynamicContent').empty();
-      var template_form = $('#answerForm').clone();
+      var template_form = $('#answerFormDiv').clone();
       template_form.find('#surveyTitle').html(survey.title);
       //template_form.find('#survey_description').html('Fullfill your info to update');
-      template_form.attr('class', '');
+      template_form.attr('class', 'answerFormDiv');
       $('#dynamicContent').append(template_form);
       $('#dynamicContent').show();
       renderAnswers();
       if (typeof survey.questions !== 'undefined') {
             console.log('rendering ['+survey.questions.length +'] questions...');
-            for(i = 0; i < survey.questions.length; ++i) {
-                //console.log('original ID: '+survey.questions[i].id);
-                addAnswerBox(survey.questions[i]);
+            for(var i = 0; i < survey.questions.length; ++i) {
+                switch(survey.questions[i].questionType){
+                    case TYPE_TEXT:
+                                addAnswerBox(survey.questions[i]);
+                                break;
+                    case TYPE_CHOICE:
+                                addAnswerRadio(survey.questions[i]);
+                                break;
+                    case TYPE_MULTICHOICE:
+                                addAnswerCheckBox(survey.questions[i]);
+                                break;
+                }
             }
       }
       $('#publishSurveyAnswers').click(function(){
@@ -451,12 +510,31 @@ function renderSurveyAnswerForm(survey, createdNow){
       });
 }
 
+
+function getTextAnswers(answerBox){
+    var textAnswer = new Array();
+    textAnswer.push(answerBox.find('textarea').val());
+
+    return textAnswer;
+}
+
+function getCheckOrRadioAnswers(answerBox, questionType){
+      var answers = new Array();
+      answerBox.find($("input[type='" + questionType + "']")).each(function(){
+        if($(this).is(":checked")){
+            answers.push(($(this).val()));
+        }
+      })
+      return answers;
+}
+
+
 function answerSurvey() {
     //console.log("Updating survey: "+currentSurvey.title);
     var indexQuestion = 0;
     var answer = new AnswerList();
     var nAnswers = $('.question').length;
-    var answerText;
+    var answerOptions;
     var answerType;
     var idQuestion;
     console.log("nAnswers: "+nAnswers);
@@ -464,8 +542,19 @@ function answerSurvey() {
 
         idQuestion = currentSurvey.questions[indexQuestion].id;
         answerType = currentSurvey.questions[indexQuestion].questionType;
-        answerText = $(this).find('textarea').val();
-        answer.answered.push(new Answer(idQuestion,answerType,answerText));
+        switch(answerType){
+                            case TYPE_TEXT:
+                                        answerOptions = getTextAnswers($(this))
+                                        break;
+                            case TYPE_CHOICE:
+                                        answerOptions = getCheckOrRadioAnswers($(this),'radio');
+                                        break;
+                            case TYPE_MULTICHOICE:
+                                        answerOptions = getCheckOrRadioAnswers($(this),'checkbox');
+                                        break;
+         }
+        //answerText = $(this).find('textarea').val();
+        answer.answered.push(new Answer(idQuestion,answerType,answerOptions));
         indexQuestion++;
     });
     // Finalitzem l'enquesta
@@ -493,8 +582,10 @@ $(document).ready(function($) {
     }
     if(params.id == null){
         renderCreateForm();
-    }else{
-        sendGetSurveyQuestions(params.id)
+    }else if(params.id!= null && params.user== null){
+        sendGetSurveyQuestions(params.id, null)
+    }else if(params.id!= null && params.user!= null){
+        sendGetSurveyQuestionsAndAnswers(params.id, params.user)
     }
 
     //renderNewSurveyForm();

@@ -87,7 +87,7 @@ function Answer() {
         case 3:
             this.idQuestion = arguments[0];
             this.typeAnswer = arguments[1];
-            this.text = arguments[2];
+            this.options = arguments[2];
         break;
     }
 }
