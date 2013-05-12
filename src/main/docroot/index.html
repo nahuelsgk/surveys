@@ -19,6 +19,33 @@
     <a href="#" id="createSurvey" onclick="createSurvey();">Create survey</a>
 </menu>
 
+<section id="loginSection">
+    <div class="login">
+        <h1>Login</h1>
+        <span class="hidden" id="loginfeedback"><p>Login incorrect. Please try again.</p></span>
+        <form action="javascript:logIn();">
+            <p><input type="text" id="username" value="" placeholder="Username or Email"></p>
+            <p><input type="password" id="pwd" value="" placeholder="Password"></p>
+            <p class="remember_me">
+                <label>
+                    <input type="checkbox" name="remember_me" id="remember_me">
+                    Remember me on this computer
+                </label>
+            </p>
+            <p class="submit"><input type="submit" id="loginBtn"  name="commit" value="Login"></p>
+        </form>
+    </div>
+
+    <div id="login-help" class="login-help">
+        <p><a href="#"> Forgot your password?</a></p>
+        <p>Don't have an account yet?<input type="submit" id="signIn" value="Sign in!"></p>
+    </div>
+
+    <div id="logout" class="hidden">
+        <p><input type="submit" id="logoutBtn" name="commit" value="Logout"></p>
+    </div>
+</section>
+
 <section id="copyright">
     <p>Your awesome copyright statement goes here.</p>
 </section>
@@ -39,6 +66,7 @@
     <script src="scripts/enquestator.js"></script>
     <script src="scripts/domain.js"></script>
     <script src="scripts/utils.js"></script>
+    <script src="scripts/login.js"></script>
 </footer>
 
 <!-- Here are some useful html templates -->
