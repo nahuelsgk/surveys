@@ -49,11 +49,8 @@
 <div class="hidden" id="questions">
     <label for="link">Your survey link:</label>
     <a href="http://localhost:8080" id="link"></a><br />
-    <div class="hidden" id="links">
-        <label for="linkadmin">Your admin link:</label>
-        <a href="" id="linkadmin"></a><br />
-    </div>
-
+    <label id="labellinkadmin" for="linkadmin">Your admin link:</label>
+    <a href="" id="linkadmin"></a><br />
     <form>
     <ul id="questionList">
     </ul>
@@ -126,6 +123,8 @@
         </ul>
     </form>
     <br />
+    <label  for="linkanswer">Your answer link:</label>
+    <a href="" id="linkanswer"></a><br />
     <input type="button"  id="saveSurveyAnswers" value="Save survey" title="Save and resume later">
     <input type="button"  id="publishSurveyAnswers" value="Finish survey" title="Send your answers to survey administrator">
 </div>
