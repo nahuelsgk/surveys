@@ -510,12 +510,31 @@ function renderSurveyAnswerForm(survey, createdNow){
       });
 }
 
+
+function getTextAnswers(answerBox){
+    var textAnswer = new Array();
+    textAnswer.push(answerBox.find('textarea').val());
+
+    return textAnswer;
+}
+
+function getCheckOrRadioAnswers(answerBox, questionType){
+      var answers = new Array();
+      answerBox.find($("input[type='" + questionType + "']")).each(function(){
+        if($(this).is(":checked")){
+            answers.push(($(this).val()));
+        }
+      })
+      return answers;
+}
+
+
 function answerSurvey() {
     //console.log("Updating survey: "+currentSurvey.title);
     var indexQuestion = 0;
     var answer = new AnswerList();
     var nAnswers = $('.question').length;
-    var answerText;
+    var answerOptions;
     var answerType;
     var idQuestion;
     console.log("nAnswers: "+nAnswers);
@@ -523,8 +542,19 @@ function answerSurvey() {
 
         idQuestion = currentSurvey.questions[indexQuestion].id;
         answerType = currentSurvey.questions[indexQuestion].questionType;
-        answerText = $(this).find('textarea').val();
-        answer.answered.push(new Answer(idQuestion,answerType,answerText));
+        switch(answerType){
+                            case TYPE_TEXT:
+                                        answerOptions = getTextAnswers($(this))
+                                        break;
+                            case TYPE_CHOICE:
+                                        answerOptions = getCheckOrRadioAnswers($(this),'radio');
+                                        break;
+                            case TYPE_MULTICHOICE:
+                                        answerOptions = getCheckOrRadioAnswers($(this),'checkbox');
+                                        break;
+         }
+        //answerText = $(this).find('textarea').val();
+        answer.answered.push(new Answer(idQuestion,answerType,answerOptions));
         indexQuestion++;
     });
     // Finalitzem l'enquesta
