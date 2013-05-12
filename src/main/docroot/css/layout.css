@@ -438,7 +438,7 @@ menu.main a.hidden{
 }
 
 .signInContainer {
-    width:300px;
+    width:100%;
     padding:10px;
 }
 
@@ -457,6 +457,11 @@ menu.main a.hidden{
 .signInContainer label {
     width: 50%;
     float:left;
+}
+
+.signInContainer form {
+    padding-top:10px;
+    width:300px;
 }
 
 .signInError {

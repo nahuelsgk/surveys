@@ -1,3 +1,5 @@
+var currentUser;
+
 function logIn() {
     var user = $('#username').val();
     var pwd = $('#pwd').val();
@@ -59,9 +61,23 @@ function signIn() {
     var email = $('#newemail').val();
     if (!isValidField(username) || !isValidField(pwd)
         || !isValidField(pwd2) || !isValidField(email) || pwd !== pwd2) {
-         $('.signInContainer').find('span').attr('class','signInError');
+         $('#userNotification').text('Error creating your account');
+         $('#userNotification').attr('class','error');
     }
     else {
-
+       var user = new User(username, pwd, email);
+       currentUser = user;
+       console.log(JSON.stringify(user));
+       var loc = '/api/user';
+       sendEvent(loc, 'POST', user, null, userCreated);
     }
+}
+
+function userCreated(data, location) {
+    $('#userNotification').text('Your account has been created');
+    $('#userNotification').attr('class','success');
+    $('#signInDiv').find('h1').text('Welcome '+currentUser.userName);
+    $('#signInDiv').find('form').remove();
+    var idUser = location.replace('/api/user/','');
+    console.log('ID: '+idUser);
 }
