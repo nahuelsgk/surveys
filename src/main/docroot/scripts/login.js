@@ -43,3 +43,25 @@ function isValidField(text) {
     if ((text == "") || text.length < 3 || text.length > 15 || text == null) return false;
     else return true;
 }
+
+function showSignIn() {
+    cleanView(currentView);
+    currentView = SIGN_IN;
+    var form = $('#signInDiv').clone();
+    form.attr('class','signInContainer');
+    $('#content').append(form);
+}
+
+function signIn() {
+    var username = $('#newusername').val();
+    var pwd = $('#newpwd').val();
+    var pwd2 = $('#newpwd2').val();
+    var email = $('#newemail').val();
+    if (!isValidField(username) || !isValidField(pwd)
+        || !isValidField(pwd2) || !isValidField(email) || pwd !== pwd2) {
+         $('.signInContainer').find('span').attr('class','signInError');
+    }
+    else {
+
+    }
+}

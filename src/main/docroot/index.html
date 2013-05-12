@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns="http://www.w3.org/1999/html">
+<html lang="en" xmlns="http://www.w3.org/1999/html" xmlns="http://www.w3.org/1999/html">
 <head>
     <title>Enquestator</title>
     <meta charset="utf-8" />
@@ -24,7 +24,7 @@
         <h1>Login</h1>
         <span class="hidden" id="loginfeedback"><p>Login incorrect. Please try again.</p></span>
         <form action="javascript:logIn();">
-            <p><input type="text" id="username" value="" placeholder="Username or Email"></p>
+            <p><input type="text" id="username" value="" placeholder="Username"></p>
             <p><input type="password" id="pwd" value="" placeholder="Password"></p>
             <p class="remember_me">
                 <label>
@@ -38,7 +38,7 @@
 
     <div id="login-help" class="login-help">
         <p><a href="#"> Forgot your password?</a></p>
-        <p>Don't have an account yet?<input type="submit" id="signIn" value="Sign in!"></p>
+        <p>Don't have an account yet?<input type="submit" onclick="javascript:showSignIn();" id="signIn" value="Sign in!"></p>
     </div>
 
     <div id="logout" class="hidden">
@@ -158,6 +158,18 @@
     <!--<textarea class="answerTextArea" id="answerTextArea" rows="3" cols="30">
     </textarea> -->
 </li>
+
+<div id="signInDiv" class="hidden">
+    <h1>Join now!</h1>
+    <span class="hidden"><p>Error. Please review all fields.</p></span>
+    <form action="javascript:signIn();">
+        <p></p><label>Username: </label><input type="text" id="newusername" value="" placeholder="Username"></p>
+        <p></p><label>Password: </label><input type="password" id="newpwd" value="" placeholder="Password"></p>
+        <p></p><label>Repeat Password: </label><input type="password" id="newpwd2" value="" placeholder="Password"></p>
+        <p></p><label>Email: </label><input type="text" id="newemail" value="" placeholder="Email"></p>
+        <p><input type="submit" id="createAccount" name="commit" value="Sign in"></p>
+    </form>
+</div>
 
 </body>
 </html>
