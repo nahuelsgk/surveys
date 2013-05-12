@@ -30,6 +30,12 @@ class SurveysService(surveysRepository: SurveysRepository) {
         Map("id" -> surveyRecord._id.toString, "secret" -> "bigotiSecret");
     }
 
+    def putAnswers(id: String, answers: SurveyAnswer) {
+        println("*** SurveyService.putAnswers()")
+        println("Try to put survey answers: " + answers.toRecord())
+        surveysRepository.putAnswers(new ObjectId(id), answers.toRecord());
+    }
+
     def saveAnswers(id: String, answers: SurveyAnswer) {
         println("*** SurveyService.saveAnswers()")
         println("Try to save survey answers: " + answers.toRecord())
