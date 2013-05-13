@@ -4,7 +4,6 @@ import collection.mutable.ListBuffer
 import org.bson.types.ObjectId
 import dsbw.domain.survey.Survey
 import dsbw.domain.survey.SurveyAnswer
-import scala.util.Random
 
 class SurveysService(surveysRepository: SurveysRepository) {
 
@@ -14,7 +13,7 @@ class SurveysService(surveysRepository: SurveysRepository) {
         val listSurvey = new ListBuffer[Survey]
 
         list.foreach((sur: SurveysRecord) => {
-            val aux = new Survey(id = sur._id.toString, title = sur.title, since = sur.since, until = sur.until, secret = sur.secret);
+            val aux = new Survey(id = sur._id.toString, title = sur.title, since = sur.since, until = sur.until, secret = sur.secret)
             listSurvey += aux
         })
 

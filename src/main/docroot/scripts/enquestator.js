@@ -44,12 +44,6 @@ function renderEditSurvey(survey, createdNow){
     $("#link").html(url);
     $("#link").attr("href",url);
 
-
-
-
-
-
-
     template_form.find('#title').val(survey.title);
     template_form.find('#since').val(survey.until);
     template_form.find('#until').val(survey.since);
@@ -210,16 +204,6 @@ function surveyCreated(data, location) {
         $("#linkadmin").attr("href",urlAdmin);
         $("#labellinkadmin").text("Your admin link:");
 
-
-       /*
-        var links = $('#links').clone();
-        links.attr('class','');
-        var urlAdmin = "http://localhost:8080/?id=" + obj.id + "&secret=" + secret;
-        console.log(urlAdmin);
-        $("#linkadmin").html(urlAdmin);
-        $("#linkadmin").attr("href",urlAdmin);
-        */
-
 	    showEditButton();
 	    //@TODO Evitar dues peticionsseguides (POST + GET)
         sendEvent(location, 'GET', null, null, displaySurvey);
@@ -249,13 +233,6 @@ function updateCurrentSurvey(survey){
     $("#linkadmin").attr("href",urlAdmin);
     $("#labellinkadmin").text("");
 
-
-    /*
-    var links = $('#links').clone();
-    links.attr('class','hidden');
-    $("#linkadmin").html("");
-    $("#linkadmin").attr("href","");
-     */
     renderEditSurvey(currentSurvey);
  }
 
@@ -286,11 +263,6 @@ function renderListSurveys(listOfSurveys) {
         var noSurvey = $('<span>No surveys today</span>');
 	    surveysHtmlIni.append(noSurvey);
     }
-    /*$('body').on('click', '.surveyItem', function(){           //TODO: canviar!! sino s'afegeixen masses listeners
-      var id = $(this).attr('name');
-      sendEvent('/api/survey/'+id, 'GET', null, null, updateCurrentSurvey);
-    });     */
-
 
     displayContent(surveysHtmlIni, LIST_SURVEYS);
 }
@@ -302,7 +274,6 @@ function listSurveys() {
 
 function createSurvey() {
     cleanView(currentView);
-    //$('#dynamicContent').show();
     renderCreateForm();
     currentView = CREATE_SURVEY;
 }
@@ -315,7 +286,6 @@ function displayContent(html, view)  {
 }
 
 function cleanView(view) {
-    //console.log("Removing view: "+view);
     switch(view) {
         case CREATE_SURVEY:
             $('#dynamicContent').empty();
