@@ -100,13 +100,18 @@ function signIn() {
        currentUser = user;
        //console.log(JSON.stringify(user));
        var loc = '/api/user';
-       sendEvent(loc, 'POST', user, null, userCreated);
+       sendEvent(loc, 'POST', user, null, userCreated, userCreatedFail);
     }
 
     if (error) {
         $('#userNotification').text('Error creating your account. Please check the red fields.');
         $('#userNotification').attr('class','error');
     }
+}
+
+function userCreatedFail() {
+    $('#userNotification').text('There is another user with that username.');
+    $('#userNotification').attr('class','error');
 }
 
 function userCreated(data, location) {
@@ -126,6 +131,7 @@ function sayWelcome() {
     container.find('h1').text('Welcome '+currentUser.userName);
     var info = $('#userState').clone();
     info.attr('class','');
+    info.find('#totalSurveys').text('Total surveys: '+currentUser.surveys.length);
     container.append(info);
     $('#content').append(container);
 }
