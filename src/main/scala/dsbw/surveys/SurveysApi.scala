@@ -82,8 +82,7 @@ class SurveysApi(surveysService: SurveysService) extends Api {
             println("Survey Answer: " + surveyAnswers)
             surveysService.putAnswers(idSurvey, surveyAnswers)
             Response(HttpStatusCode.NoContent)
-        }
-        else {
+        } else {
             Response(HttpStatusCode.BadRequest)
         }
         }catch {
