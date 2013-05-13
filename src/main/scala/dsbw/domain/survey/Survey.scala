@@ -14,21 +14,22 @@ object StatesSurvey {
 }
 
 case class Survey(
-                     id: String = ""
-                     , title: String
-                     , since: String
-                     , until: String
-                     , state: String = StatesSurvey.Creating
-                     , questions: Option[List[Question]]= None
-                     , answers: Option[Map[Int, List[Answer]]]= None
-                     ) {
+   id: String = "",
+   title: String,
+   since: String,
+   until: String,
+   secret: String = "",
+   state: String = StatesSurvey.Creating,
+   questions: Option[List[Question]]= None,
+   answers: Option[Map[Int, List[Answer]]]= None
+ ) {
 
     /* Recupera el ID o el genera si cal */
-    private def getId(): ObjectId = {
+    private def getId: ObjectId = {
         if (this.id.isEmpty)
-            return new ObjectId()
+            new ObjectId()
         else
-            return new ObjectId(this.id)
+            new ObjectId(this.id)
     }
 
     /* Recupera el List de QuestionRecords */
@@ -40,27 +41,28 @@ case class Survey(
                 ll+= q.toRecord()
             })
             println("LL: ("+ ll.toList.size+ ") "+ ll.toList)
-            return ll.toList
+            ll.toList
         }
         else{
-            return List()
+            List()
         }
     }
 
     /* Genera el record */
     def toRecord(): SurveysRecord= {
         new SurveysRecord(
-            _id = this.getId()
+            _id = this.getId
             , title = this.title
             , since = this.since
             , until = this.until
+            , secret = this.secret
             , state= this.state
             , questions= getQuestionRecordList())
     }
 
     /* Print addicional */
     def toString2(){
-        println("Survey(" + this.getId()+ ", "+ this.title+ ", "+ this.since+ ", "+ this.until+ ", "+ this.state)
+        println("Survey(" + this.getId + ", "+ this.title+ ", "+ this.since+ ", "+ this.until+ ", "+ this.state)
         print("      , questions[")
         if (this.questions.nonEmpty){
             this.questions.get.foreach(q=> print(q.toString2+ ", "))
@@ -72,8 +74,6 @@ case class Survey(
 }
 
 object Survey {
-
-
     /* Metode static per convertir SurveyRecord a Survey */
     def fromRecord(record: SurveysRecord) : Survey = {
         val questions = new ListBuffer[Question]()
@@ -88,6 +88,7 @@ object Survey {
             title = record.title,
             since = record.since,
             until = record.until,
+            secret = record.secret,
             state = record.state,
             questions = Some(questions.toList)
         )

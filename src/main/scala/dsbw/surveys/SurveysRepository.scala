@@ -11,24 +11,27 @@ import dsbw.domain.survey.StatesSurvey
 
 /** A record representing the scheme of Surveys stored in the surveys collection */
 case class SurveysRecord(
-                            _id: ObjectId = new org.bson.types.ObjectId()
-                            , title: String
-                            , since: String
-                            , until: String
-                            , state: String= StatesSurvey.Creating
-                            , questions: List[QuestionRecord] = List())
+                            _id: ObjectId = new org.bson.types.ObjectId(),
+                            title: String,
+                            since: String,
+                            until: String,
+                            secret: String,
+                            state: String = StatesSurvey.Creating,
+                            questions: List[QuestionRecord] = List())
 
 case class QuestionRecord(
-                             _id: ObjectId = new org.bson.types.ObjectId()
-                             , questionType: String= ""
-                             , order: Int= 1
-                             , text: String= ""
-                             , options: List[String] = List())
+     _id: ObjectId = new org.bson.types.ObjectId(),
+     questionType: String= "",
+     order: Int= 1,
+     text: String= "",
+     options: List[String] = List()
+)
 
 case class SurveyAnswerRecord(
-                                 idClient       : ObjectId = new ObjectId()
-                                 , stateAnswer  : String
-			                     , answered     : List[AnswerRecord] = List())
+    idClient       : ObjectId = new ObjectId(),
+    stateAnswer  : String,
+    answered     : List[AnswerRecord] = List()
+)
 
 case class AnswerRecord(
 		         idQuestion  : ObjectId = new ObjectId()
@@ -38,8 +41,14 @@ case class AnswerRecord(
 
 /** Surveys Data Access Object */
 class SurveysDao(db: DB) extends MongoDao[SurveysRecord](db.surveys) {
+    def getSecretById(id: String): String = {
+        //val aux = DBObject
+        //aux.
+        //this.salatDao.primitiveProjection[String](DBObject(Map("_id" -> new ObjectId(id))), "secret")
+        val survey = this.findOneByID(new ObjectId(id)).get;
 
-
+        survey.secret
+    }
 }
 
 /**
@@ -54,17 +63,27 @@ class SurveysRepository(dao: SurveysDao) {
         while (surveysCursor.hasNext) {
             surveysList += surveysCursor.next()
         }
-        return surveysList
+
+        surveysList
     }
 
     def createSurvey(survey: SurveysRecord) {
         dao.save(survey)
     }
 
-   def updateSurvey(survey: SurveysRecord) {
+   def updateSurvey(survey: SurveysRecord): Boolean = {
         var query = Map[String, ObjectId]()
         query += "_id" -> survey._id
-        dao.update(query, MongoDBObject("$set" -> (MongoDBObject("title" -> survey.title) ++ MongoDBObject("since" -> survey.since) ++ MongoDBObject("until" -> survey.until))), false)
+        dao.update(
+            query,
+            MongoDBObject(
+              "$set" -> (MongoDBObject("title" -> survey.title)
+                          ++ MongoDBObject("since" -> survey.since)
+                          ++ MongoDBObject("until" -> survey.until))
+            ),
+            false
+        )
+
         if (survey.questions.nonEmpty){
             println("   - HIHA: "+ survey.questions+ "| "+ survey.questions.size+ "| "+ survey.questions)
             insertQuestion(survey._id, survey.questions)
@@ -72,6 +91,12 @@ class SurveysRepository(dao: SurveysDao) {
         else{
             println("   - NO hiha Questions")
         }
+
+        true
+    }
+
+    def getSurveySecret(id: String) : String = {
+        dao.getSecretById(id)
     }
 
     def getSurvey(id: String) : SurveysRecord = {

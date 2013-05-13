@@ -5,6 +5,8 @@ var EDIT_SURVEY = 2;
 var ANSWER_SURVEY = 3;
 var currentSurvey;
 var surveys = new Object();
+var secret = new Object();
+var surveyId = new Object();
 
 function renderLastChangeNotification(){
     date = new Date();
@@ -37,6 +39,11 @@ function renderEditSurvey(survey, createdNow){
     template_form.attr('id', 'editForm');
     template_form.find('form').attr('id', 'edit_survey_form');
     //console.log(survey);
+
+    var url = "http://localhost:8080/?id=" + survey.id;
+    $("#link").html(url);
+    $("#link").attr("href",url);
+
     template_form.find('#title').val(survey.title);
     template_form.find('#since').val(survey.until);
     template_form.find('#until').val(survey.since);
@@ -135,21 +142,44 @@ function updateSurvey() {
         });
     }
     var jsonSurvey = currentSurvey;
+    jsonSurvey.secret = secret;
+
     console.log("obj: "+JSON.stringify(jsonSurvey));
     var loc = '/api/survey/'+currentSurvey.id;
-    sendEvent(loc, 'PUT', jsonSurvey, null, surveyUpdated);
+    sendEvent(loc, 'PUT', jsonSurvey, null, surveyUpdatedCorrectly, surveyUpdateError);
 }
 
-function surveyUpdated() {
+function surveyUpdatedCorrectly() {
     $('#notification').text('Survey updated correctly!');
     $('#notification').attr('class','info');
-    window.scrollTo( 0, 0) ;
 
+    window.scrollTo(0, 0);
+    console.log('Survey updated correctly');
+}
+
+function surveyUpdateError() {
+    $('#notification').text('You dont have permission to edit this survey');
+    $('#notification').attr('class','failure');
+
+     window.scrollTo(0, 0);
+     console.log('Error updating Survey');
 }
 
 function editSurvey() {
     cleanView(currentView);
     currentView = EDIT_SURVEY;
+
+    var urlAdmin = "";
+    $("#linkadmin").html(urlAdmin);
+    $("#linkadmin").attr("href",urlAdmin);
+    $("#labellinkadmin").text("");
+
+    /*
+    var links = $('#links').clone();
+    links.attr('class','hidden');
+    $("#linkadmin").html("");
+    $("#linkadmin").attr("href","");
+    */
     renderEditSurvey(currentSurvey);
 }
 
@@ -162,17 +192,27 @@ function displaySurvey(request) {
     renderEditSurvey(currentSurvey,true);
 }
 
-function surveyCreated(uri, location) {
+function surveyCreated(data, location) {
     if (location !== 'none') {
         //console.log("URI: "+location);
         //$('#editSurvey').attr('class','');
+        var obj = $.parseJSON(data.value);
+        secret = obj.secret;
+
+        var urlAdmin = "http://localhost:8080/?id=" + obj.id + "&secret=" + secret;
+        $("#linkadmin").html(urlAdmin);
+        $("#linkadmin").attr("href",urlAdmin);
+        $("#labellinkadmin").text("Your admin link:");
+
 	    showEditButton();
+	    //@TODO Evitar dues peticionsseguides (POST + GET)
         sendEvent(location, 'GET', null, null, displaySurvey);
     }
 }
 
 function submitCreateSurvey(){
-    var data = {title : $('#title').val(), since : $('#since').val(), until : $('#until').val()};
+    secret = Math.random().toString(36).substr(2,16);
+    var data = {title : $('#title').val(), since : $('#since').val(), until : $('#until').val(), secret : secret};
     var method = 'POST';
     sendEvent('/api/survey', method, data, null, surveyCreated);
     return false;
@@ -187,6 +227,12 @@ function updateCurrentSurvey(survey){
     currentSurvey = $.parseJSON(survey.value);
     console.log(currentSurvey);
     showEditButton();
+
+    var urlAdmin = "";
+    $("#linkadmin").html(urlAdmin);
+    $("#linkadmin").attr("href",urlAdmin);
+    $("#labellinkadmin").text("");
+
     renderEditSurvey(currentSurvey);
  }
 
@@ -217,11 +263,6 @@ function renderListSurveys(listOfSurveys) {
         var noSurvey = $('<span>No surveys today</span>');
 	    surveysHtmlIni.append(noSurvey);
     }
-    /*$('body').on('click', '.surveyItem', function(){           //TODO: canviar!! sino s'afegeixen masses listeners
-      var id = $(this).attr('name');
-      sendEvent('/api/survey/'+id, 'GET', null, null, updateCurrentSurvey);
-    });     */
-
 
     displayContent(surveysHtmlIni, LIST_SURVEYS);
 }
@@ -233,7 +274,6 @@ function listSurveys() {
 
 function createSurvey() {
     cleanView(currentView);
-    //$('#dynamicContent').show();
     renderCreateForm();
     currentView = CREATE_SURVEY;
 }
@@ -246,7 +286,6 @@ function displayContent(html, view)  {
 }
 
 function cleanView(view) {
-    //console.log("Removing view: "+view);
     switch(view) {
         case CREATE_SURVEY:
             $('#dynamicContent').empty();
@@ -394,6 +433,8 @@ function enableAddQuestions() {
     });
 }
 
+
+
 function sendGetSurveyQuestions(id){
     sendEvent('/api/survey/'+id, 'GET', null, null, getSurveyQuestions);
 }
@@ -488,6 +529,12 @@ function renderSurveyAnswerForm(survey, createdNow){
       template_form.attr('class', 'answerFormDiv');
       $('#dynamicContent').append(template_form);
       $('#dynamicContent').show();
+
+      $("#linkanswer").html("");
+      $("#linkanswer").attr("href","");
+      $("#labellinkanswer").text("");
+
+
       renderAnswers();
       if (typeof survey.questions !== 'undefined') {
             console.log('rendering ['+survey.questions.length +'] questions...');
@@ -565,29 +612,65 @@ function answerSurvey() {
     sendEvent(loc, 'POST', jsonAnswer, null, surveyAnswered);
 }
 
-function surveyAnswered(){
+function surveyAnswered(data){
     $('#notificationAnswer').text('Survey answered!');
     $('#notificationAnswer').attr('class','info');
+
+    var obj = $.parseJSON(data.value);
+    secret = obj.userId;
+
+    var urlAnswer = "http://localhost:8080/?id=" + surveyId + "&user=" + secret;
+    $("#linkanswer").html(urlAnswer);
+    $("#linkanswer").attr("href",urlAnswer);
+    $("#labellinkanswer").text("Your answer link: ");
+
+}
+
+function renderForm() {
+      var prmstr = window.location.search.substr(1);
+      var prmarr = prmstr.split ("&");
+      var params = {};
+
+      for ( var i = 0; i < prmarr.length; i++) {
+          var tmparr = prmarr[i].split("=");
+          params[tmparr[0]] = tmparr[1];
+      }
+      switch(prmarr.length) {
+        case 0:
+            renderCreateForm();
+            break;
+        case 1:
+            if(params.id != null) {
+                sendGetSurveyQuestions(params.id);
+                surveyId = params.id;
+            }
+            else renderCreateForm();
+            break;
+        case 2:
+            if(params.id && params.secret) {
+                surveyId = params.id;
+                secret = params.secret;
+                sendEvent('/api/survey/'+params.id, 'GET', null, null, updateCurrentSurvey);
+            } else if(params.id && params.user) {
+                surveyId = params.id;
+                secret = params.user;
+                sendGetSurveyQuestions(params.id)
+                console.log("EditRespuestas");
+            }
+            else renderCreateForm();
+            break;
+        default:
+            renderCreateForm();
+            break;
+
+      }
+
+
 }
 
 
 $(document).ready(function($) {
-    var prmstr = window.location.search.substr(1);
-    var prmarr = prmstr.split ("&");
-    var params = [];
-
-    for ( var i = 0; i < prmarr.length; i++) {
-        var tmparr = prmarr[i].split("=");
-        params[tmparr[0]] = tmparr[1];
-    }
-    if(params.id == null){
-        renderCreateForm();
-    }else if(params.id!= null && params.user== null){
-        sendGetSurveyQuestions(params.id, null)
-    }else if(params.id!= null && params.user!= null){
-        sendGetSurveyQuestionsAndAnswers(params.id, params.user)
-    }
-
+     renderForm();
     //renderNewSurveyForm();
 });
 
