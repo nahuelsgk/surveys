@@ -101,5 +101,11 @@ function User() {
             this.email = arguments[2];
             this.surveys = new Array();
         break;
+        case 2:
+            this.userName = arguments[0];
+            this.password = arguments[1];
+            this.email = '';
+            this.surveys = new Array();
+        break;
     }
 }

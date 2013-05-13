@@ -4,6 +4,7 @@ var LIST_SURVEYS = 1;
 var EDIT_SURVEY = 2;
 var ANSWER_SURVEY = 3;
 var SIGN_IN = 4;
+var WELCOME_VIEW = 5;
 var currentSurvey;
 var surveys = new Object();
 
@@ -256,15 +257,19 @@ function cleanView(view) {
         case LIST_SURVEYS:
             $('#surveysList').remove();
             break;
-	case EDIT_SURVEY:
-	    $('#dynamicContent').empty();
-	    break;
-	case ANSWER_SURVEY:
-	     $('#dynamicContent').empty();
+        case EDIT_SURVEY:
+            $('#dynamicContent').empty();
+            break;
+        case ANSWER_SURVEY:
+             $('#dynamicContent').empty();
          break;
          case SIGN_IN:
             $('.signInContainer').remove();
          break;
+         case WELCOME_VIEW:
+            $('.signInContainer').remove();
+         break;
+
     }
 }
 

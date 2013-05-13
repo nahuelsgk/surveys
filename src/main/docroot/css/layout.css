@@ -470,3 +470,7 @@ menu.main a.hidden{
    padding-bottom:5px;
    text-align: center;
 }
+
+.fieldError {
+    color: red;
+}
