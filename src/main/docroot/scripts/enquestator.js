@@ -224,7 +224,8 @@ function surveyCreated(data, location) {
 }
 
 function submitCreateSurvey(){
-    var data = {title : $('#title').val(), since : $('#since').val(), until : $('#until').val()};
+    secret = Math.random().toString(36).substr(2,16);
+    var data = {title : $('#title').val(), since : $('#since').val(), until : $('#until').val(), secret : secret};
     var method = 'POST';
     sendEvent('/api/survey', method, data, null, surveyCreated);
     return false;
@@ -555,6 +556,12 @@ function renderSurveyAnswerForm(survey, createdNow){
       template_form.attr('class', 'answerFormDiv');
       $('#dynamicContent').append(template_form);
       $('#dynamicContent').show();
+
+      $("#linkanswer").html("");
+      $("#linkanswer").attr("href","");
+      $("#labellinkanswer").text("");
+
+
       renderAnswers();
       if (typeof survey.questions !== 'undefined') {
             console.log('rendering ['+survey.questions.length +'] questions...');
@@ -636,13 +643,23 @@ function surveyAnswered(){
     $('#notificationAnswer').text('Survey answered!');
     $('#notificationAnswer').attr('class','info');
 
+ /* if(info40x) {
+        $('#notificationAnswer').text('You dont have permission to edit this survey answer');
+        $('#notificationAnswer').attr('class','failure');
+    } else if(info20x) {
+        $('#notificationAnswer').text('Survey answered!');
+        $('#notificationAnswer').attr('class','info');
+    } */
+
    // var obj = $.parseJSON(data.value);
     //secret = obj.user;
     secret = "bliblu";
 
-    var urlAnswer = "http://localhost:8080/?id=" + "testing" + "&secret=" + secret;
+    var urlAnswer = "http://localhost:8080/?id=" + "testing" + "&user=" + secret;
     $("#linkanswer").html(urlAnswer);
     $("#linkanswer").attr("href",urlAnswer);
+    $("#labellinkanswer").text("Your answer link: ");
+
 }
 
 function renderForm() {
