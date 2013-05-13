@@ -3,9 +3,7 @@ package dsbw.surveys
 import Config.{dbHostName, dbPort, dbName, username, pwd, webServerPort}
 import dsbw.json.JSON
 import dsbw.server.{Server, HttpStatusCode, Response, Api}
-import dsbw.domain.survey.Survey
-import dsbw.domain.survey.SurveyAnswer
-import dsbw.domain.survey.Answer
+import dsbw.domain.survey.{StatesSurvey, Survey, SurveyAnswer, Answer}
 import org.bson.types.ObjectId
 
 /* Surveys API */
@@ -153,9 +151,19 @@ class SurveysApi(surveysService: SurveysService) extends Api {
     }
 
     private def getSurveyById(id: String): Response = {
-        val myenq= surveysService.getSurvey(id);
+        println("*** SurveysApi.getSurveyById()")
+        /*val myenq= surveysService.getSurvey(id);
         val tmp1= JSON.toJSON(myenq);
-        Response(HttpStatusCode.Ok, null, tmp1);
+        Response(HttpStatusCode.Ok, null, tmp1);*/
+
+        val myenq= surveysService.getSurvey(id);
+        if (!checkSurveyAvailability(myenq)){
+            Response(HttpStatusCode.BadRequest)
+        }
+        else{
+            val tmp1= JSON.toJSON(myenq);
+            Response(HttpStatusCode.Ok, null, tmp1);
+        }
     }
 
     private def getAllSurveys: Response = {
@@ -163,6 +171,24 @@ class SurveysApi(surveysService: SurveysService) extends Api {
         val json = JSON.toJSON(surveysService.listSurveys()).value
         println("body response: " + json)
         Response(HttpStatusCode.Ok, null, json)
+    }
+
+    /** Funcions auxiliars **/
+    private def checkSurveyAvailability(myenq: Survey): Boolean = {
+        println("*** SurveysApi.checkSurveyDates()")
+        // Check dates
+        val today = java.util.Calendar.getInstance().getTime()
+        val since= new java.text.SimpleDateFormat("yyyy-MM-dd").parse(myenq.since)
+        val until= new java.text.SimpleDateFormat("yyyy-MM-dd").parse(myenq.until)
+        println("since: "+ since + " - until: "+ until+ " - today: "+ today)
+        if(today.before(since) || today.after(until)){
+            return false
+        }
+        // Check state
+        if (myenq.state!= StatesSurvey::Accepted){
+            return false
+        }
+        return true
     }
 
 }
