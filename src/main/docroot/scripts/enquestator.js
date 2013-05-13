@@ -151,21 +151,23 @@ function updateSurvey() {
 
     console.log("obj: "+JSON.stringify(jsonSurvey));
     var loc = '/api/survey/'+currentSurvey.id;
-    sendEvent(loc, 'PUT', jsonSurvey, null, surveyUpdated);
+    sendEvent(loc, 'PUT', jsonSurvey, null, surveyUpdatedCorrectly, surveyUpdateError);
 }
 
-function surveyUpdated() {
+function surveyUpdatedCorrectly() {
     $('#notification').text('Survey updated correctly!');
     $('#notification').attr('class','info');
-   /* if(info40x) {
-        $('#notification').text('You dont have permission to edit this survey');
-        $('#notification').attr('class','failure');
-    } else if(info20x) {
-        $('#notification').text('Survey updated correctly!');
-        $('#notification').attr('class','info');
-    }                 */
-    window.scrollTo( 0, 0) ;
 
+    window.scrollTo(0, 0);
+    console.log('Survey updated correctly');
+}
+
+function surveyUpdateError() {
+    $('#notification').text('You dont have permission to edit this survey');
+    $('#notification').attr('class','failure');
+
+     window.scrollTo(0, 0);
+     console.log('Error updating Survey');
 }
 
 function editSurvey() {

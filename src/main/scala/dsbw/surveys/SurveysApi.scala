@@ -103,12 +103,12 @@ class SurveysApi(surveysService: SurveysService) extends Api {
         try{
             if(body.nonEmpty) {
                 val surveyAnswers = JSON.fromJSON[SurveyAnswer](body.get)
-                val idUser= new ObjectId().toString;
-                println("Generated User id: "+ idUser)
-                surveyAnswers.setId(idUser);
+                val userId= new ObjectId().toString
+                println("Generated User id: "+ userId)
+                surveyAnswers.setId(userId)
                 println("Survey Answer: " + surveyAnswers)
                 surveysService.saveAnswers(idSurvey, surveyAnswers)
-                Response(HttpStatusCode.Ok, null, idUser);
+                Response(HttpStatusCode.Ok, null, JSON.toJSON[Map[String, String]](Map("userId" -> userId)))
             }
             else {
                 Response(HttpStatusCode.BadRequest)
