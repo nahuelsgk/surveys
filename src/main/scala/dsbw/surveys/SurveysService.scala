@@ -62,6 +62,10 @@ class SurveysService(surveysRepository: SurveysRepository) {
 
 class UsersService(usersRepository: UsersRepository) {
 
+    def existsUserName(user: User): Boolean = {
+        usersRepository.existsUserName(user.userName)
+    }
+
     def createUser(user: User) : String = {
         println("User to create: " + user)
         val userRecord = user.toRecord()

@@ -175,12 +175,14 @@ class SurveysApi(surveysService: SurveysService, usersService: UsersService) ext
     private def postUser(body: Option[JSON]): Response = {
         if (body.isDefined) {
             val user = JSON.fromJSON[User](body.get)
-            val id = usersService.createUser(user)
+            if(usersService.existsUserName(user)) {
+                val id = usersService.createUser(user)
 
-
-            val uri = "/api/user/" + id
-            val headers = Map("Location" -> uri)
-            Response(HttpStatusCode.Created, headers, "{}")
+                val uri = "/api/user/" + id
+                val headers = Map("Location" -> uri)
+                Response(HttpStatusCode.Created, headers, "{}")
+            }
+            else Response(HttpStatusCode.Forbidden)
         }
         else {
             Response(HttpStatusCode.BadRequest)
