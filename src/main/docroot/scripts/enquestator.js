@@ -639,7 +639,7 @@ function answerSurvey() {
     sendEvent(loc, 'POST', jsonAnswer, null, surveyAnswered);
 }
 
-function surveyAnswered(){
+function surveyAnswered(data){
     $('#notificationAnswer').text('Survey answered!');
     $('#notificationAnswer').attr('class','info');
 
@@ -651,9 +651,8 @@ function surveyAnswered(){
         $('#notificationAnswer').attr('class','info');
     } */
 
-   // var obj = $.parseJSON(data.value);
-    //secret = obj.user;
-    secret = "bliblu";
+    var obj = $.parseJSON(data.value);
+    secret = obj.userId;
 
     var urlAnswer = "http://localhost:8080/?id=" + "testing" + "&user=" + secret;
     $("#linkanswer").html(urlAnswer);
