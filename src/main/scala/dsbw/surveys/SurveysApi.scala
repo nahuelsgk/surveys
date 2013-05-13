@@ -130,10 +130,10 @@ class SurveysApi(surveysService: SurveysService) extends Api {
                 //Es parseja el body
                 val survey = JSON.fromJSON[Survey](body.get)
                 println("Parsed body: "+ survey)
-                surveysService.updateSurvey(survey)
+                val allowed = surveysService.updateSurvey(survey)
 
                 //Es retorna OK si tot ha anat be
-                Response(HttpStatusCode.NoContent)
+                Response(if (allowed)  HttpStatusCode.NoContent else HttpStatusCode.Forbidden)
             } else {
                 Response(HttpStatusCode.BadRequest)
             }

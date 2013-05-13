@@ -47,7 +47,7 @@ class SurveysService(surveysRepository: SurveysRepository) {
         println("*** SurveysService.updateSurvey()")
         println("Survey updated: " + survey.toRecord())
 
-        if (surveysRepository.getSurveySecret(survey.id) == survey.id) {
+        if (surveysRepository.getSurveySecret(survey.id) == survey.secret) {
             surveysRepository.updateSurvey(survey.toRecord())
             true
         } else {
