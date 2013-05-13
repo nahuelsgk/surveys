@@ -6,6 +6,7 @@ var ANSWER_SURVEY = 3;
 var currentSurvey;
 var surveys = new Object();
 var secret = new Object();
+var surveyId = new Object();
 
 function renderLastChangeNotification(){
     date = new Date();
@@ -656,7 +657,7 @@ function surveyAnswered(data){
     var obj = $.parseJSON(data.value);
     secret = obj.userId;
 
-    var urlAnswer = "http://localhost:8080/?id=" + "testing" + "&user=" + secret;
+    var urlAnswer = "http://localhost:8080/?id=" + surveyId + "&user=" + secret;
     $("#linkanswer").html(urlAnswer);
     $("#linkanswer").attr("href",urlAnswer);
     $("#labellinkanswer").text("Your answer link: ");
@@ -677,14 +678,19 @@ function renderForm() {
             renderCreateForm();
             break;
         case 1:
-            if(params.id != null) sendGetSurveyQuestions(params.id);
+            if(params.id != null) {
+                sendGetSurveyQuestions(params.id);
+                surveyId = params.id;
+            }
             else renderCreateForm();
             break;
         case 2:
             if(params.id && params.secret) {
+                surveyId = params.id;
                 secret = params.secret;
                 sendEvent('/api/survey/'+params.id, 'GET', null, null, updateCurrentSurvey);
             } else if(params.id && params.user) {
+                surveyId = params.id;
                 secret = params.user;
                 sendGetSurveyQuestions(params.id)
                 console.log("EditRespuestas");
