@@ -436,3 +436,37 @@ menu.main a.hidden{
 .logout p {
     text-align: center;
 }
+
+.signInContainer {
+    width:100%;
+    padding:10px;
+}
+
+.signInContainer input[type=text],  .signInContainer input[type=password]{
+    width:50%;
+    height: 25px;
+    margin-bottom: 5px;
+}
+
+.signInContainer input[type=submit] {
+    width: 120px;
+    margin-top: 10px;
+    float: right;
+}
+
+.signInContainer label {
+    width: 50%;
+    float:left;
+}
+
+.signInContainer form {
+    padding-top:10px;
+    width:300px;
+}
+
+.signInError {
+   font-size:14px;
+   color: red;
+   padding-bottom:5px;
+   text-align: center;
+}

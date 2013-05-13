@@ -1,3 +1,5 @@
+var currentUser;
+
 function logIn() {
     var user = $('#username').val();
     var pwd = $('#pwd').val();
@@ -42,4 +44,40 @@ function badlyLogged() {
 function isValidField(text) {
     if ((text == "") || text.length < 3 || text.length > 15 || text == null) return false;
     else return true;
+}
+
+function showSignIn() {
+    cleanView(currentView);
+    currentView = SIGN_IN;
+    var form = $('#signInDiv').clone();
+    form.attr('class','signInContainer');
+    $('#content').append(form);
+}
+
+function signIn() {
+    var username = $('#newusername').val();
+    var pwd = $('#newpwd').val();
+    var pwd2 = $('#newpwd2').val();
+    var email = $('#newemail').val();
+    if (!isValidField(username) || !isValidField(pwd)
+        || !isValidField(pwd2) || !isValidField(email) || pwd !== pwd2) {
+         $('#userNotification').text('Error creating your account');
+         $('#userNotification').attr('class','error');
+    }
+    else {
+       var user = new User(username, pwd, email);
+       currentUser = user;
+       console.log(JSON.stringify(user));
+       var loc = '/api/user';
+       sendEvent(loc, 'POST', user, null, userCreated);
+    }
+}
+
+function userCreated(data, location) {
+    $('#userNotification').text('Your account has been created');
+    $('#userNotification').attr('class','success');
+    $('#signInDiv').find('h1').text('Welcome '+currentUser.userName);
+    $('#signInDiv').find('form').remove();
+    var idUser = location.replace('/api/user/','');
+    console.log('ID: '+idUser);
 }
