@@ -41,25 +41,20 @@ class SurveysApi(surveysService: SurveysService) extends Api {
         println("*** SurveysApi.postSurvey()")
         try {
             if (body.nonEmpty) {
-                //Es parseja el body
-                val survey = JSON.fromJSON[Survey](body.get)
-                println("Survey parsed: " + survey)
-                //S'emmagatzema la nova Survey i s'obte la id que li ha assignat la BD
 
-                val id = surveysService.createSurvey(survey)
+                val surveyInfo = surveysService.createSurvey(JSON.fromJSON[Survey](body.get))
 
                 //Es construeix la resposta amb la nova URI amb la id que ha proporcionat la BD
-                val uri = "/api/survey/" + id
+                val uri = "/api/survey/" + surveyInfo("id")
                 val headers = Map("Location" -> uri)
-                Response(HttpStatusCode.Created, headers = headers, body = "{}")
-            }
-            else {
+                Response(HttpStatusCode.Created, headers = headers, body = JSON.toJSON[Map[String, String]](surveyInfo))
+            } else {
                 Response(HttpStatusCode.BadRequest)
             }
         }
         catch {
             case e: Throwable => {
-                println(e);
+                println(e)
                 println(e.getStackTraceString)
             }
             Response(HttpStatusCode.BadRequest)
@@ -83,12 +78,11 @@ class SurveysApi(surveysService: SurveysService) extends Api {
         try{
         if(body.nonEmpty) {
             val surveyAnswers = JSON.fromJSON[SurveyAnswer](body.get)
-            surveyAnswers.setId(idUser);
+            surveyAnswers.setId(idUser)
             println("Survey Answer: " + surveyAnswers)
             surveysService.putAnswers(idSurvey, surveyAnswers)
-            Response(HttpStatusCode.NoContent);
-        }
-        else {
+            Response(HttpStatusCode.NoContent)
+        } else {
             Response(HttpStatusCode.BadRequest)
         }
         }catch {
@@ -108,12 +102,12 @@ class SurveysApi(surveysService: SurveysService) extends Api {
         try{
             if(body.nonEmpty) {
                 val surveyAnswers = JSON.fromJSON[SurveyAnswer](body.get)
-                val idUser= new ObjectId().toString;
-                println("Generated User id: "+ idUser)
-                surveyAnswers.setId(idUser);
+                val userId= new ObjectId().toString
+                println("Generated User id: "+ userId)
+                surveyAnswers.setId(userId)
                 println("Survey Answer: " + surveyAnswers)
                 surveysService.saveAnswers(idSurvey, surveyAnswers)
-                Response(HttpStatusCode.Ok, null, idUser);
+                Response(HttpStatusCode.Ok, null, JSON.toJSON[Map[String, String]](Map("userId" -> userId)))
             }
             else {
                 Response(HttpStatusCode.BadRequest)
@@ -135,10 +129,10 @@ class SurveysApi(surveysService: SurveysService) extends Api {
                 //Es parseja el body
                 val survey = JSON.fromJSON[Survey](body.get)
                 println("Parsed body: "+ survey)
-                surveysService.updateSurvey(id, survey)
+                val allowed = surveysService.updateSurvey(survey)
 
                 //Es retorna OK si tot ha anat be
-                Response(HttpStatusCode.NoContent)
+                Response(if (allowed)  HttpStatusCode.NoContent else HttpStatusCode.Forbidden)
             } else {
                 Response(HttpStatusCode.BadRequest)
             }

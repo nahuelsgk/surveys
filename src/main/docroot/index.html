@@ -47,6 +47,10 @@
 <img src="img/error.png" class="hidden" id="deleteSurveyID">
 
 <div class="hidden" id="questions">
+    <label for="link">Your survey link:</label>
+    <a href="http://localhost:8080" id="link"></a><br />
+    <label id="labellinkadmin" for="linkadmin">Your admin link:</label>
+    <a href="" id="linkadmin"></a><br />
     <form>
     <ul id="questionList">
     </ul>
@@ -119,6 +123,8 @@
         </ul>
     </form>
     <br />
+    <label id="labellinkanswer" for="linkanswer"></label>
+    <a href="" id="linkanswer"></a><br />
     <input type="button"  id="saveSurveyAnswers" value="Save survey" title="Save and resume later">
     <input type="button"  id="publishSurveyAnswers" value="Finish survey" title="Send your answers to survey administrator">
 </div>
