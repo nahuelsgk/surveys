@@ -45,8 +45,8 @@ function renderEditSurvey(survey, createdNow){
     $("#link").attr("href",url);
 
     template_form.find('#title').val(survey.title);
-    template_form.find('#since').val(survey.until);
-    template_form.find('#until').val(survey.since);
+    template_form.find('#since').val(survey.since);
+    template_form.find('#until').val(survey.until);
     template_form.find('#buttonSurveyCreate').attr('value', 'Update');
     template_form.find('#buttonSurveyCreate').attr('id', 'buttonEditSurvey');
     $('#dynamicContent').append(template_form);
@@ -237,7 +237,7 @@ function updateCurrentSurvey(survey){
  }
 
 function renderListSurveys(listOfSurveys) {
-
+    $('#dynamicContent').empty();
     var surveysHtmlIni = $('<div id="surveysList">');
     var header = $('<h2 id="contentTitle">Surveys list</h2>');
     surveysHtmlIni.append(header);
@@ -436,7 +436,8 @@ function enableAddQuestions() {
 
 
 function sendGetSurveyQuestions(id){
-    sendEvent('/api/survey/'+id, 'GET', null, null, getSurveyQuestions);
+    var loc = '/api/survey/'+id+ '/answers/';
+    sendEvent(loc, 'GET', null, null, getSurveyQuestions, surveyAlreadyClosed);
 }
 
 function getSurveyQuestions(request) {
@@ -667,6 +668,15 @@ function renderForm() {
 
 
 }
+
+function surveyAlreadyClosed(){
+    $('#dynamicContent').empty();
+    var notification =  $('#notificationAnswer').clone();
+    notification.text('You can\'t answer this survey. It\'s already closed!');
+    notification.attr('class','error');
+    $('#dynamicContent').append(notification);
+}
+
 
 
 $(document).ready(function($) {

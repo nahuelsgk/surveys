@@ -9,11 +9,12 @@ import org.bson.types.ObjectId
 /* Surveys API */
 class SurveysApi(surveysService: SurveysService) extends Api {
 
-    val PatternGetSurveyId  = "GET /api/survey/(\\w+)".r
-    val PatternPutSurveyId  = "PUT /api/survey/(\\w+)".r
-    val PatternGetAnswers   = "GET /api/survey/(\\w+)/answers/(\\w+)/".r
-    val PatternPutAnswers   = "PUT /api/survey/(\\w+)/answers/(\\w+)/".r
-    val PatternPostAnswers  = "POST /api/survey/(\\w+)/answers/".r
+    val PatternGetSurveyId      = "GET /api/survey/(\\w+)".r
+    val PatternPutSurveyId      = "PUT /api/survey/(\\w+)".r
+    val PatternGetAnswers       = "GET /api/survey/(\\w+)/answers/".r
+    val PatternGetAnswersUser   = "GET /api/survey/(\\w+)/answers/(\\w+)/".r
+    val PatternPutAnswers       = "PUT /api/survey/(\\w+)/answers/(\\w+)/".r
+    val PatternPostAnswers      = "POST /api/survey/(\\w+)/answers/".r
 
     def service(
         method: String,
@@ -24,7 +25,8 @@ class SurveysApi(surveysService: SurveysService) extends Api {
     ): Response = {
         (method + " " + uri) match {
             case "POST /api/survey" => postSurvey(body)
-            case PatternGetAnswers(idSurvey, idUser) => getSurveyUser(idSurvey, idUser, body)
+            case PatternGetAnswersUser(idSurvey, idUser) => getAnswersUser(idSurvey, idUser, body)
+            case PatternGetAnswers(id) => getAnswers(id)
             case PatternGetSurveyId(id) => getSurveyById(id)
             case PatternPutAnswers(idSurvey, idUser) => putAnswers(idSurvey, idUser, body)
             case PatternPostAnswers(idSurvey)=> postAnswers(idSurvey, body)
@@ -59,7 +61,21 @@ class SurveysApi(surveysService: SurveysService) extends Api {
         }
     }
 
-    private def getSurveyUser(idSurvey: String, idUser: String, body: Option[JSON]): Response = {
+    private def getAnswers(id: String): Response = {
+        println("*** SurveysApi.getAnswers()")
+
+        val myenq= surveysService.getSurvey(id);
+        if (!checkSurveyAvailability(myenq)){
+            Response(HttpStatusCode.Ok);
+                //, null, JSON.toJSON[Map[String, String]](Map("error" -> "Survey not available")))
+        }
+        else{
+            val tmp1= JSON.toJSON(myenq);
+            Response(HttpStatusCode.Ok, null, tmp1);
+        }
+    }
+
+    private def getAnswersUser(idSurvey: String, idUser: String, body: Option[JSON]): Response = {
         println("*** SurveysApi.getSurveyUser()")
         println("Survey id: "+ idSurvey+ "; User id: "+ idUser)
         println("Request body: " + body)
@@ -145,19 +161,9 @@ class SurveysApi(surveysService: SurveysService) extends Api {
     }
 
     private def getSurveyById(id: String): Response = {
-        println("*** SurveysApi.getSurveyById()")
-        /*val myenq= surveysService.getSurvey(id);
-        val tmp1= JSON.toJSON(myenq);
-        Response(HttpStatusCode.Ok, null, tmp1);*/
-
         val myenq= surveysService.getSurvey(id);
-        if (!checkSurveyAvailability(myenq)){
-            Response(HttpStatusCode.BadRequest)
-        }
-        else{
-            val tmp1= JSON.toJSON(myenq);
-            Response(HttpStatusCode.Ok, null, tmp1);
-        }
+        val tmp1= JSON.toJSON(myenq);
+        Response(HttpStatusCode.Ok, null, tmp1);
     }
 
     private def getAllSurveys: Response = {
@@ -179,9 +185,9 @@ class SurveysApi(surveysService: SurveysService) extends Api {
             return false
         }
         // Check state
-        if (myenq.state!= StatesSurvey::Accepted){
+        /*if (myenq.state!= StatesSurvey.Accepted){
             return false
-        }
+        }*/
         return true
     }
 
