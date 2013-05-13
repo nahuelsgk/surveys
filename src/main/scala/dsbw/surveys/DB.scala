@@ -8,7 +8,7 @@ import com.mongodb.casbah.commons.MongoDBObject
 class DB(hostName: String, port: Int, dbName: String, username: String, pwd: String){
   val db = MongoConnection(hostName, port)(dbName)
   db.authenticate(username, pwd)
-  val surveys = db("surveys")
+  val surveys = db("surveyss")
 
   /** Initialize the DB here, mostly, ensure indexes */
   def init() {

@@ -30,10 +30,22 @@ class SurveysService(surveysRepository: SurveysRepository) {
         Map("id" -> surveyRecord._id.toString, "secret" -> surveyRecord.secret)
     }
 
-    def putAnswers(id: String, answers: SurveyAnswer) {
+    def putAnswers(id: String, answers: SurveyAnswer) : Boolean = {
         println("*** SurveyService.putAnswers()")
         println("Try to put survey answers: " + answers.toRecord())
-        surveysRepository.putAnswers(new ObjectId(id), answers.toRecord())
+        val s= getSurvey(id)
+        s.answers.get.foreach(a=> {
+            if(a.idClient== answers.idClient){
+                println("Client trobat: "+ answers.idClient+ "= "+ a.idClient)
+                surveysRepository.putAnswers(new ObjectId(id), answers.toRecord())
+                return true
+            }
+            else{
+                println("Client NO: "+ answers.idClient+ "= "+ a.idClient)
+            }
+        })
+        println("Client no trobat -> NO es fa el PUT")
+        return false
     }
 
     def saveAnswers(id: String, answers: SurveyAnswer) {

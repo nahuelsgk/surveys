@@ -52,3 +52,26 @@ case class SurveyAnswer(
         this.idClient= id.toString()
     }
 }
+
+object SurveyAnswer {
+    /* Metode static per convertir SurveyAnswerRecord a SurveyAnswer */
+    def fromRecord(record: SurveyAnswerRecord) : SurveyAnswer = {
+        val answered = new ListBuffer[Answer]()
+        if(record.answered.nonEmpty) {
+            //println("Class of answers: " + record.answered.getClass)
+            val listA = record.answered
+            println("List of ANSWERS: ")
+            var i= 0;
+            listA.foreach(a => {
+                answered += Answer.fromRecord(a)
+                println("      - ["+ i +"] "+ a)
+                i= i+ 1
+            })
+        }
+        new SurveyAnswer(
+            idClient = record.idClient.toString,
+            stateAnswer = record.stateAnswer,
+            answered = Some(answered.toList)
+        )
+    }
+}
