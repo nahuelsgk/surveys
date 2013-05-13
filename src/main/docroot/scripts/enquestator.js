@@ -616,14 +616,6 @@ function surveyAnswered(data){
     $('#notificationAnswer').text('Survey answered!');
     $('#notificationAnswer').attr('class','info');
 
- /* if(info40x) {
-        $('#notificationAnswer').text('You dont have permission to edit this survey answer');
-        $('#notificationAnswer').attr('class','failure');
-    } else if(info20x) {
-        $('#notificationAnswer').text('Survey answered!');
-        $('#notificationAnswer').attr('class','info');
-    } */
-
     var obj = $.parseJSON(data.value);
     secret = obj.userId;
 
