@@ -130,7 +130,7 @@ class SurveysApi(surveysService: SurveysService) extends Api {
                 //Es parseja el body
                 val survey = JSON.fromJSON[Survey](body.get)
                 println("Parsed body: "+ survey)
-                surveysService.updateSurvey(id, survey)
+                surveysService.updateSurvey(survey)
 
                 //Es retorna OK si tot ha anat be
                 Response(HttpStatusCode.NoContent)
