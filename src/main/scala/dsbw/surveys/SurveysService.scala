@@ -63,6 +63,7 @@ class SurveysService(surveysRepository: SurveysRepository) {
 class UsersService(usersRepository: UsersRepository) {
 
     def existsUserName(user: User): Boolean = {
+        println("existsUserName " + user.userName)
         usersRepository.existsUserName(user.userName)
     }
 

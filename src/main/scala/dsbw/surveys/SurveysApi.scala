@@ -175,14 +175,17 @@ class SurveysApi(surveysService: SurveysService, usersService: UsersService) ext
     private def postUser(body: Option[JSON]): Response = {
         if (body.isDefined) {
             val user = JSON.fromJSON[User](body.get)
-            if(usersService.existsUserName(user)) {
+            if(!usersService.existsUserName(user)) {
                 val id = usersService.createUser(user)
-
+                println("userCreated: " + user)
                 val uri = "/api/user/" + id
                 val headers = Map("Location" -> uri)
                 Response(HttpStatusCode.Created, headers, "{}")
             }
-            else Response(HttpStatusCode.Forbidden)
+            else {
+                println("user " + user + " already exists")
+                Response(HttpStatusCode.Forbidden)
+            }
         }
         else {
             Response(HttpStatusCode.BadRequest)

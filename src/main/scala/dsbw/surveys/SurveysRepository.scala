@@ -207,6 +207,7 @@ class UsersRepository(dao: UsersDao) {
     def existsUserName(userName: String): Boolean = {
         val query = Map("userName" -> userName)
         val f = dao.findOne(query)
+        println("User " + userName + " exists " + f.isDefined)
         f.isDefined
     }
 }
