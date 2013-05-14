@@ -14,45 +14,49 @@ class SurveysService(surveysRepository: SurveysRepository) {
         val listSurvey = new ListBuffer[Survey]
 
         list.foreach((sur: SurveysRecord) => {
-            val aux = new Survey(sur._id.toString, sur.title, sur.since, sur.until);
+            val aux = new Survey(id = sur._id.toString, title = sur.title, since = sur.since, until = sur.until, secret = sur.secret)
             listSurvey += aux
         })
 
         listSurvey
     }
 
-    def createSurvey(survey: Survey): String = {
+    def createSurvey(survey: Survey): Map[String, String] = {
         println("*** SurveysService.createSurvey()")
         //val surveyRecord = new SurveysRecord(title = survey.title, since = survey.since, until = survey.until, state = survey.state)
-        val surveyRecord= survey.toRecord()
+        val surveyRecord = survey.toRecord()
         surveysRepository.createSurvey(surveyRecord)
         println("Survey created: " + surveyRecord)
-        surveyRecord._id.toString
+
+        Map("id" -> surveyRecord._id.toString, "secret" -> surveyRecord.secret)
     }
 
     def putAnswers(id: String, answers: SurveyAnswer) {
         println("*** SurveyService.putAnswers()")
         println("Try to put survey answers: " + answers.toRecord())
-        surveysRepository.putAnswers(new ObjectId(id), answers.toRecord());
+        surveysRepository.putAnswers(new ObjectId(id), answers.toRecord())
     }
 
     def saveAnswers(id: String, answers: SurveyAnswer) {
         println("*** SurveyService.saveAnswers()")
         println("Try to save survey answers: " + answers.toRecord())
-        surveysRepository.saveAnswers(new ObjectId(id), answers.toRecord());
+        surveysRepository.saveAnswers(new ObjectId(id), answers.toRecord())
     }
 
-    def updateSurvey(id: String, survey: Survey) {
+    def updateSurvey(survey: Survey): Boolean =  {
         println("*** SurveysService.updateSurvey()")
-        val objectId = new org.bson.types.ObjectId(id)
-        //val surveyRecord = new SurveysRecord(_id = objectId, title = survey.title, since = survey.since, until = survey.until)
         println("Survey updated: " + survey.toRecord())
-        surveysRepository.updateSurvey(survey.toRecord())
 
+        if (surveysRepository.getSurveySecret(survey.id) == survey.secret) {
+            surveysRepository.updateSurvey(survey.toRecord())
+            true
+        } else {
+            false
+        }
     }
 
     def getSurvey(id: String) : Survey = {
-        println("Survey getted: "+ id);
+        println("Survey gotten: "+ id);
         val sur= surveysRepository.getSurvey(id);
         Survey.fromRecord(sur)
     }

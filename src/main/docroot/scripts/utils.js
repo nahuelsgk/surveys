@@ -14,7 +14,7 @@ var SEPARATOR = '_';
 
 
 /*send event generic: uri, method, json data, done callback, success callback*/
-function sendEvent(uri, method, data, done, success, failFunc){
+function sendEvent(uri, method, data, done, success, error){
     var request = $.ajax({
         url: uri,
         type: method,
@@ -25,10 +25,15 @@ function sendEvent(uri, method, data, done, success, failFunc){
             if(success){
                 success(data,location);
             }
+        },
+        error: function(data, status, xhr){
+            if (error) {
+                error();
+            }
         }
     });
 
-    request.fail(failFunc);
+    request.fail(error);
 	if(done){
 	    request.done(done(request));
 	}
