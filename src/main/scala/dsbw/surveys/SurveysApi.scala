@@ -86,9 +86,9 @@ class SurveysApi(surveysService: SurveysService, usersService: UsersService) ext
         println("*** SurveysApi.getSurveyUser()")
         println("Survey id: "+ idSurvey+ "; User id: "+ idUser)
         println("Request body: " + body)
-
-        println("Not implemented yet!")
-        Response(HttpStatusCode.Ok)
+        val myans = surveysService.getAnswersUser(idSurvey, idUser)
+        val tmpl = JSON.toJSON(myans)
+        Response(HttpStatusCode.Ok,null, tmpl )
     }
 
     private def putAnswers(idSurvey: String, idUser: String, body: Option[JSON]): Response = {
@@ -101,10 +101,13 @@ class SurveysApi(surveysService: SurveysService, usersService: UsersService) ext
             val surveyAnswers = JSON.fromJSON[SurveyAnswer](body.get)
             surveyAnswers.setId(idUser)
             println("Survey Answer: " + surveyAnswers)
-            surveysService.saveAnswers(idSurvey, surveyAnswers)
-            Response(HttpStatusCode.NoContent);
-        }
-        else {
+            if(surveysService.putAnswers(idSurvey, surveyAnswers)){
+                Response(HttpStatusCode.NoContent)
+            }
+            else{
+                Response(HttpStatusCode.BadRequest)
+            }
+        } else {
             Response(HttpStatusCode.BadRequest)
         }
         }catch {

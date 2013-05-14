@@ -1,5 +1,5 @@
 package dsbw.domain.survey
-import dsbw.surveys.AnswerRecord
+import dsbw.surveys.{QuestionRecord, AnswerRecord}
 import org.bson.types.ObjectId
 
 
@@ -26,4 +26,15 @@ case class Answer(
 	)
     }
 
+}
+
+object Answer {
+    /* Metode static per convertir QuestionRecord a Question */
+    def fromRecord(record: AnswerRecord) : Answer = {
+        new Answer(
+            idQuestion = record.idQuestion.toString,
+            typeAnswer = record.typeAnswer,
+            options = record.options
+        )
+    }
 }

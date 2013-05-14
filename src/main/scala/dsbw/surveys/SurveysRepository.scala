@@ -17,7 +17,8 @@ case class SurveysRecord(
                             until: String,
                             secret: String,
                             state: String = StatesSurvey.Creating,
-                            questions: List[QuestionRecord] = List())
+                            questions: List[QuestionRecord] = List(),
+                            answers: List[SurveyAnswerRecord] = List())
 
 case class QuestionRecord(
      _id: ObjectId = new org.bson.types.ObjectId(),

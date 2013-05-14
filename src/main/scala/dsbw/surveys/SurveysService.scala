@@ -31,10 +31,22 @@ class SurveysService(surveysRepository: SurveysRepository) {
         Map("id" -> surveyRecord._id.toString, "secret" -> surveyRecord.secret)
     }
 
-    def putAnswers(id: String, answers: SurveyAnswer) {
+    def putAnswers(id: String, answers: SurveyAnswer) : Boolean = {
         println("*** SurveyService.putAnswers()")
         println("Try to put survey answers: " + answers.toRecord())
-        surveysRepository.putAnswers(new ObjectId(id), answers.toRecord())
+        val s= getSurvey(id)
+        s.answers.get.foreach(a=> {
+            if(a.idClient== answers.idClient){
+                println("Client trobat: "+ answers.idClient+ "= "+ a.idClient)
+                surveysRepository.putAnswers(new ObjectId(id), answers.toRecord())
+                return true
+            }
+            else{
+                println("Client NO: "+ answers.idClient+ "= "+ a.idClient)
+            }
+        })
+        println("Client no trobat -> NO es fa el PUT")
+        return false
     }
 
     def saveAnswers(id: String, answers: SurveyAnswer) {
@@ -53,6 +65,20 @@ class SurveysService(surveysRepository: SurveysRepository) {
         } else {
             false
         }
+    }
+
+    def getAnswersUser(idSurvey: String, idClient: String) : SurveyAnswer = {
+        println("Survey answers from survey "+idSurvey+" of the user "+idClient)
+
+        var sur    = surveysRepository.getSurvey(idSurvey)
+        var survey = Survey.fromRecord(sur)
+
+        var toReturn = new SurveyAnswer()
+        val l = survey.answers.get
+        l.foreach( e => {
+          if(e.idClient == idClient) toReturn = e
+        })
+        toReturn
     }
 
     def getSurvey(id: String) : Survey = {

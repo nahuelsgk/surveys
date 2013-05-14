@@ -21,7 +21,8 @@ case class Survey(
    secret: String = "",
    state: String = StatesSurvey.Creating,
    questions: Option[List[Question]]= None,
-   answers: Option[Map[Int, List[Answer]]]= None
+   //answers: Option[Map[Int, List[Answer]]]= None
+   answers: Option[List[SurveyAnswer]]= None
  ) {
 
     /* Recupera el ID o el genera si cal */
@@ -78,10 +79,25 @@ object Survey {
     def fromRecord(record: SurveysRecord) : Survey = {
         val questions = new ListBuffer[Question]()
         if(record.questions.nonEmpty) {
-            println("Class of questions: " + record.questions.getClass)
             val listQ = record.questions
-            println("List of QUESTIONS to get: " + listQ)
-            listQ.foreach(q => questions += Question.fromRecord(q))
+            println("List of QUESTIONS: " + listQ)
+            var i= 0;
+            listQ.foreach(q => {
+                questions += Question.fromRecord(q)
+                println("   - ["+ i +"] "+ q)
+                i= i+ 1
+            })
+        }
+        val answers = new ListBuffer[SurveyAnswer]()
+        if(record.answers.nonEmpty) {
+            val listA = record.answers
+            println("List of SURVEYANSWERS: ")
+            var i= 0;
+            listA.foreach(a => {
+                answers += SurveyAnswer.fromRecord(a)
+                println("   - ["+ i +"] "+ a)
+                i= i+ 1
+            })
         }
         new Survey(
             id = record._id.toString,
@@ -90,7 +106,8 @@ object Survey {
             until = record.until,
             secret = record.secret,
             state = record.state,
-            questions = Some(questions.toList)
+            questions = Some(questions.toList),
+            answers= Some(answers.toList)
         )
     }
 }
