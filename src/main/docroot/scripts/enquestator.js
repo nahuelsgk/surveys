@@ -42,7 +42,7 @@ function renderEditSurvey(survey, createdNow){
     template_form.find('form').attr('id', 'edit_survey_form');
     //console.log(survey);
 
-    var url = "http://boiling-headland-7151.herokuapp.com/?id=" + survey.id;
+    var url = "http://localhost:8080/?id=" + survey.id;
     $("#link").html(url);
     $("#link").attr("href",url);
 
@@ -200,7 +200,7 @@ function surveyCreated(data, location) {
         var obj = $.parseJSON(data.value);
         secret = obj.secret;
 
-        var urlAdmin = "http://boiling-headland-7151.herokuapp.com/?id=" + obj.id + "&secret=" + secret;
+        var urlAdmin = "http://localhost:8080/?id=" + obj.id + "&secret=" + secret;
         $("#linkadmin").html(urlAdmin);
         $("#linkadmin").attr("href",urlAdmin);
         $("#labellinkadmin").text("Your admin link:");
@@ -632,7 +632,7 @@ function surveyAnswered(data){
     var obj = $.parseJSON(data.value);
     secret = obj.userId;
 
-    var urlAnswer = "http://boiling-headland-7151.herokuapp.com/?id=" + surveyId + "&user=" + secret;
+    var urlAnswer = "http://localhost:8080/?id=" + surveyId + "&user=" + secret;
     $("#linkanswer").html(urlAnswer);
     $("#linkanswer").attr("href",urlAnswer);
     $("#labellinkanswer").text("Your answer link: ");
