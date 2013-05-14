@@ -66,6 +66,20 @@ class SurveysService(surveysRepository: SurveysRepository) {
         }
     }
 
+    def getAnswersUser(idSurvey: String, idClient: String) : SurveyAnswer = {
+        println("Survey answers from survey "+idSurvey+" of the user "+idClient)
+
+        var sur    = surveysRepository.getSurvey(idSurvey)
+        var survey = Survey.fromRecord(sur)
+
+        var toReturn = new SurveyAnswer()
+        val l = survey.answers.get
+        l.foreach( e => {
+          if(e.idClient == idClient) toReturn = e
+        })
+        toReturn
+    }
+
     def getSurvey(id: String) : Survey = {
         println("Survey gotten: "+ id);
         val sur= surveysRepository.getSurvey(id);

@@ -24,15 +24,15 @@ class SurveysApi(surveysService: SurveysService) extends Api {
         body: Option[JSON] = None
     ): Response = {
         (method + " " + uri) match {
-            case "POST /api/survey" => postSurvey(body)
+            case "POST /api/survey"                      => postSurvey(body)
             case PatternGetAnswersUser(idSurvey, idUser) => getAnswersUser(idSurvey, idUser, body)
-            case PatternGetAnswers(id) => getAnswers(id)
-            case PatternGetSurveyId(id) => getSurveyById(id)
-            case PatternPutAnswers(idSurvey, idUser) => putAnswers(idSurvey, idUser, body)
-            case PatternPostAnswers(idSurvey)=> postAnswers(idSurvey, body)
-            case PatternPutSurveyId(id) => putSurvey(id, body)
-            case "GET /api/surveys" => getAllSurveys
-            case _ => Response(HttpStatusCode.NotFound)
+            case PatternGetAnswers(id)                   => getAnswers(id)
+            case PatternGetSurveyId(id)                  => getSurveyById(id)
+            case PatternPutAnswers(idSurvey, idUser)     => putAnswers(idSurvey, idUser, body)
+            case PatternPostAnswers(idSurvey)            => postAnswers(idSurvey, body)
+            case PatternPutSurveyId(id)                  => putSurvey(id, body)
+            case "GET /api/surveys"                      => getAllSurveys
+            case _                                       => Response(HttpStatusCode.NotFound)
         }
     }
 
@@ -79,9 +79,9 @@ class SurveysApi(surveysService: SurveysService) extends Api {
         println("*** SurveysApi.getSurveyUser()")
         println("Survey id: "+ idSurvey+ "; User id: "+ idUser)
         println("Request body: " + body)
-
-        println("Not implemented yet!")
-        Response(HttpStatusCode.Ok)
+        val myans = surveysService.getAnswersUser(idSurvey, idUser)
+        val tmpl = JSON.toJSON(myans)
+        Response(HttpStatusCode.Ok,null, tmpl )
     }
 
     private def putAnswers(idSurvey: String, idUser: String, body: Option[JSON]): Response = {
