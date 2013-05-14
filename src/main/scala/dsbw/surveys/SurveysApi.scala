@@ -187,12 +187,11 @@ class SurveysApi(surveysService: SurveysService, usersService: UsersService) ext
     /** Funcions auxiliars **/
     private def checkSurveyAvailability(myenq: Survey): Boolean = {
         println("*** SurveysApi.checkSurveyDates()")
+        val df= new java.text.SimpleDateFormat("yyyy-MM-dd")
         // Check dates
-        val today = java.util.Calendar.getInstance().getTime()
-        val since= new java.text.SimpleDateFormat("yyyy-MM-dd").parse(myenq.since)
-        val until= new java.text.SimpleDateFormat("yyyy-MM-dd").parse(myenq.until)
-        println("since: "+ since + " - until: "+ until+ " - today: "+ today)
-        if(today.before(since) || today.after(until)){
+        val today = df.format(java.util.Calendar.getInstance().getTime())
+        println("since: "+ myenq.since + " - until: "+ myenq.until+ " - today: "+ today)
+        if(today< myenq.since || today> myenq.until){
             return false
         }
         // Check state

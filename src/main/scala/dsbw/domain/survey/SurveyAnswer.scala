@@ -13,6 +13,7 @@ object TypeStateAnswer {
 
 case class SurveyAnswer(
                      var idClient   : String               = ""
+                     , dateAnswer : String= ""
                      , stateAnswer : String= TypeStateAnswer.Responding
 		             , answered : Option[List[Answer]] = None
                      ) {
