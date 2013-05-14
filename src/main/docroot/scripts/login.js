@@ -91,10 +91,10 @@ function signIn() {
         $('#lpwd2').attr('class','fieldError');
         error = true;
     }
-    else if (!isValidField(email)) {
+    /*else if (!isValidField(email)) {
         $('#lemail').attr('class','fieldError');
         error = true;
-    }
+    }   */
     else {
        var user = new User(username, pwd, email);
        currentUser = user;
