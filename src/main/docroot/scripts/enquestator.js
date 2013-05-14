@@ -621,10 +621,10 @@ function answerSurvey() {
     answer.stateAnswer = "done";
     var jsonAnswer = answer;
     console.log("answer = " + JSON.stringify(jsonAnswer));
-    //var loc = '/api/survey/'+currentSurvey.id+ '/answers/';
-    //sendEvent(loc, 'POST', jsonAnswer, null, surveyAnswered);
-    var loc = '/api/survey/'+currentSurvey.id+ '/answers/51917029b45d6da4c48979fc/';
-    sendEvent(loc, 'PUT', jsonAnswer, null, surveyAnswered);
+    var loc = '/api/survey/'+currentSurvey.id+ '/answers/';
+    sendEvent(loc, 'POST', jsonAnswer, null, surveyAnswered);
+    //var loc = '/api/survey/'+currentSurvey.id+ '/answers/51917029b45d6da4c48979fc/';
+    //sendEvent(loc, 'PUT', jsonAnswer, null, surveyAnswered);
 }
 
 function surveyAnswered(data){
