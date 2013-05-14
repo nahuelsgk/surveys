@@ -45,6 +45,12 @@ input[type=submit], input[type=button] {
 
 }
 
+.login input[type=submit], .login-help input[type=submit], .logout input[type=submit]{
+    background: #cde5ef;
+    color: #527881;
+    font-weight: bold;
+}
+
 body {
     background: url(../img/background.png) repeat-x left top;
     background-attachment:fixed;
@@ -91,6 +97,10 @@ div#left{
 }
 
 menu.main, #copyright {
+    margin-bottom: 10px;
+}
+
+menu.main, #loginSection {
     margin-bottom: 10px;
 }
 
@@ -341,4 +351,126 @@ menu.main a.hidden{
 
 .optionDiv {
     width:230px;
+}
+
+#loginSection {
+    padding:10px;
+}
+
+.login p.remember_me {
+  float: left;
+  line-height: 31px;
+}
+.login p.remember_me label {
+  font-size: 12px;
+  color: #777;
+  cursor: pointer;
+}
+.login p.remember_me input {
+  position: relative;
+  bottom: 1px;
+  margin-right: 4px;
+  vertical-align: middle;
+}
+
+.login-help {
+  margin: 5px 0;
+  font-size: 11px;
+  color: #2a85a1;
+  text-align: left;
+}
+.login-help a {
+  color: #2a85a1;
+  text-decoration: none;
+}
+.login-help a:hover {
+  text-decoration: underline;
+}
+
+:-moz-placeholder {
+  color: #c9c9c9 !important;
+  font-size: 13px;
+}
+
+::-webkit-input-placeholder {
+  color: #ccc;
+  font-size: 13px;
+}
+
+.login p.submit {
+  text-align: right;
+}
+
+.login input[type=text], .login input[type=password] {
+  width: 99%;
+  height: 25px;
+  margin:2px;
+}
+
+.login h1 {
+  line-height: 20px;
+  font-size: 15px;
+  font-weight: bold;
+  color: #555;
+  text-align: center;
+}
+
+#signIn {
+    float:right;
+}
+
+#loginBtn {
+    width:100px;
+}
+
+#loginfeedback{
+    font-size:12px;
+    color: red;
+    text-align: center;
+}
+
+#logoutBtn {
+    width:100px;
+}
+
+.logout p {
+    text-align: center;
+}
+
+.signInContainer {
+    width:100%;
+    padding:10px;
+}
+
+.signInContainer input[type=text],  .signInContainer input[type=password]{
+    width:50%;
+    height: 25px;
+    margin-bottom: 5px;
+}
+
+.signInContainer input[type=submit] {
+    width: 120px;
+    margin-top: 10px;
+    float: right;
+}
+
+.signInContainer label {
+    width: 50%;
+    float:left;
+}
+
+.signInContainer form {
+    padding-top:10px;
+    width:300px;
+}
+
+.signInError {
+   font-size:14px;
+   color: red;
+   padding-bottom:5px;
+   text-align: center;
+}
+
+.fieldError {
+    color: red;
 }

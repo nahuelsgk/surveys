@@ -33,9 +33,7 @@ function sendEvent(uri, method, data, done, success, error){
         }
     });
 
-    request.fail(function() {
-        console.log('request failed :/');
-    });
+    request.fail(error);
 	if(done){
 	    request.done(done(request));
 	}

@@ -3,6 +3,8 @@ var CREATE_SURVEY = 0;
 var LIST_SURVEYS = 1;
 var EDIT_SURVEY = 2;
 var ANSWER_SURVEY = 3;
+var SIGN_IN = 4;
+var WELCOME_VIEW = 5;
 var currentSurvey;
 var surveys = new Object();
 var secret = new Object();
@@ -152,9 +154,8 @@ function updateSurvey() {
 function surveyUpdatedCorrectly() {
     $('#notification').text('Survey updated correctly!');
     $('#notification').attr('class','info');
+    window.scrollTo( 0, 0) ;
 
-    window.scrollTo(0, 0);
-    console.log('Survey updated correctly');
 }
 
 function surveyUpdateError() {
@@ -263,6 +264,11 @@ function renderListSurveys(listOfSurveys) {
         var noSurvey = $('<span>No surveys today</span>');
 	    surveysHtmlIni.append(noSurvey);
     }
+    /*$('body').on('click', '.surveyItem', function(){           //TODO: canviar!! sino s'afegeixen masses listeners
+      var id = $(this).attr('name');
+      sendEvent('/api/survey/'+id, 'GET', null, null, updateCurrentSurvey);
+    });     */
+
 
     displayContent(surveysHtmlIni, LIST_SURVEYS);
 }
@@ -274,6 +280,7 @@ function listSurveys() {
 
 function createSurvey() {
     cleanView(currentView);
+    //$('#dynamicContent').show();
     renderCreateForm();
     currentView = CREATE_SURVEY;
 }
@@ -294,12 +301,19 @@ function cleanView(view) {
         case LIST_SURVEYS:
             $('#surveysList').remove();
             break;
-	case EDIT_SURVEY:
-	    $('#dynamicContent').empty();
-	    break;
-	case ANSWER_SURVEY:
-	     $('#dynamicContent').empty();
+        case EDIT_SURVEY:
+            $('#dynamicContent').empty();
+            break;
+        case ANSWER_SURVEY:
+             $('#dynamicContent').empty();
          break;
+         case SIGN_IN:
+            $('.signInContainer').remove();
+         break;
+         case WELCOME_VIEW:
+            $('.signInContainer').remove();
+         break;
+
     }
 }
 
@@ -432,8 +446,6 @@ function enableAddQuestions() {
         addNewQuestion();
     });
 }
-
-
 
 function sendGetSurveyQuestions(id){
     var loc = '/api/survey/'+id+ '/answers/';

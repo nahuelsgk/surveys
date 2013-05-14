@@ -5,9 +5,11 @@ import dsbw.json.JSON
 import dsbw.server.{Server, HttpStatusCode, Response, Api}
 import dsbw.domain.survey.{StatesSurvey, Survey, SurveyAnswer, Answer}
 import org.bson.types.ObjectId
+import dsbw.domain.user.User
+import javax.xml.ws
 
 /* Surveys API */
-class SurveysApi(surveysService: SurveysService) extends Api {
+class SurveysApi(surveysService: SurveysService, usersService: UsersService) extends Api {
 
     val PatternGetSurveyId      = "GET /api/survey/(\\w+)".r
     val PatternPutSurveyId      = "PUT /api/survey/(\\w+)".r
@@ -15,6 +17,8 @@ class SurveysApi(surveysService: SurveysService) extends Api {
     val PatternGetAnswersUser   = "GET /api/survey/(\\w+)/answers/(\\w+)/".r
     val PatternPutAnswers       = "PUT /api/survey/(\\w+)/answers/(\\w+)/".r
     val PatternPostAnswers      = "POST /api/survey/(\\w+)/answers/".r
+
+    val PatternGetUserId  = "GET /api/user/(\\w+)".r
 
     def service(
         method: String,
@@ -24,15 +28,18 @@ class SurveysApi(surveysService: SurveysService) extends Api {
         body: Option[JSON] = None
     ): Response = {
         (method + " " + uri) match {
-            case "POST /api/survey"                      => postSurvey(body)
+            case "POST /api/survey" => postSurvey(body)
             case PatternGetAnswersUser(idSurvey, idUser) => getAnswersUser(idSurvey, idUser, body)
-            case PatternGetAnswers(id)                   => getAnswers(id)
-            case PatternGetSurveyId(id)                  => getSurveyById(id)
-            case PatternPutAnswers(idSurvey, idUser)     => putAnswers(idSurvey, idUser, body)
-            case PatternPostAnswers(idSurvey)            => postAnswers(idSurvey, body)
-            case PatternPutSurveyId(id)                  => putSurvey(id, body)
-            case "GET /api/surveys"                      => getAllSurveys
-            case _                                       => Response(HttpStatusCode.NotFound)
+            case PatternGetAnswers(id) => getAnswers(id)
+            case PatternGetSurveyId(id) => getSurveyById(id)
+            case PatternPutAnswers(idSurvey, idUser) => putAnswers(idSurvey, idUser, body)
+            case PatternPostAnswers(idSurvey)=> postAnswers(idSurvey, body)
+            case PatternPutSurveyId(id) => putSurvey(id, body)
+            case "GET /api/surveys" => getAllSurveys
+            case "POST /api/user" => postUser(body)
+            case PatternGetUserId(id) => getUser(id)
+            case "POST /api/login" => loginUser(body)
+            case _ => Response(HttpStatusCode.NotFound)
         }
     }
 
@@ -195,13 +202,57 @@ class SurveysApi(surveysService: SurveysService) extends Api {
         return true
     }
 
+    private def postUser(body: Option[JSON]): Response = {
+        if (body.isDefined) {
+            val user = JSON.fromJSON[User](body.get)
+            if(!usersService.existsUserName(user)) {
+                val id = usersService.createUser(user)
+                println("userCreated: " + user)
+                val uri = "/api/user/" + id
+                val headers = Map("Location" -> uri)
+                Response(HttpStatusCode.Created, headers, "{}")
+            }
+            else {
+                println("user " + user + " already exists")
+                Response(HttpStatusCode.Forbidden)
+            }
+        }
+        else {
+            Response(HttpStatusCode.BadRequest)
+        }
+    }
+
+    private def getUser(id: String): Response = {
+        val user = usersService.getUser(id)
+        val json = JSON.toJSON(user)
+        Response(HttpStatusCode.Ok, null, json)
+    }
+
+    private def loginUser(body: Option[JSON]): Response = {
+        if (body.isDefined) {
+            val user = JSON.fromJSON[User](body.get)
+            val id = usersService.login(user)
+
+            if(id != null)  {
+                val uri = "/api/user/" + id
+                val headers = Map("Location" -> uri)
+                Response(HttpStatusCode.Ok, headers, "{}")
+            }
+            else Response(HttpStatusCode.Unauthorized)
+        }
+        else {
+            Response(HttpStatusCode.BadRequest)
+        }
+    }
 }
 
 object SurveysApp extends App {
     val db = new DB(dbHostName, dbPort, dbName, username, pwd)
     val surveysRepository = new SurveysRepository(new SurveysDao(db))
+    val usersRepository = new UsersRepository(new UsersDao(db))
     val surveysService = new SurveysService(surveysRepository)
+    val usersService = new UsersService(usersRepository)
 
-    val server = new Server(new SurveysApi(surveysService), webServerPort)
+    val server = new Server(new SurveysApi(surveysService, usersService), webServerPort)
     server.start()
 }

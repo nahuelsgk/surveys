@@ -7,7 +7,7 @@ import scala.collection.mutable.ListBuffer
 import org.bson.types.ObjectId
 import com.mongodb.casbah.commons.TypeImports.ObjectId
 import com.novus.salat.annotations.raw.Salat
-import dsbw.domain.survey.StatesSurvey
+import dsbw.domain.survey.{Survey, StatesSurvey}
 
 /** A record representing the scheme of Surveys stored in the surveys collection */
 case class SurveysRecord(
@@ -40,6 +40,14 @@ case class AnswerRecord(
 			   , options     : List[String] = List()
 			   )
 
+case class UserRecord (
+                          _id: ObjectId = new ObjectId(),
+                          userName: String,
+                          password: String,
+                          email: String,
+                          surveys: List[String] = List()
+                          )
+
 /** Surveys Data Access Object */
 class SurveysDao(db: DB) extends MongoDao[SurveysRecord](db.surveys) {
     def getSecretById(id: String): String = {
@@ -52,11 +60,17 @@ class SurveysDao(db: DB) extends MongoDao[SurveysRecord](db.surveys) {
     }
 }
 
+class UsersDao(db: DB) extends MongoDao[UserRecord](db.users) {
+
+
+}
+
 /**
  * Surveys Repository
  * A repository uses a DAO but doesn't expose all the DB centric API of the DAO
  */
 class SurveysRepository(dao: SurveysDao) {
+
     def listSurveys(): ListBuffer[SurveysRecord] = {
         println("*** SurveysRepository.listSurveys()")
         val surveysCursor = dao.findAll
@@ -198,5 +212,28 @@ class SurveysRepository(dao: SurveysDao) {
                 println(e.getStackTraceString)
             }
         }
+    }
+}
+
+class UsersRepository(dao: UsersDao) {
+
+    def createUser(userRecord: UserRecord) {
+        dao.save(userRecord)
+    }
+
+    def getUser(id: String) : UserRecord = {
+        dao.findOneByID(new ObjectId(id)).get;
+    }
+
+    def loginUser(userName: String, pass: String): Option[UserRecord] = {
+        val query = Map("userName" -> userName, "password" -> pass)
+        dao.findOne(query)
+    }
+
+    def existsUserName(userName: String): Boolean = {
+        val query = Map("userName" -> userName)
+        val f = dao.findOne(query)
+        println("User " + userName + " exists " + f.isDefined)
+        f.isDefined
     }
 }

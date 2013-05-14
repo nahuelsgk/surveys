@@ -4,6 +4,7 @@ import collection.mutable.ListBuffer
 import org.bson.types.ObjectId
 import dsbw.domain.survey.Survey
 import dsbw.domain.survey.SurveyAnswer
+import dsbw.domain.user.User
 
 class SurveysService(surveysRepository: SurveysRepository) {
 
@@ -84,5 +85,38 @@ class SurveysService(surveysRepository: SurveysRepository) {
         println("Survey gotten: "+ id);
         val sur= surveysRepository.getSurvey(id);
         Survey.fromRecord(sur)
+    }
+
+
+}
+
+class UsersService(usersRepository: UsersRepository) {
+
+    def existsUserName(user: User): Boolean = {
+        println("existsUserName " + user.userName)
+        usersRepository.existsUserName(user.userName)
+    }
+
+    def createUser(user: User) : String = {
+        println("User to create: " + user)
+        val userRecord = user.toRecord()
+        usersRepository.createUser(userRecord)
+        userRecord._id.toString
+    }
+
+    def getUser(id: String): User = {
+        val user = usersRepository.getUser(id)
+        User.fromRecord(user)
+    }
+
+    def login(user: User): String = {
+        val u = usersRepository.loginUser(user.userName, user.password)
+        println("User logged: " + u)
+        if (u.isDefined) {
+            u.get._id.toString
+        }
+        else {
+            return null
+        }
     }
 }

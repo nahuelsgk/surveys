@@ -8,11 +8,13 @@ import com.mongodb.casbah.commons.MongoDBObject
 class DB(hostName: String, port: Int, dbName: String, username: String, pwd: String){
   val db = MongoConnection(hostName, port)(dbName)
   db.authenticate(username, pwd)
-  val surveys = db("surveyss")
+  val surveys = db("surveys")
+  val users = db("users")
 
   /** Initialize the DB here, mostly, ensure indexes */
   def init() {
-    surveys.ensureIndex(MongoDBObject("date" -> -1))
+      surveys.ensureIndex(MongoDBObject("date" -> -1))
+      users.ensureIndex(MongoDBObject("date" -> -1))
   }
 
   /** In case you want to reset the DB. Warning! This will remove all the data! */
