@@ -641,6 +641,20 @@ function surveyAnswered(data){
 
 }
 
+function sendGetSurveyQuestionsByUser(surveyId, userId){
+    var loc = '/api/survey/'+ surveyId + '/answers/' + userId + '/';
+    sendEvent(loc, 'GET', null, null, getSurveyQuestions, surveyAlreadyClosed);
+}
+
+function getSurveyQuestions(request) {
+    var obj = $.parseJSON(request.value);
+    var survey = new Survey(obj);
+    currentSurvey = survey;
+    //console.log(survey);
+    //console.log("ID: "+survey.id);
+    renderSurveyAnswerForm(survey,true);
+}
+
 function renderForm() {
       var prmstr = window.location.search.substr(1);
       var prmarr = prmstr.split ("&");
@@ -669,7 +683,7 @@ function renderForm() {
             } else if(params.id && params.user) {
                 surveyId = params.id;
                 secret = params.user;
-                sendGetSurveyQuestions(params.id)
+                sendGetSurveyQuestionsByUser(params.id, params.user);
                 console.log("EditRespuestas");
             }
             else renderCreateForm();
