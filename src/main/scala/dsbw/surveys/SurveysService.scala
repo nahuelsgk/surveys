@@ -67,18 +67,28 @@ class SurveysService(surveysRepository: SurveysRepository) {
         }
     }
 
-    def getAnswersUser(idSurvey: String, idClient: String) : SurveyAnswer = {
+    def getAnswersUser(idSurvey: String, idClient: String) : Survey = {
         println("Survey answers from survey "+idSurvey+" of the user "+idClient)
 
         var sur    = surveysRepository.getSurvey(idSurvey)
         var survey = Survey.fromRecord(sur)
 
-        var toReturn = new SurveyAnswer()
-        val l = survey.answers.get
-        l.foreach( e => {
-          if(e.idClient == idClient) toReturn = e
-        })
-        toReturn
+        //var toReturn = new Survey()
+        //val l = survey.answers.get
+        val listFiltered = survey.answers.get.filter( e => e.idClient == idClient)
+        //l.foreach( e => {
+        //  if(e.idClient == idClient) toReturn = e
+        //})
+        new Survey(
+                    id = survey.id,
+                    title = survey.title,
+                    since = survey.since,
+                    until = survey.until,
+                    secret = survey.secret,
+                    state = survey.state,
+                    questions = survey.questions,
+                    answers= Some(listFiltered)
+                )
     }
 
     def getSurvey(id: String) : Survey = {
