@@ -9,6 +9,7 @@ var currentSurvey;
 var surveys = new Object();
 var secret = new Object();
 var surveyId = new Object();
+var userId;
 
 function renderLastChangeNotification(){
     date = new Date();
@@ -469,16 +470,20 @@ function renderAnswers() {
     $('#dynamicContent').append(answers);
 }
 
-function addAnswerBox(a) {
+function addAnswerBox(question, userAnswer) {
 
-    a.id = answerCounter;
+    question.id = answerCounter;
 
     var answer = $('#answerBox').clone();
     answer.attr('class','question');
     answer.attr('id','answerBox' + answerCounter);
-    answer.find('#questionText').html(answerCounter + ". " + a.text);
+    answer.find('#questionText').html(answerCounter + ". " + question.text);
 
     var text = $('<textarea>').attr({class: 'answerTextArea', id: AREA_TAG + answerCounter, row: '3', cols: '30'})
+    if(userAnswer.length == 1 && userAnswer[0].idClient == userId){
+        text.val(userAnswer[0].answered[0].options[0]);
+    }
+
     answer.append(text);
     $('#answerList').append(answer);
     ++answerCounter;
@@ -554,10 +559,10 @@ function renderSurveyAnswerForm(survey, createdNow){
             for(var i = 0; i < survey.questions.length; ++i) {
                 switch(survey.questions[i].questionType){
                     case TYPE_TEXT:
-                                addAnswerBox(survey.questions[i]);
+                                addAnswerBox(survey.questions[i],survey.answers);
                                 break;
                     case TYPE_CHOICE:
-                                addAnswerRadio(survey.questions[i]);
+                                addAnswerRadio(survey.questions[i],survey.answers);
                                 break;
                     case TYPE_MULTICHOICE:
                                 addAnswerCheckBox(survey.questions[i]);
@@ -683,6 +688,7 @@ function renderForm() {
             } else if(params.id && params.user) {
                 surveyId = params.id;
                 secret = params.user;
+                userId = params.user;
                 sendGetSurveyQuestionsByUser(params.id, params.user);
                 console.log("EditRespuestas");
             }
