@@ -481,7 +481,7 @@ function addAnswerBox(question, userAnswer) {
 
     var text = $('<textarea>').attr({class: 'answerTextArea', id: AREA_TAG + answerCounter, row: '3', cols: '30'})
     if(userAnswer.length == 1 && userAnswer[0].idClient == userId){
-        text.val(userAnswer[0].answered[0].options[0]);
+        text.val(userAnswer[0].answered[answerCounter - 1].options[0]);
     }
 
     answer.append(text);
@@ -489,7 +489,7 @@ function addAnswerBox(question, userAnswer) {
     ++answerCounter;
 }
 
-function addAnswerRadio(question){
+function addAnswerRadio(question, userAnswer){
     var radio;
     var radioLabel;
     var answer = $('#answerBox').clone();
@@ -507,12 +507,19 @@ function addAnswerRadio(question){
         answer.append(radioLabel);
         //$('#radio' + answerCounter + '_' + i).text("hola");
         answer.append('<br>');
+
+        // Retrieve old answeer
+        if(userAnswer.length == 1 && userAnswer[0].idClient == userId){
+            if(userAnswer[0].answered[answerCounter - 1].options[i] == 'true'){
+                radio.prop('checked',true);
+            }
+        }
     }
     $('#answerList').append(answer);
     ++answerCounter;
 }
 
-function addAnswerCheckBox(question){
+function addAnswerCheckBox(question, userAnswer){
     var checkbox;
     var checkboxLabel;
     var answer = $('#answerBox').clone();
@@ -530,6 +537,12 @@ function addAnswerCheckBox(question){
         answer.append(checkboxLabel);
         //$('#radio' + answerCounter + '_' + i).text("hola");
         answer.append('<br>');
+        // Retrieve old answeer
+        if(userAnswer.length == 1 && userAnswer[0].idClient == userId){
+           if(userAnswer[0].answered[answerCounter - 1].options[i] == 'true'){
+               checkbox.prop('checked',true);
+           }
+        }
     }
     $('#answerList').append(answer);
     ++answerCounter;
@@ -565,7 +578,7 @@ function renderSurveyAnswerForm(survey, createdNow){
                                 addAnswerRadio(survey.questions[i],survey.answers);
                                 break;
                     case TYPE_MULTICHOICE:
-                                addAnswerCheckBox(survey.questions[i]);
+                                addAnswerCheckBox(survey.questions[i],survey.answers);
                                 break;
                 }
             }
@@ -587,7 +600,9 @@ function getCheckOrRadioAnswers(answerBox, questionType){
       var answers = new Array();
       answerBox.find($("input[type='" + questionType + "']")).each(function(){
         if($(this).is(":checked")){
-            answers.push(($(this).val()));
+            answers.push('true');
+        }else{
+            answers.push('false');
         }
       })
       return answers;
