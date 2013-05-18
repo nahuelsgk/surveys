@@ -684,7 +684,7 @@ function surveySaved(data){
 }
 
 function sendGetSurveyQuestionsByUser(surveyId, userId){
-    var loc = '/api/survey/'+ surveyId + '/answers/' + userId + '/';
+    var loc = '/api/survey/'+ surveyId + '/answers/' + userId;
     sendEvent(loc, 'GET', null, null, getSurveyQuestions, surveyAlreadyClosed);
 }
 

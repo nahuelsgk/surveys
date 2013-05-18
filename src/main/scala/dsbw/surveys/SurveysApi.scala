@@ -14,8 +14,8 @@ class SurveysApi(surveysService: SurveysService, usersService: UsersService) ext
     val PatternGetSurveyId      = "GET /api/survey/(\\w+)".r
     val PatternPutSurveyId      = "PUT /api/survey/(\\w+)".r
     val PatternGetAnswers       = "GET /api/survey/(\\w+)/answers/".r
-    val PatternGetAnswersUser   = "GET /api/survey/(\\w+)/answers/(\\w+)/".r
-    val PatternPutAnswers       = "PUT /api/survey/(\\w+)/answers/(\\w+)/".r
+    val PatternGetAnswersUser   = "GET /api/survey/(\\w+)/answers/(\\w+)".r
+    val PatternPutAnswers       = "PUT /api/survey/(\\w+)/answers/(\\w+)".r
     val PatternPostAnswers      = "POST /api/survey/(\\w+)/answers/".r
 
     val PatternGetUserId  = "GET /api/user/(\\w+)".r
