@@ -157,7 +157,7 @@ class SurveysRepository(dao: SurveysDao) {
             ,false)
     }
 
-    def putAnswers(surveyId: ObjectId, answer: SurveyAnswerRecord) {
+    def updateAnswers(surveyId: ObjectId, answer: SurveyAnswerRecord) {
         println("*** SurveysRepository.putAnswers()")
         var query = Map("_id" -> surveyId, "answers.idClient" -> answer.idClient)
         dao.update(

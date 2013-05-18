@@ -101,7 +101,7 @@ class SurveysApi(surveysService: SurveysService, usersService: UsersService) ext
             val surveyAnswers = JSON.fromJSON[SurveyAnswer](body.get)
             surveyAnswers.setId(idUser)
             println("Survey Answer: " + surveyAnswers)
-            if(surveysService.putAnswers(idSurvey, surveyAnswers)){
+            if(surveysService.updateAnswers(idSurvey, surveyAnswers)){
                 Response(HttpStatusCode.NoContent)
             }
             else{
