@@ -609,7 +609,7 @@ function getCheckOrRadioAnswers(answerBox, questionType){
 }
 
 
-function answerSurvey() {
+function answerSurvey(state) {
     //console.log("Updating survey: "+currentSurvey.title);
     var indexQuestion = 0;
     var answer = new AnswerList();
@@ -638,7 +638,7 @@ function answerSurvey() {
         indexQuestion++;
     });
     // Finalitzem l'enquesta
-    answer.stateAnswer = "done";
+    answer.stateAnswer = state;
     var jsonAnswer = answer;
     console.log("answer = " + JSON.stringify(jsonAnswer));
     var loc = '/api/survey/'+currentSurvey.id+ '/answers/';
