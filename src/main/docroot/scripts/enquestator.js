@@ -658,28 +658,29 @@ function answerSurvey(state) {
 }
 
 function surveyAnswered(data){
-     $('#notificationAnswer').text('Survey answered!');
-     $('#notificationAnswer').attr('class','info');
-     var obj = $.parseJSON(data.value);
-     userId = obj.userId;
-     var urlAnswer = "http://localhost:8080/?id=" + surveyId + "&user=" + userId;
-     $("#linkanswer").html(urlAnswer);
-     $("#linkanswer").attr("href",urlAnswer);
-     $("#labellinkanswer").text("Your answer link: ");
-}
-
-function surveySaved(data){
-    $('#notificationAnswer').text('Survey answered!');
-    $('#notificationAnswer').attr('class','info');
-
     var obj = $.parseJSON(data.value);
     userId = obj.userId;
+    showSurveyAnsweredNotification();
 
+}
+
+function showSurveyAnsweredNotification(){
+    $('#notificationAnswer').text('Survey answered!');
+    $('#notificationAnswer').attr('class','info');
+}
+
+function showLink(){
     var urlAnswer = "http://localhost:8080/?id=" + surveyId + "&user=" + userId;
     $("#linkanswer").html(urlAnswer);
     $("#linkanswer").attr("href",urlAnswer);
     $("#labellinkanswer").text("Your answer link: ");
+}
 
+function surveySaved(data){
+    var obj = $.parseJSON(data.value);
+    userId = obj.userId;
+    showSurveyAnsweredNotification();
+    showLink();
 }
 
 function sendGetSurveyQuestionsByUser(surveyId, userId){
