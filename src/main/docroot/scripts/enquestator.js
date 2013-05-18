@@ -9,7 +9,7 @@ var currentSurvey;
 var surveys = new Object();
 var secret = new Object();
 var surveyId = new Object();
-var userId;
+var userId = "";
 
 function renderLastChangeNotification(){
     date = new Date();
@@ -583,8 +583,11 @@ function renderSurveyAnswerForm(survey, createdNow){
                 }
             }
       }
+      $('#saveSurveyAnswers').click(function(){
+            answerSurvey("pending");
+      })
       $('#publishSurveyAnswers').click(function(){
-            answerSurvey();
+            answerSurvey("done");
       });
 }
 
@@ -609,7 +612,7 @@ function getCheckOrRadioAnswers(answerBox, questionType){
 }
 
 
-function answerSurvey() {
+function answerSurvey(state) {
     //console.log("Updating survey: "+currentSurvey.title);
     var indexQuestion = 0;
     var answer = new AnswerList();
@@ -638,23 +641,41 @@ function answerSurvey() {
         indexQuestion++;
     });
     // Finalitzem l'enquesta
-    answer.stateAnswer = "done";
+    answer.stateAnswer = state;
     var jsonAnswer = answer;
     console.log("answer = " + JSON.stringify(jsonAnswer));
-    var loc = '/api/survey/'+currentSurvey.id+ '/answers/';
-    sendEvent(loc, 'POST', jsonAnswer, null, surveyAnswered);
+    if(userId == "" ){
+        var loc = '/api/survey/'+currentSurvey.id+ '/answers/';
+        sendEvent(loc, 'POST', jsonAnswer, null, surveyAnswered);
+    }else{
+        var loc = '/api/survey/'+currentSurvey.id+ '/answers/' + userId;
+        sendEvent(loc, 'PUT', jsonAnswer, null, surveyAnswered);
+    }
+
+
     //var loc = '/api/survey/'+currentSurvey.id+ '/answers/51917029b45d6da4c48979fc/';
     //sendEvent(loc, 'PUT', jsonAnswer, null, surveyAnswered);
 }
 
 function surveyAnswered(data){
+     $('#notificationAnswer').text('Survey answered!');
+     $('#notificationAnswer').attr('class','info');
+     var obj = $.parseJSON(data.value);
+     userId = obj.userId;
+     var urlAnswer = "http://localhost:8080/?id=" + surveyId + "&user=" + userId;
+     $("#linkanswer").html(urlAnswer);
+     $("#linkanswer").attr("href",urlAnswer);
+     $("#labellinkanswer").text("Your answer link: ");
+}
+
+function surveySaved(data){
     $('#notificationAnswer').text('Survey answered!');
     $('#notificationAnswer').attr('class','info');
 
     var obj = $.parseJSON(data.value);
-    secret = obj.userId;
+    userId = obj.userId;
 
-    var urlAnswer = "http://localhost:8080/?id=" + surveyId + "&user=" + secret;
+    var urlAnswer = "http://localhost:8080/?id=" + surveyId + "&user=" + userId;
     $("#linkanswer").html(urlAnswer);
     $("#linkanswer").attr("href",urlAnswer);
     $("#labellinkanswer").text("Your answer link: ");
@@ -702,7 +723,6 @@ function renderForm() {
                 sendEvent('/api/survey/'+params.id, 'GET', null, null, updateCurrentSurvey);
             } else if(params.id && params.user) {
                 surveyId = params.id;
-                secret = params.user;
                 userId = params.user;
                 sendGetSurveyQuestionsByUser(params.id, params.user);
                 console.log("EditRespuestas");
