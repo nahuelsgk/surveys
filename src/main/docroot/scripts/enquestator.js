@@ -7,7 +7,7 @@ var SIGN_IN = 4;
 var WELCOME_VIEW = 5;
 var currentSurvey;
 var surveys = new Object();
-var answerList = new Object();
+var answerListList = new Object();
 var secret = new Object();
 var surveyId = new Object();
 var userId;
@@ -253,13 +253,12 @@ function renderSurveyAnswers(answers) {
         var count = 0;
         var size = answers.length;
         for (var i = 0; i < size; ++i) {      // iteration over the all survey JSONs
-            var answer = new Answer(answers[i]);
-            if (typeof answer === 'undefined') {
+            var listListAnswers = new AnswerListRandomName(answers[i]);
+            if (typeof listListAnswers === 'undefined') {
                 console.log('undefined answer');
-            }
-            else {
-                var key = answer.id;
-                answerList[key] = answer;
+            } else {
+                var key = listListAnswers.id;
+                answerListList[key] = answer;
                 var item = listAnswer(answer);
                 list.append(item);
                 count = count + 1;
@@ -269,10 +268,6 @@ function renderSurveyAnswers(answers) {
             var noAnswer = $('<span>No surveys today</span>');
     	    surveysHtmlIni.append(noAnswer);
         }
-        /*$('body').on('click', '.surveyItem', function(){           //TODO: canviar!! sino s'afegeixen masses listeners
-          var id = $(this).attr('name');
-          sendEvent('/api/survey/'+id, 'GET', null, null, updateCurrentSurvey);
-        });     */
 
 
         displayContent(surveysHtmlIni, LIST_SURVEYS);
@@ -358,8 +353,13 @@ function cleanView(view) {
     }
 }
 
-function listAnswer(answer) {
+function prepareListAnswers(listAnswers) {
+    var item = $('#listAnswerItem').clone(true); //TODO crear listAnswerItem
+    item.attr('id', '');
+    item.attr('class', '');
+    
 
+    return item;
 }
 
 function listSurvey(survey) {
@@ -592,7 +592,7 @@ function addAnswerCheckBox(question, userAnswer){
 }
 
 
-function renderSurveyAnswerForm(survey, createdNow){
+function renderSurveyAnswerForm(survey, createdNow) {
       answerCounter = 1;
 //    cleanView(currentView);
       currentView = ANSWER_SURVEY;
@@ -666,17 +666,17 @@ function answerSurvey(state) {
         idQuestion = currentSurvey.questions[indexQuestion].id;
         answerType = currentSurvey.questions[indexQuestion].questionType;
         switch(answerType){
-                            case TYPE_TEXT:
-                                        answerOptions = getTextAnswers($(this))
-                                        break;
-                            case TYPE_CHOICE:
-                                        answerOptions = getCheckOrRadioAnswers($(this),'radio');
-                                        break;
-                            case TYPE_MULTICHOICE:
-                                        answerOptions = getCheckOrRadioAnswers($(this),'checkbox');
-                                        break;
-         }
-        //answerText = $(this).find('textarea').val();
+            case TYPE_TEXT:
+                answerOptions = getTextAnswers($(this))
+                break;
+            case TYPE_CHOICE:
+                answerOptions = getCheckOrRadioAnswers($(this),'radio');
+                break;
+            case TYPE_MULTICHOICE:
+                answerOptions = getCheckOrRadioAnswers($(this),'checkbox');
+                break;
+        }
+
         answer.answered.push(new Answer(idQuestion,answerType,answerOptions));
         indexQuestion++;
     });

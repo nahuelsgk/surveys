@@ -92,6 +92,10 @@ function Answer() {
     }
 }
 
+function AnswerListRandomName() {
+
+}
+
 
 function User() {
     switch (arguments.length) {
