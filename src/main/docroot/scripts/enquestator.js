@@ -7,6 +7,7 @@ var SIGN_IN = 4;
 var WELCOME_VIEW = 5;
 var currentSurvey;
 var surveys = new Object();
+var answerList = new Object();
 var secret = new Object();
 var surveyId = new Object();
 var userId;
@@ -22,7 +23,8 @@ function renderCreateForm(){
     template_form.attr('class', '');
     template_form.attr('id', 'editForm');
     template_form.find('form').attr('id', 'create_survey_form');
-    $('#dynamicContent').append(template_form);
+    $('#dynamicContent').ap
+    pend(template_form);
     $('#dynamicContent').show();
     initDatePicker();
     currentView = CREATE_SURVEY;
@@ -235,8 +237,46 @@ function updateCurrentSurvey(survey){
     $("#linkadmin").attr("href",urlAdmin);
     $("#labellinkadmin").text("");
 
-    renderEditSurvey(currentSurvey);
+    if(currentSurvey.answers.length > 0) {
+        renderSurveyAnswers(currentSurvey.answers);//funcion list answers
+    }
+    else renderEditSurvey(currentSurvey);
  }
+
+function renderSurveyAnswers(answers) {
+    $('#dynamicContent').empty();
+        var surveysHtmlIni = $('<div id="surveysList">');
+        var header = $('<h2 id="contentTitle">Surveys list</h2>');
+        surveysHtmlIni.append(header);
+        var list = $('<ul/>');
+        surveysHtmlIni.append(list);
+        var count = 0;
+        var size = answers.length;
+        for (var i = 0; i < size; ++i) {      // iteration over the all survey JSONs
+            var answer = new Answer(answers[i]);
+            if (typeof answer === 'undefined') {
+                console.log('undefined answer');
+            }
+            else {
+                var key = answer.id;
+                answerList[key] = answer;
+                var item = listAnswer(answer);
+                list.append(item);
+                count = count + 1;
+            }
+        }
+        if (count == 0) {
+            var noAnswer = $('<span>No surveys today</span>');
+    	    surveysHtmlIni.append(noAnswer);
+        }
+        /*$('body').on('click', '.surveyItem', function(){           //TODO: canviar!! sino s'afegeixen masses listeners
+          var id = $(this).attr('name');
+          sendEvent('/api/survey/'+id, 'GET', null, null, updateCurrentSurvey);
+        });     */
+
+
+        displayContent(surveysHtmlIni, LIST_SURVEYS);
+}
 
 function renderListSurveys(listOfSurveys) {
     $('#dynamicContent').empty();
@@ -318,6 +358,9 @@ function cleanView(view) {
     }
 }
 
+function listAnswer(answer) {
+
+}
 
 function listSurvey(survey) {
     var item = $('#listSurveyItem').clone(true);
