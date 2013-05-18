@@ -73,12 +73,7 @@ class SurveysService(surveysRepository: SurveysRepository) {
         var sur    = surveysRepository.getSurvey(idSurvey)
         var survey = Survey.fromRecord(sur)
 
-        //var toReturn = new Survey()
-        //val l = survey.answers.get
         val listFiltered = survey.answers.get.filter( e => e.idClient == idClient)
-        //l.foreach( e => {
-        //  if(e.idClient == idClient) toReturn = e
-        //})
         new Survey(
                     id = survey.id,
                     title = survey.title,
