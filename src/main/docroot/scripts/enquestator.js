@@ -653,7 +653,7 @@ function answerSurvey(state) {
         sendEvent(loc, 'POST', jsonAnswer, null, surveyAnswered);
     }else{
         var loc = '/api/survey/'+currentSurvey.id+ '/answers/' + userId;
-        sendEvent(loc, 'PUT', jsonAnswer, null, surveyAnswered);
+        sendEvent(loc, 'PUT', jsonAnswer, null, showSurveyAnsweredNotification());
     }
 
 
