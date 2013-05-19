@@ -644,6 +644,10 @@ function answerSurvey(state) {
     answer.stateAnswer = state;
     var jsonAnswer = answer;
     console.log("answer = " + JSON.stringify(jsonAnswer));
+    // Mostrem link si es un save
+    if(state == "pending"){
+        showLink();
+    }
     if(userId == "" ){
         var loc = '/api/survey/'+currentSurvey.id+ '/answers/';
         sendEvent(loc, 'POST', jsonAnswer, null, surveyAnswered);
@@ -661,7 +665,6 @@ function surveyAnswered(data){
     var obj = $.parseJSON(data.value);
     userId = obj.userId;
     showSurveyAnsweredNotification();
-
 }
 
 function showSurveyAnsweredNotification(){
