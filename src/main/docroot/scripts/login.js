@@ -36,8 +36,8 @@ function correctlyLogged(username, sayHello) {
     $('#logoutBtn').click(function() {
         logOut();
     });
-
-   if (sayHello) sayWelcome();
+    $('#listSurveys').show();
+    if (sayHello) sayWelcome();
 }
 
 function logOut() {
@@ -48,6 +48,7 @@ function logOut() {
     $('#login-help').attr('class','login-help');
     $('#logout').attr('class','hidden');
     sayGoodBye();
+    $('#listSurveys').hide();
     document.cookie=null;
     var userCookie = getCookie();
     if (userCookie != null) {
@@ -192,6 +193,6 @@ function checkCookie() {
         correctlyLogged(userCookie.username, false);
     }
     else {  // el client no esta loguejat
-
+        $('#listSurveys').hide();
     }
 }
