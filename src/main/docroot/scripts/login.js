@@ -1,3 +1,4 @@
+var DAYS_WITH_COOKIE = 10;
 var currentUser;
 
 function logIn() {
@@ -21,10 +22,13 @@ function logIn() {
 
 function loginSucceed(data, location) {
     var idUser = location.replace('/api/user/','');
-    correctlyLogged(currentUser.userName);
+    if (idUser!=null && idUser!="") {
+        correctlyLogged(currentUser.userName, true);
+        setCookie(idUser,currentUser.userName, DAYS_WITH_COOKIE);
+    }
 }
 
-function correctlyLogged(username) {
+function correctlyLogged(username, sayHello) {
     $('.login').find('h1').text(username);
     $('.login').find('form').attr('class','hidden');
     $('#login-help').attr('class','hidden');
@@ -33,7 +37,7 @@ function correctlyLogged(username) {
         logOut();
     });
 
-   sayWelcome();
+   if (sayHello) sayWelcome();
 }
 
 function logOut() {
@@ -44,6 +48,12 @@ function logOut() {
     $('#login-help').attr('class','login-help');
     $('#logout').attr('class','hidden');
     sayGoodBye();
+    document.cookie=null;
+    var userCookie = getCookie();
+    if (userCookie != null) {
+        userCookie.expires = null;
+        setCookie(userCookie.id, userCookie.username, userCookie.expires);
+    }
 }
 
 function badlyLogged() {
@@ -115,7 +125,7 @@ function userCreatedFail() {
 }
 
 function userCreated(data, location) {
-    correctlyLogged(currentUser.userName);
+    correctlyLogged(currentUser.userName, true);
     $('#userNotification').text('Your account has been created');
     $('#userNotification').attr('class','success');
     var idUser = location.replace('/api/user/','');
@@ -144,4 +154,42 @@ function sayGoodBye() {
     container.find('form').remove();
     container.find('h1').text('Goodbye!');
     $('#content').append(container);
+}
+
+function getCookie() {
+    var c = document.cookie;
+    console.log('retrieved: '+c);
+    if (c != null) {
+        try {
+            var json = $.parseJSON(c);
+            if (json != null) {
+                var userCookie = new UserCookie(json.id,json.username,json.expires);
+                return userCookie;
+            }
+        }
+        catch(e) {
+            return null;
+        }
+    }
+    return null;
+}
+
+function setCookie(id,username,exdays) {
+    var exdate=new Date();
+    exdate.setDate(exdate.getDate() + exdays);
+    var date = ((exdays==null) ? "" : exdate.toUTCString());
+    var myCookie = new UserCookie(id,username,date);
+    document.cookie = JSON.stringify(myCookie);
+    console.log("cookie: "+document.cookie);
+}
+
+
+function checkCookie() {
+    var userCookie=getCookie();
+    if (userCookie!=null && userCookie.expires != "") {       //el client ja està loguejat
+        correctlyLogged(userCookie.username, false);
+    }
+    else {  // el client no esta loguejat
+
+    }
 }

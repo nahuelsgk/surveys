@@ -754,6 +754,7 @@ function surveyAlreadyClosed(){
 
 $(document).ready(function($) {
      renderForm();
+     checkCookie();
     //renderNewSurveyForm();
 });
 
