@@ -200,6 +200,13 @@ function checkCookie() {
     }
     else {  // el client no esta loguejat
         $('#listSurveys').hide();
+        if (userCookie!=null) {
+            userCookie.username = null;
+            userCookie.id = null;
+            userCookie.expires = null;
+            document.cookie = JSON.stringify(userCookie);
+            console.log("reset cookie: "+document.cookie);
+        }
     }
 }
 
