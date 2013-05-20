@@ -653,7 +653,12 @@ function answerSurvey(state) {
         sendEvent(loc, 'POST', jsonAnswer, null, surveyAnswered);
     }else{
         var loc = '/api/survey/'+currentSurvey.id+ '/answers/' + userId;
-        sendEvent(loc, 'PUT', jsonAnswer, null, showSurveyAnsweredNotification());
+        if(state == "pending"){
+            sendEvent(loc, 'PUT', jsonAnswer, null, showSurveyAnsweredNotification("Your answers has been saved. Please click the link below to continue this survey in the future."));
+        }else if(state == 'done'){
+            sendEvent(loc, 'PUT', jsonAnswer, null, showSurveyAnsweredNotification("Your survey has been send!"));
+        }
+
     }
 
 
@@ -667,8 +672,9 @@ function surveyAnswered(data){
     showSurveyAnsweredNotification();
 }
 
-function showSurveyAnsweredNotification(){
-    $('#notificationAnswer').text('Survey answered!');
+function showSurveyAnsweredNotification(notificationText){
+    $('#notificationAnswer').text(notificationText);
+//    $('#notificationAnswer').text('Survey answered!');
     $('#notificationAnswer').attr('class','info');
 }
 
