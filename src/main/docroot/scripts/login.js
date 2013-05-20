@@ -56,7 +56,7 @@ function logOut() {
     var userCookie = getCookie();
     if (userCookie != null) {
         userCookie.expires = null;
-        setCookie(userCookie.id, userCookie.username, userCookie.expires);
+        resetCookie(userCookie);
     }
 }
 
@@ -195,23 +195,26 @@ function setCookie(id,username,exdays) {
 
 function checkCookie() {
     var userCookie=getCookie();
-    if (userCookie!=null && userCookie.expires != "") {       //el client ja està loguejat
+    if (userCookie!=null && userCookie.expires != "" && userCookie.id != null) {       //el client ja està loguejat
         correctlyLogged(userCookie.username, false);
     }
     else {  // el client no esta loguejat
         $('#listSurveys').hide();
         if (userCookie!=null) {
-            userCookie.username = null;
-            userCookie.id = null;
-            userCookie.expires = null;
-            document.cookie = JSON.stringify(userCookie);
-            console.log("reset cookie: "+document.cookie);
+            resetCookie(userCookie);
         }
     }
 }
 
-function isValidEmail(mail)
-{
+function resetCookie(userCookie) {
+    userCookie.username = null;
+    userCookie.id = null;
+    userCookie.expires = null;
+    document.cookie = JSON.stringify(userCookie);
+    console.log("reset cookie: "+document.cookie);
+}
+
+function isValidEmail(mail) {
  if (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(mail)) {
     return (true)
  }
