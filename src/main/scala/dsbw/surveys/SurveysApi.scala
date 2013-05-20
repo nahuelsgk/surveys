@@ -254,7 +254,7 @@ class SurveysApi(surveysService: SurveysService, usersService: UsersService) ext
             if (cookie.isDefined) {
                 val json = new JSON(cookie.get)
                 val cookieJSON = JSON.fromJSON[CookieJSON](json)
-                idCreator = cookieJSON.id
+                if(cookieJSON.id != null) idCreator = cookieJSON.id
             }
         }
         idCreator
