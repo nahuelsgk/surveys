@@ -404,7 +404,8 @@ function addOptionChoice(idQuestion,divNameTo) {
 
 function enableAddChoices(divNameTo,idQuestion) {
     $(divNameTo).attr('class','questionOptions');
-    $(divNameTo).find('img').click(function() {
+    $(divNameTo).find('img.add_question_icon').unbind('click');
+    $(divNameTo).find('img.add_question_icon').click(function() {
         addOptionChoice(idQuestion, divNameTo);
     });
 }
