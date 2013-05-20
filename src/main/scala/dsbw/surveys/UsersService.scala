@@ -31,4 +31,10 @@ class UsersService(usersRepository: UsersRepository) {
             return null
         }
     }
+
+    def putSurvey(idUser: String, idSurvey: String) {
+        if (!idUser.equals("-1")) {
+            usersRepository.pushSurvey(idUser, idSurvey)
+        }
+    }
 }

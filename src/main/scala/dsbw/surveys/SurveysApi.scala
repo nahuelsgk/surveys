@@ -61,7 +61,7 @@ class SurveysApi(surveysService: SurveysService, usersService: UsersService) ext
                     }
                 }
                 val surveyInfo = surveysService.createSurvey(JSON.fromJSON[Survey](body.get), idCreator)
-
+                usersService.putSurvey(idCreator, surveyInfo("id"))
                 //Es construeix la resposta amb la nova URI amb la id que ha proporcionat la BD
                 val uri = "/api/survey/" + surveyInfo("id")
                 val headers = Map("Location" -> uri)

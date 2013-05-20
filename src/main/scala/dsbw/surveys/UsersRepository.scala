@@ -1,9 +1,11 @@
 package dsbw.surveys
 
-import org.bson.types.ObjectId
+import com.mongodb.casbah.commons.MongoDBObject
+import com.mongodb.casbah.query.Imports._
 import dsbw.mongo.MongoDao
-import com.mongodb.casbah.commons.TypeImports._
-import dsbw.surveys.UserRecord
+import scala.collection.mutable.ListBuffer
+import com.mongodb.casbah.commons.TypeImports.ObjectId
+import dsbw.domain.survey.StatesSurvey
 
 case class UserRecord(
                        _id: ObjectId = new ObjectId(),
@@ -34,6 +36,14 @@ class UsersRepository(dao: UsersDao) {
             println("User " + userName + " exists " + f.isDefined)
             f.isDefined
       }
+
+    def pushSurvey(idUser:String, idSurvey: String) {
+        dao.updateById(
+            new ObjectId(idUser),
+            MongoDBObject("$push" -> (MongoDBObject("surveys" -> idSurvey)))
+        )
+        println("Survey pushed to user: " + getUser(idUser))
+    }
 }
 
 class UsersDao(db: DB) extends MongoDao[UserRecord](db.users) {
