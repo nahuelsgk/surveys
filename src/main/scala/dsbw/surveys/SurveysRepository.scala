@@ -13,6 +13,7 @@ case class SurveysRecord(
     title: String,
     since: String,
     until: String,
+    idCreator: String,
     secret: String,
     state: String = StatesSurvey.Creating,
     questions: List[QuestionRecord] = List(),
@@ -41,14 +42,6 @@ case class AnswerRecord(
    options: List[String] = List()
 )
 
-case class UserRecord(
-     _id: ObjectId = new ObjectId(),
-     userName: String,
-     password: String,
-     email: String,
-     surveys: List[String] = List()
- )
-
 /** Surveys Data Access Object */
 class SurveysDao(db: DB) extends MongoDao[SurveysRecord](db.surveys) {
     def getSecretById(id: String): String = {
@@ -58,10 +51,7 @@ class SurveysDao(db: DB) extends MongoDao[SurveysRecord](db.surveys) {
     }
 }
 
-class UsersDao(db: DB) extends MongoDao[UserRecord](db.users) {
 
-
-}
 
 /**
  * Surveys Repository
@@ -211,25 +201,4 @@ class SurveysRepository(dao: SurveysDao) {
     }
 }
 
-class UsersRepository(dao: UsersDao) {
 
-    def createUser(userRecord: UserRecord) {
-        dao.save(userRecord)
-    }
-
-    def getUser(id: String): UserRecord = {
-        dao.findOneByID(new ObjectId(id)).get;
-    }
-
-    def loginUser(userName: String, pass: String): Option[UserRecord] = {
-        val query = Map("userName" -> userName, "password" -> pass)
-        dao.findOne(query)
-    }
-
-    def existsUserName(userName: String): Boolean = {
-        val query = Map("userName" -> userName)
-        val f = dao.findOne(query)
-        println("User " + userName + " exists " + f.isDefined)
-        f.isDefined
-    }
-}

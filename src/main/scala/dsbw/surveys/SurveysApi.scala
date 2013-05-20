@@ -28,7 +28,7 @@ class SurveysApi(surveysService: SurveysService, usersService: UsersService) ext
         body: Option[JSON] = None
     ): Response = {
         (method + " " + uri) match {
-            case "POST /api/survey" => postSurvey(body)
+            case "POST /api/survey" => postSurvey(headers, body)
             case PatternGetAnswersUser(idSurvey, idUser) => getAnswersUser(idSurvey, idUser, body)
             case PatternGetAnswers(id) => getAnswers(id)
             case PatternGetSurveyId(id) => getSurveyById(id)
@@ -44,12 +44,23 @@ class SurveysApi(surveysService: SurveysService, usersService: UsersService) ext
     }
 
 
-    private def postSurvey(body: Option[JSON]): Response = {
+    private def postSurvey(headersReceived: Map[String, String], body: Option[JSON]): Response = {
         println("*** SurveysApi.postSurvey()")
         try {
             if (body.nonEmpty) {
-
-                val surveyInfo = surveysService.createSurvey(JSON.fromJSON[Survey](body.get))
+                var idCreator = "-1";
+                println("headers " + headersReceived)
+                println("Contains cookie " + headersReceived.contains("cookie"))
+                if(headersReceived.contains("Cookie")) {
+                    val cookie = headersReceived.get("Cookie")
+                    println("Cookie received " + cookie)
+                    if (cookie.isDefined) {
+                        val json = new JSON(cookie.get)
+                        val cookieJSON = JSON.fromJSON[CookieJSON](json)
+                        idCreator = cookieJSON.id
+                    }
+                }
+                val surveyInfo = surveysService.createSurvey(JSON.fromJSON[Survey](body.get), idCreator)
 
                 //Es construeix la resposta amb la nova URI amb la id que ha proporcionat la BD
                 val uri = "/api/survey/" + surveyInfo("id")
@@ -243,6 +254,10 @@ class SurveysApi(surveysService: SurveysService, usersService: UsersService) ext
             Response(HttpStatusCode.BadRequest)
         }
     }
+}
+
+case class CookieJSON(id: String, username: String, expires: String) {
+
 }
 
 object SurveysApp extends App {

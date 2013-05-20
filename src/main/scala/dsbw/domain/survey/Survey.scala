@@ -14,16 +14,18 @@ object StatesSurvey {
 }
 
 case class Survey(
-   id: String = "",
-   title: String,
-   since: String,
-   until: String,
-   secret: String = "",
-   state: String = StatesSurvey.Creating,
-   questions: Option[List[Question]]= None,
-   //answers: Option[Map[Int, List[Answer]]]= None
-   answers: Option[List[SurveyAnswer]]= None
- ) {
+    id: String = "",
+    title: String,
+    since: String,
+    until: String,
+    idCreator: String = "-1",
+    secret: String = "",
+    state: String = StatesSurvey.Creating,
+    questions: Option[List[Question]]= None,
+    //answers: Option[Map[Int, List[Answer]]]= None
+    answers: Option[List[SurveyAnswer]]= None
+ )  {
+
 
     /* Recupera el ID o el genera si cal */
     private def getId: ObjectId = {
@@ -56,6 +58,19 @@ case class Survey(
             , title = this.title
             , since = this.since
             , until = this.until
+            , idCreator = this.idCreator
+            , secret = this.secret
+            , state= this.state
+            , questions= getQuestionRecordList())
+    }
+
+    def toRecord(idC: String): SurveysRecord= {
+        new SurveysRecord(
+            _id = this.getId
+            , title = this.title
+            , since = this.since
+            , until = this.until
+            , idCreator = idC
             , secret = this.secret
             , state= this.state
             , questions= getQuestionRecordList())
@@ -104,6 +119,7 @@ object Survey {
             title = record.title,
             since = record.since,
             until = record.until,
+            idCreator = record.idCreator,
             secret = record.secret,
             state = record.state,
             questions = Some(questions.toList),
