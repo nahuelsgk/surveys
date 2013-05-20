@@ -125,11 +125,13 @@ function userCreatedFail() {
 }
 
 function userCreated(data, location) {
-    correctlyLogged(currentUser.userName, true);
     $('#userNotification').text('Your account has been created');
     $('#userNotification').attr('class','success');
     var idUser = location.replace('/api/user/','');
-    console.log('ID: '+idUser);
+    if (idUser!=null && idUser!="") {
+        correctlyLogged(currentUser.userName, true);
+        setCookie(idUser,currentUser.userName, DAYS_WITH_COOKIE);
+    }
 }
 
 function sayWelcome() {

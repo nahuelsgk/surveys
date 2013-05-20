@@ -35,7 +35,6 @@ function sendEvent(uri, method, data, done, success, error){
     var userCookie = getCookie();
     if (userCookie != null) {
         request.setRequestHeader("cookie", JSON.stringify(userCookie));
-        console.log('REQUEST: '+request);
     }
     request.fail(error);
 	if(done){
