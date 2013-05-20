@@ -164,7 +164,7 @@ function sayGoodBye() {
 
 function getCookie() {
     var c = document.cookie;
-    console.log('retrieved: '+c);
+    //console.log('retrieved: '+c);
     if (c != null) {
         try {
             var json = $.parseJSON(c);
@@ -189,7 +189,7 @@ function setCookie(id,username,exdays) {
     }
     var myCookie = new UserCookie(id,username,date);
     document.cookie = JSON.stringify(myCookie);
-    console.log("cookie: "+document.cookie);
+    //console.log("cookie: "+document.cookie);
 }
 
 
@@ -211,7 +211,7 @@ function resetCookie(userCookie) {
     userCookie.id = null;
     userCookie.expires = null;
     document.cookie = JSON.stringify(userCookie);
-    console.log("reset cookie: "+document.cookie);
+    //console.log("reset cookie: "+document.cookie);
 }
 
 function isValidEmail(mail) {
