@@ -10,6 +10,8 @@ var surveys = new Object();
 var secret = new Object();
 var surveyId = new Object();
 var userId = "";
+// Variable que guarda quin botó s'ha pitjat...si, en una global, si, em sento brut, odio javascript, odio aquest món
+var clickedButton;
 
 function renderLastChangeNotification(){
     date = new Date();
@@ -647,10 +649,18 @@ function answerSurvey(state) {
     // Mostrem link si es un save
     if(state == "pending"){
         showLink();
+        clickedButton = "saveAnswer";
+    }else{
+        clickedButton = "finishAnswer";
     }
     if(userId == "" ){
         var loc = '/api/survey/'+currentSurvey.id+ '/answers/';
-        sendEvent(loc, 'POST', jsonAnswer, null, surveyAnswered);
+        if(state == 'pending'){
+            sendEvent(loc, 'POST', jsonAnswer, null, surveyAnswered);
+        }else if(state == 'done'){
+            sendEvent(loc, 'POST', jsonAnswer, null, surveyAnswered);
+        }
+
     }else{
         var loc = '/api/survey/'+currentSurvey.id+ '/answers/' + userId;
         if(state == "pending"){
@@ -669,7 +679,12 @@ function answerSurvey(state) {
 function surveyAnswered(data){
     var obj = $.parseJSON(data.value);
     userId = obj.userId;
-    showSurveyAnsweredNotification();
+    if(clickedButton == "finishSurvey"){
+        showSurveyAnsweredNotification("Your survey has been send!");
+    }else if(clickedButton = "saveSurvey"){
+        showSurveyAnsweredNotification("Your answers has been saved. Please click the link below to continue this survey in the future.");
+    }
+
 }
 
 function showSurveyAnsweredNotification(notificationText){
