@@ -1,3 +1,4 @@
+var DAYS_WITH_COOKIE = 10;
 var currentUser;
 
 function logIn() {
@@ -21,10 +22,16 @@ function logIn() {
 
 function loginSucceed(data, location) {
     var idUser = location.replace('/api/user/','');
-    correctlyLogged(currentUser.userName);
+    if (idUser!=null && idUser!="") {
+        correctlyLogged(currentUser.userName, true);
+        if ($('#remember_me').is(':checked')) {
+            setCookie(idUser,currentUser.userName, DAYS_WITH_COOKIE);
+        }
+        else setCookie(idUser,currentUser.userName);
+    }
 }
 
-function correctlyLogged(username) {
+function correctlyLogged(username, sayHello) {
     $('.login').find('h1').text(username);
     $('.login').find('form').attr('class','hidden');
     $('#login-help').attr('class','hidden');
@@ -32,8 +39,8 @@ function correctlyLogged(username) {
     $('#logoutBtn').click(function() {
         logOut();
     });
-
-   sayWelcome();
+    $('#listSurveys').show();
+    if (sayHello) sayWelcome();
 }
 
 function logOut() {
@@ -44,6 +51,13 @@ function logOut() {
     $('#login-help').attr('class','login-help');
     $('#logout').attr('class','hidden');
     sayGoodBye();
+    $('#listSurveys').hide();
+    document.cookie=null;
+    var userCookie = getCookie();
+    if (userCookie != null) {
+        userCookie.expires = null;
+        resetCookie(userCookie);
+    }
 }
 
 function badlyLogged() {
@@ -91,10 +105,10 @@ function signIn() {
         $('#lpwd2').attr('class','fieldError');
         error = true;
     }
-    /*else if (!isValidField(email)) {
+    else if (!isValidEmail(email)) {
         $('#lemail').attr('class','fieldError');
         error = true;
-    }   */
+    }
     else {
        var user = new User(username, pwd, email);
        currentUser = user;
@@ -115,11 +129,13 @@ function userCreatedFail() {
 }
 
 function userCreated(data, location) {
-    correctlyLogged(currentUser.userName);
     $('#userNotification').text('Your account has been created');
     $('#userNotification').attr('class','success');
     var idUser = location.replace('/api/user/','');
-    console.log('ID: '+idUser);
+    if (idUser!=null && idUser!="") {
+        correctlyLogged(currentUser.userName, true);
+        setCookie(idUser,currentUser.userName, DAYS_WITH_COOKIE);
+    }
 }
 
 function sayWelcome() {
@@ -144,4 +160,63 @@ function sayGoodBye() {
     container.find('form').remove();
     container.find('h1').text('Goodbye!');
     $('#content').append(container);
+}
+
+function getCookie() {
+    var c = document.cookie;
+    //console.log('retrieved: '+c);
+    if (c != null) {
+        try {
+            var json = $.parseJSON(c);
+            if (json != null) {
+                var userCookie = new UserCookie(json.id,json.username,json.expires);
+                return userCookie;
+            }
+        }
+        catch(e) {
+            return null;
+        }
+    }
+    return null;
+}
+
+function setCookie(id,username,exdays) {
+    var date = null;
+    if (exdays !== 'undefined') {
+        var exdate=new Date();
+        exdate.setDate(exdate.getDate() + exdays);
+        date = ((exdays==null) ? "" : exdate.toUTCString());
+    }
+    var myCookie = new UserCookie(id,username,date);
+    document.cookie = JSON.stringify(myCookie);
+    //console.log("cookie: "+document.cookie);
+}
+
+
+function checkCookie() {
+    var userCookie=getCookie();
+    if (userCookie!=null && userCookie.expires != "" && userCookie.id != null) {       //el client ja està loguejat
+        correctlyLogged(userCookie.username, false);
+    }
+    else {  // el client no esta loguejat
+        $('#listSurveys').hide();
+        if (userCookie!=null) {
+            resetCookie(userCookie);
+        }
+    }
+}
+
+function resetCookie(userCookie) {
+    userCookie.username = null;
+    userCookie.id = null;
+    userCookie.expires = null;
+    document.cookie = JSON.stringify(userCookie);
+    //console.log("reset cookie: "+document.cookie);
+}
+
+function isValidEmail(mail) {
+ if (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(mail)) {
+    return (true)
+ }
+ return (false)
 }

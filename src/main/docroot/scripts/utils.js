@@ -32,10 +32,23 @@ function sendEvent(uri, method, data, done, success, error){
             }
         }
     });
-
+    var userCookie = getCookie();
+    if (userCookie != null) {
+        request.setRequestHeader("cookie", JSON.stringify(userCookie));
+    }
     request.fail(error);
 	if(done){
 	    request.done(done(request));
 	}
 };
+
+function UserCookie() {
+    switch (arguments.length) {
+        case 3:
+            this.id = arguments[0];
+            this.username = arguments[1];
+            this.expires = arguments[2];
+        break;
+    }
+}
 
