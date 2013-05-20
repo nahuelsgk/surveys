@@ -21,6 +21,13 @@ class SurveysService(surveysRepository: SurveysRepository) {
         listSurvey
     }
 
+    def listSurveys(idSurveys: List[String]): Set[Survey] =  {
+        val surveysRecord = surveysRepository.listSurveys(idSurveys)
+        var surveys = Set[Survey]()
+        surveysRecord.foreach((sur: SurveysRecord) => surveys += Survey.fromRecord(sur))
+        surveys
+    }
+
     def createSurvey(survey: Survey, idCreator: String): Map[String, String] = {
         println("*** SurveysService.createSurvey() idCreator: " + idCreator )
 

@@ -37,4 +37,8 @@ class UsersService(usersRepository: UsersRepository) {
             usersRepository.pushSurvey(idUser, idSurvey)
         }
     }
+
+    def getSurveys(idUser: String): List[String] = {
+       usersRepository.getUser(idUser).surveys
+    }
 }

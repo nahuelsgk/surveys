@@ -13,7 +13,7 @@ case class SurveysRecord(
     title: String,
     since: String,
     until: String,
-    idCreator: String,
+    idCreator: String = "-1",
     secret: String,
     state: String = StatesSurvey.Creating,
     questions: List[QuestionRecord] = List(),
@@ -68,6 +68,13 @@ class SurveysRepository(dao: SurveysDao) {
         }
 
         surveysList
+    }
+
+    def listSurveys(ids: List[String]): Set[SurveysRecord] = {
+        println("*** SurveysRepository.listSurveys() ids: " + ids)
+        var setIDS = Set[ObjectId]()
+        ids.foreach(a => setIDS += new ObjectId(a))
+        dao.findByIds(setIDS)
     }
 
     def createSurvey(survey: SurveysRecord) {
