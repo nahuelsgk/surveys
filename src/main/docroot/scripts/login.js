@@ -24,7 +24,10 @@ function loginSucceed(data, location) {
     var idUser = location.replace('/api/user/','');
     if (idUser!=null && idUser!="") {
         correctlyLogged(currentUser.userName, true);
-        setCookie(idUser,currentUser.userName, DAYS_WITH_COOKIE);
+        if ($('#remember_me').is(':checked')) {
+            setCookie(idUser,currentUser.userName, DAYS_WITH_COOKIE);
+        }
+        else setCookie(idUser,currentUser.userName);
     }
 }
 
@@ -102,10 +105,10 @@ function signIn() {
         $('#lpwd2').attr('class','fieldError');
         error = true;
     }
-    /*else if (!isValidField(email)) {
+    else if (!isValidEmail(email)) {
         $('#lemail').attr('class','fieldError');
         error = true;
-    }   */
+    }
     else {
        var user = new User(username, pwd, email);
        currentUser = user;
@@ -178,9 +181,12 @@ function getCookie() {
 }
 
 function setCookie(id,username,exdays) {
-    var exdate=new Date();
-    exdate.setDate(exdate.getDate() + exdays);
-    var date = ((exdays==null) ? "" : exdate.toUTCString());
+    var date = null;
+    if (exdays !== 'undefined') {
+        var exdate=new Date();
+        exdate.setDate(exdate.getDate() + exdays);
+        date = ((exdays==null) ? "" : exdate.toUTCString());
+    }
     var myCookie = new UserCookie(id,username,date);
     document.cookie = JSON.stringify(myCookie);
     console.log("cookie: "+document.cookie);
@@ -195,4 +201,12 @@ function checkCookie() {
     else {  // el client no esta loguejat
         $('#listSurveys').hide();
     }
+}
+
+function isValidEmail(mail)
+{
+ if (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(mail)) {
+    return (true)
+ }
+ return (false)
 }
