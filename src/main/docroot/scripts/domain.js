@@ -93,8 +93,17 @@ function Answer() {
     }
 }
 
-function AnswerListRandomName() {
-
+function AnsweredQuestionList() {
+    var idClient;
+    var dateAnswer;
+    var answered;
+    var stateAnswer;
+    if (arguments.length === 1) {
+        this.idClient = arguments[0].idClient;
+        this.dateAnswer = arguments[0].dateAnswer;
+        this.answered = arguments[0].answered;
+        this.stateAnswer = arguments[0].stateAnswer;
+    }
 }
 
 

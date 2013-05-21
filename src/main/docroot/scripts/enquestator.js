@@ -244,32 +244,27 @@ function updateCurrentSurvey(survey){
 
 function renderSurveyAnswers(answers) {
     $('#dynamicContent').empty();
-        var surveysHtmlIni = $('<div id="surveysList">');
-        var header = $('<h2 id="contentTitle">Surveys list</h2>');
-        surveysHtmlIni.append(header);
-        var list = $('<ul/>');
-        surveysHtmlIni.append(list);
-        var count = 0;
-        var size = answers.length;
-        for (var i = 0; i < size; ++i) {      // iteration over the all survey JSONs
-            var listListAnswers = new AnswerListRandomName(answers[i]);
-            if (typeof listListAnswers === 'undefined') {
-                console.log('undefined answer');
-            } else {
-                var key = listListAnswers.id;
-                answerListList[key] = answer;
-                var item = listAnswer(answer);
-                list.append(item);
-                count = count + 1;
-            }
-        }
+    var surveysHtmlIni = $('<div id="surveysList">');
+    var header = $('<h2 id="contentTitle">Surveys list</h2>');
+    surveysHtmlIni.append(header);
+    var list = $('<ul/>');
+    surveysHtmlIni.append(list);
 
-        if (count == 0) {
-            var noAnswer = $('<span>No surveys today</span>');
-    	    surveysHtmlIni.append(noAnswer);
-        }
+    var size = answers.length;
 
-        displayContent(surveysHtmlIni, LIST_SURVEYS);
+    for (var i = 0; i < size; ++i) {      // iteration over the all survey JSONs
+        var listListAnswers = new AnsweredQuestionList(answers[i]);
+        //idClient dateAnswer
+        var item = prepareListAnswers(listListAnswers);
+        list.append(item);
+    }
+
+    if (size == 0) {
+        var noAnswer = $('<span>No surveys today</span>');
+        surveysHtmlIni.append(noAnswer);
+    }
+
+    displayContent(surveysHtmlIni, LIST_SURVEYS);
 }
 
 function renderListSurveys(listOfSurveys) {
@@ -352,10 +347,12 @@ function cleanView(view) {
     }
 }
 
+
 function prepareListAnswers(listAnswers) {
     var item = $('#listAnswerItem').clone(true); //TODO crear listAnswerItem
     item.attr('id', '');
     item.attr('class', '');
+    item.text('idClient ' + listAnswers.idClient + 'date = ' + listAnswers.dateAnswer);
     
 
     return item;
