@@ -23,8 +23,7 @@ function renderCreateForm(){
     template_form.attr('class', '');
     template_form.attr('id', 'editForm');
     template_form.find('form').attr('id', 'create_survey_form');
-    $('#dynamicContent').ap
-    pend(template_form);
+    $('#dynamicContent').append(template_form);
     $('#dynamicContent').show();
     initDatePicker();
     currentView = CREATE_SURVEY;
