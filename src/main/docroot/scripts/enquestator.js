@@ -353,10 +353,56 @@ function prepareListAnswers(listAnswers) {
     item.attr('id', '');
     item.attr('class', '');
     item.text('idClient ' + listAnswers.idClient + 'date = ' + listAnswers.dateAnswer);
-    
+     item.click(function() {
+            //rendersurveyAnswered(listAnswers);
+     });
 
     return item;
 }
+/*
+function renderSurveyAnswered(answer) {
+    //TODO Cambiarlo para que se muestren los answers
+      answerCounter = 1;
+
+      currentView = ANSWER_SURVEY;
+      $('#dynamicContent').empty();
+      var template_form = $('#answerFormDiv').clone();
+      template_form.find('#surveyTitle').html(survey.title);
+
+      template_form.attr('class', 'answerFormDiv');
+      $('#dynamicContent').append(template_form);
+      $('#dynamicContent').show();
+
+      $("#linkanswer").html("");
+      $("#linkanswer").attr("href","");
+      $("#labellinkanswer").text("");
+
+
+      renderAnswers();
+      if (typeof survey.questions !== 'undefined') {
+            console.log('rendering ['+survey.questions.length +'] questions...');
+            for(var i = 0; i < survey.questions.length; ++i) {
+                switch(survey.questions[i].questionType){
+                    case TYPE_TEXT:
+                                addAnswerBox(survey.questions[i],survey.answers);
+                                break;
+                    case TYPE_CHOICE:
+                                addAnswerRadio(survey.questions[i],survey.answers);
+                                break;
+                    case TYPE_MULTICHOICE:
+                                addAnswerCheckBox(survey.questions[i],survey.answers);
+                                break;
+                }
+            }
+      }
+      $('#saveSurveyAnswers').click(function() {
+            answerSurvey("pending");
+      });
+
+      $('#publishSurveyAnswers').click(function() {
+            answerSurvey("done");
+      });
+}   */
 
 function listSurvey(survey) {
     var item = $('#listSurveyItem').clone(true);
