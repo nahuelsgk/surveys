@@ -237,7 +237,7 @@ function updateCurrentSurvey(survey){
     $("#labellinkadmin").text("");
 
     if(currentSurvey.answers.length > 0) {
-        renderSurveyAnswers(currentSurvey.answers);//funcion list answers
+        renderSurveyAnswers(currentSurvey.answers);//function list answers
     }
     else renderEditSurvey(currentSurvey);
  }
@@ -263,11 +263,11 @@ function renderSurveyAnswers(answers) {
                 count = count + 1;
             }
         }
+
         if (count == 0) {
             var noAnswer = $('<span>No surveys today</span>');
     	    surveysHtmlIni.append(noAnswer);
         }
-
 
         displayContent(surveysHtmlIni, LIST_SURVEYS);
 }
@@ -593,12 +593,12 @@ function addAnswerCheckBox(question, userAnswer){
 
 function renderSurveyAnswerForm(survey, createdNow) {
       answerCounter = 1;
-//    cleanView(currentView);
+
       currentView = ANSWER_SURVEY;
       $('#dynamicContent').empty();
       var template_form = $('#answerFormDiv').clone();
       template_form.find('#surveyTitle').html(survey.title);
-      //template_form.find('#survey_description').html('Fullfill your info to update');
+
       template_form.attr('class', 'answerFormDiv');
       $('#dynamicContent').append(template_form);
       $('#dynamicContent').show();
@@ -625,10 +625,11 @@ function renderSurveyAnswerForm(survey, createdNow) {
                 }
             }
       }
-      $('#saveSurveyAnswers').click(function(){
+      $('#saveSurveyAnswers').click(function() {
             answerSurvey("pending");
-      })
-      $('#publishSurveyAnswers').click(function(){
+      });
+
+      $('#publishSurveyAnswers').click(function() {
             answerSurvey("done");
       });
 }
