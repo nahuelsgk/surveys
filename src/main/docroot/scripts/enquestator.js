@@ -708,6 +708,7 @@ function surveyAnswered(data){
     var obj = $.parseJSON(data.value);
     userId = obj.userId;
     showSurveyAnsweredNotification();
+    showLink();
 }
 
 function showSurveyAnsweredNotification(){
