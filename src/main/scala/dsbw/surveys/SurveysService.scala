@@ -21,24 +21,31 @@ class SurveysService(surveysRepository: SurveysRepository) {
         listSurvey
     }
 
-    def createSurvey(survey: Survey): Map[String, String] = {
-        println("*** SurveysService.createSurvey()")
-        //val surveyRecord = new SurveysRecord(title = survey.title, since = survey.since, until = survey.until, state = survey.state)
-        val surveyRecord = survey.toRecord()
+    def listSurveys(idSurveys: List[String]): Set[Survey] =  {
+        val surveysRecord = surveysRepository.listSurveys(idSurveys)
+        var surveys = Set[Survey]()
+        surveysRecord.foreach((sur: SurveysRecord) => surveys += Survey.fromRecord(sur))
+        surveys
+    }
+
+    def createSurvey(survey: Survey, idCreator: String): Map[String, String] = {
+        println("*** SurveysService.createSurvey() idCreator: " + idCreator )
+
+        val surveyRecord = survey.toRecord(idCreator)
         surveysRepository.createSurvey(surveyRecord)
         println("Survey created: " + surveyRecord)
 
         Map("id" -> surveyRecord._id.toString, "secret" -> surveyRecord.secret)
     }
 
-    def putAnswers(id: String, answers: SurveyAnswer) : Boolean = {
+    def updateAnswers(id: String, answers: SurveyAnswer) : Boolean = {
         println("*** SurveyService.putAnswers()")
         println("Try to put survey answers: " + answers.toRecord())
         val s= getSurvey(id)
         s.answers.get.foreach(a=> {
             if(a.idClient== answers.idClient){
                 println("Client trobat: "+ answers.idClient+ "= "+ a.idClient)
-                surveysRepository.putAnswers(new ObjectId(id), answers.toRecord())
+                surveysRepository.updateAnswers(new ObjectId(id), answers.toRecord())
                 return true
             }
             else{
@@ -95,33 +102,3 @@ class SurveysService(surveysRepository: SurveysRepository) {
 
 }
 
-class UsersService(usersRepository: UsersRepository) {
-
-    def existsUserName(user: User): Boolean = {
-        println("existsUserName " + user.userName)
-        usersRepository.existsUserName(user.userName)
-    }
-
-    def createUser(user: User) : String = {
-        println("User to create: " + user)
-        val userRecord = user.toRecord()
-        usersRepository.createUser(userRecord)
-        userRecord._id.toString
-    }
-
-    def getUser(id: String): User = {
-        val user = usersRepository.getUser(id)
-        User.fromRecord(user)
-    }
-
-    def login(user: User): String = {
-        val u = usersRepository.loginUser(user.userName, user.password)
-        println("User logged: " + u)
-        if (u.isDefined) {
-            u.get._id.toString
-        }
-        else {
-            return null
-        }
-    }
-}

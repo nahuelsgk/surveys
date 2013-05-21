@@ -24,6 +24,7 @@ function Survey() {
         survey.until = json.until;
         survey.id = json.id;
         survey.state = json.state;
+        survey.idCreator = json.idCreator;
         survey.questions = json.questions; // Array for all the survey's questions
         survey.answers = json.answers; // Map for all the survey's answers
         if (typeof survey.questions === 'undefined') {
