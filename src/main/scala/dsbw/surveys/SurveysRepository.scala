@@ -30,8 +30,7 @@ case class QuestionRecord(
 
 case class SurveyAnswerRecord(
     idClient: ObjectId = new ObjectId(),
-    dateAnswer: String = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
-    .format(java.util.Calendar.getInstance().getTime()),
+    dateAnswer: String = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(java.util.Calendar.getInstance().getTime()),
     stateAnswer: String,
     answered: List[AnswerRecord] = List()
 )
