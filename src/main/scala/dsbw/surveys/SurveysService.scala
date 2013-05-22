@@ -40,11 +40,17 @@ class SurveysService(surveysRepository: SurveysRepository) {
 
     def updateAnswers(id: String, answers: SurveyAnswer) : Boolean = {
         println("*** SurveyService.putAnswers()")
+
         println("Try to put survey answers: " + answers.toRecord())
         val s= getSurvey(id)
         s.answers.get.foreach(a=> {
             if(a.idClient== answers.idClient){
                 println("Client trobat: "+ answers.idClient+ "= "+ a.idClient)
+                println("****** El seu estat es ***"+ a.stateAnswer)
+                if (a.stateAnswer == "done" ) {
+                    println("Ja estava salvat. No es pot salvar si ja li has havies finalitzat");
+                    return false
+                }
                 surveysRepository.updateAnswers(new ObjectId(id), answers.toRecord())
                 return true
             }
@@ -67,6 +73,10 @@ class SurveysService(surveysRepository: SurveysRepository) {
         println("Survey updated: " + survey.toRecord())
 
         if (surveysRepository.getSurveySecret(survey.id) == survey.secret) {
+            val dbSurveyRecord = surveysRepository.getSurvey(survey.id)
+            val dbSurvey = Survey.fromRecord(dbSurveyRecord)
+            println("**** Size del list" + dbSurvey.answers.get.size)
+            if (dbSurvey.answers.get.size > 0) return false
             surveysRepository.updateSurvey(survey.toRecord())
             true
         } else {
@@ -81,6 +91,9 @@ class SurveysService(surveysRepository: SurveysRepository) {
         val survey = Survey.fromRecord(sur)
 
         val listFiltered = survey.answers.get.filter( e => e.idClient == idClient)
+        println("*****l.estat es " + listFiltered(0).stateAnswer)
+        if (listFiltered(0).stateAnswer == "done") throw new IllegalStateException("Exception state")
+
         new Survey(
                     id = survey.id,
                     title = survey.title,
