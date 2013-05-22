@@ -448,14 +448,6 @@ function initDatePicker() {
    });
 }
 
-
-/*function renderNewSurveyForm() {
-    initDatePicker();
-    currentView = CREATE_SURVEY;
-    $('#buttonSurveyCreate').click(submitCreateSurvey);
-    //enableAddQuestions();
-}*/
-
 function displayTypeOfQuestion(idQuestion,type) {
     //console.log('displaying type: '+type+" for question: "+idQuestion);
     var divNameTo = '#'+TYPE_TAG+idQuestion;
@@ -544,7 +536,7 @@ function getSurveyQuestions(request) {
     currentSurvey = survey;
     //console.log(survey);
     //console.log("ID: "+survey.id);
-    renderSurveyAnswerForm(survey,true);
+    renderSurveyAnswerForm(survey);
 }
 
 
@@ -634,7 +626,7 @@ function addAnswerCheckBox(question, userAnswer){
 }
 
 
-function renderSurveyAnswerForm(survey, createdNow) {
+function renderSurveyAnswerForm(survey) {
       answerCounter = 1;
 
       currentView = ANSWER_SURVEY;
@@ -657,14 +649,14 @@ function renderSurveyAnswerForm(survey, createdNow) {
             for(var i = 0; i < survey.questions.length; ++i) {
                 switch(survey.questions[i].questionType){
                     case TYPE_TEXT:
-                                addAnswerBox(survey.questions[i],survey.answers);
-                                break;
+                        addAnswerBox(survey.questions[i],survey.answers);
+                        break;
                     case TYPE_CHOICE:
-                                addAnswerRadio(survey.questions[i],survey.answers);
-                                break;
+                        addAnswerRadio(survey.questions[i],survey.answers);
+                        break;
                     case TYPE_MULTICHOICE:
-                                addAnswerCheckBox(survey.questions[i],survey.answers);
-                                break;
+                        addAnswerCheckBox(survey.questions[i],survey.answers);
+                        break;
                 }
             }
       }
@@ -784,7 +776,7 @@ function getSurveyQuestions(request) {
     currentSurvey = survey;
     //console.log(survey);
     //console.log("ID: "+survey.id);
-    renderSurveyAnswerForm(survey,true);
+    renderSurveyAnswerForm(survey);
 }
 
 function renderForm() {
@@ -836,8 +828,6 @@ function surveyAlreadyClosed(){
     notification.attr('class','error');
     $('#dynamicContent').append(notification);
 }
-
-
 
 $(document).ready(function($) {
      renderForm();
