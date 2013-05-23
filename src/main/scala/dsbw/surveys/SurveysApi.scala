@@ -173,8 +173,15 @@ class SurveysApi(surveysService: SurveysService, usersService: UsersService) ext
 
     private def getSurveyById(id: String): Response = {
         val myenq= surveysService.getSurvey(id);
-        val tmp1= JSON.toJSON(myenq);
-        Response(HttpStatusCode.Ok, null, tmp1);
+        println("-- ENQ size: "+ myenq.answers.get.size)
+        if (myenq.answers.get.size> 0){
+            println("L'enquesta ja ha estat contestada al menys per un usuari. No es pot editar")
+            Response(HttpStatusCode.BadRequest)
+        }
+        else{
+            val tmp1= JSON.toJSON(myenq);
+            Response(HttpStatusCode.Ok, null, tmp1);
+        }
     }
 
     private def getAllSurveys(): Response = {
