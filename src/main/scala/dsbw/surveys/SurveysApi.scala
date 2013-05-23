@@ -86,9 +86,15 @@ class SurveysApi(surveysService: SurveysService, usersService: UsersService) ext
         println("*** SurveysApi.getSurveyUser()")
         println("Survey id: "+ idSurvey+ "; User id: "+ idUser)
         println("Request body: " + body)
-        val myans = surveysService.getAnswersUser(idSurvey, idUser)
-        val tmpl = JSON.toJSON(myans)
-        Response(HttpStatusCode.Ok,null, tmpl )
+        try{
+             val myans = surveysService.getAnswersUser(idSurvey, idUser)
+             val tmpl = JSON.toJSON(myans)
+             Response(HttpStatusCode.Ok,null, tmpl )
+        }
+        catch {
+            case e: IllegalStateException => println("Error")
+            Response(HttpStatusCode.BadRequest)
+        }
     }
 
     private def putAnswers(idSurvey: String, idUser: String, body: Option[JSON]): Response = {
