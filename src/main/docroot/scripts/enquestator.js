@@ -256,7 +256,7 @@ function updateCurrentSurvey(survey){
     console.log("Aqui vamos.!");
     console.log(currentSurvey);
     showEditButton();
-    secret = currentSurvey.render();
+    secret = currentSurvey.secret;
 
     var urlAdmin = "";
     $("#linkadmin").html(urlAdmin);
