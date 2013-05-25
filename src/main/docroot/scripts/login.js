@@ -1,6 +1,10 @@
 var DAYS_WITH_COOKIE = 10;
 var currentUser;
 
+$('#username').focusout(function() {
+       $('#loginfeedback').attr('class','hidden');
+});
+
 function logIn() {
     var user = $('#username').val();
     var pwd = $('#pwd').val();
