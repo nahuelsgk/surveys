@@ -351,7 +351,7 @@ function cleanView(view) {
 function prepareListAnswers(listAnswers) {
     var item = $('#listAnswerItem').clone(true); //TODO crear listAnswerItem
     item.attr('id', '');
-    item.attr('class', '');
+    item.attr('class', 'surveyItem');
     item.text('idClient ' + listAnswers.idClient + 'date = ' + listAnswers.dateAnswer);
      item.click(function() {
             rendersurveyAnswered(listAnswers);
