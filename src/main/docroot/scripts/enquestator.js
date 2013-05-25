@@ -362,6 +362,7 @@ function prepareListAnswers(listAnswers) {
 }
 
 function rendersurveyAnswered(listAnswers) {
+      cleanView(currentView);
       var survey = currentSurvey;
       survey.answers = new Array();
       survey.answers[0] = listAnswers;
