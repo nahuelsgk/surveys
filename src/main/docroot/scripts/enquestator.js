@@ -358,7 +358,7 @@ function listSurvey(survey) {
     });
     item.append(img);
     item.click(function() {
-        sendEvent('/api/survey/'+survey.id, 'GET', null, surveyAlreadyStarted, updateCurrentSurvey);
+        sendEvent('/api/survey/'+survey.id, 'GET', null, null, updateCurrentSurvey, surveyAlreadyStarted);
     });
 
     return item;
@@ -696,7 +696,7 @@ function renderForm() {
             if(params.id && params.secret) {
                 surveyId = params.id;
                 secret = params.secret;
-                sendEvent('/api/survey/'+params.id, 'GET', null, surveyAlreadyStarted, updateCurrentSurvey);
+                sendEvent('/api/survey/'+params.id, 'GET', null, null, updateCurrentSurvey, surveyAlreadyStarted);
             } else if(params.id && params.user) {
                 surveyId = params.id;
                 secret = params.user;
