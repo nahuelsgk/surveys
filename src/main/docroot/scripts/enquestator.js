@@ -431,13 +431,6 @@ function addOptionChoice(idQuestion,divNameTo) {
 function enableAddChoices(divNameTo,idQuestion) {
     $(divNameTo).attr('class','questionOptions');
     $(divNameTo).find('img.add_question_icon').unbind('click');
-
-    //By default two options
-    /*var currentNoptions = ($(divNameTo).find('.optionDiv').length);
-    for(i=0; i<2-currentNoptions; i++){
-        addOptionChoice(idQuestion, divNameTo);
-    } */
-
     $(divNameTo).find('img.add_question_icon').click(function() {
         addOptionChoice(idQuestion, divNameTo);
     });
