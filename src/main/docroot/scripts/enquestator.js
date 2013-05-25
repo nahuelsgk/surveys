@@ -59,10 +59,12 @@ function renderEditSurvey(survey, createdNow){
     if (createdNow) {
         $('#notification').text('Your survey has been created');
         $('#notification').attr('class','success');
-    }
-    else {
+    } else {
         $('#notification').attr('class','hidden');
     }
+
+    hideTimeout($('#notification'));
+
     initDatePicker();
     enableAddQuestions();
     if (typeof survey.questions !== 'undefined') {
@@ -146,7 +148,7 @@ function updateSurvey() {
             var type = $(this).find('#'+SELECTOR_TAG+index).val();
             //var type = $('select').val();
             var q = new Question(type,order,text);
-            console.log(index+") text: "+q.text+" type: "+q.type);
+            console.log(index+") text: "+q.text+" type: "+q.questionType);
             if (type === 'multichoice' || type === 'choice') {
                 $(this).find('.options').each(function(ind) {
                     addOptionToQuestion(q,$(this).val());
@@ -174,6 +176,9 @@ function updateSurvey() {
 function surveyUpdatedCorrectly() {
     $('#notification').text('Survey updated correctly!');
     $('#notification').attr('class','info');
+
+    hideTimeout($('#notification'));
+
     window.scrollTo( 0, 0) ;
 
 }
@@ -181,7 +186,7 @@ function surveyUpdatedCorrectly() {
 function surveyUpdateError() {
     $('#notification').text('You dont have permission to edit this survey');
     $('#notification').attr('class','failure');
-
+    hideTimeout($('#notification'));
      window.scrollTo(0, 0);
      console.log('Error updating Survey');
 }
@@ -253,7 +258,6 @@ function showEditButton(){
 function updateCurrentSurvey(survey){
     //console.log('updating Current Survey');
     currentSurvey = $.parseJSON(survey.value);
-    console.log("Aqui vamos.!");
     console.log(currentSurvey);
     showEditButton();
     secret = currentSurvey.secret;
@@ -718,6 +722,7 @@ function showSurveyAnsweredNotification(notificationText){
     $('#notificationAnswer').text(notificationText);
 //    $('#notificationAnswer').text('Survey answered!');
     $('#notificationAnswer').attr('class','info');
+    hideTimeout($('#notificationAnswer'));
 }
 
 function showLink(){
@@ -795,6 +800,8 @@ function surveyAlreadyClosed(){
     var notification =  $('#notificationAnswer').clone();
     notification.text('You can\'t answer this survey. It\'s already closed!');
     notification.attr('class','error');
+    hideTimeout(notification);
+
     $('#dynamicContent').append(notification);
 }
 
@@ -803,13 +810,25 @@ function surveyAlreadyStarted(){
     var notification =  $('#notificationAnswer').clone();
     notification.text('You can\'t edit this survey. It\'s already anwered at least once!');
     notification.attr('class','error');
+    hideTimeout(notification);
     $('#dynamicContent').append(notification);
+    
+}
+
+function hideTimeout(element) {
+    setTimeout(
+        function() {
+            element.attr('class', element.attr('class') + ' hidden');
+        },
+        5000
+    );
 }
 
 
 
 $(document).ready(function($) {
      renderForm();
+     checkCookie();
     //renderNewSurveyForm();
 });
 
