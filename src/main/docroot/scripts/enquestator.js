@@ -371,15 +371,17 @@ function rendersurveyAnswered(listAnswers) {
       currentView = ANSWER_SURVEY;
       $('#dynamicContent').empty();
       var template_form = $('#answerFormDiv').clone();
-      template_form.find('#surveyTitle').html(survey.title);
+      template_form.find('#surveyTitle').html(survey.title + " answered by " + listAnswers.idClient + " on " + listAnswers.dateAnswer);
 
       template_form.attr('class', 'answerFormDiv');
       $('#dynamicContent').append(template_form);
       $('#dynamicContent').show();
 
-      $("#linkanswer").html("");
-      $("#linkanswer").attr("href","");
-      $("#labellinkanswer").text("");
+
+      var url = "http://localhost:8080/?id=" + survey.id;
+      $("#linkanswer").html(url);
+      $("#linkanswer").attr("href",url);
+      $("#labellinkanswer").text("Your survey link: ");
 
 
       renderAnswers();
@@ -399,6 +401,8 @@ function rendersurveyAnswered(listAnswers) {
                 }
             }
       }
+      $('#answerButtons').attr('class','hidden');
+
 }
 
 function listSurvey(survey) {
