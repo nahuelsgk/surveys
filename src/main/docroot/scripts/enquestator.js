@@ -253,8 +253,10 @@ function showEditButton(){
 function updateCurrentSurvey(survey){
     //console.log('updating Current Survey');
     currentSurvey = $.parseJSON(survey.value);
+    console.log("Aqui vamos.!");
     console.log(currentSurvey);
     showEditButton();
+    secret = currentSurvey.render();
 
     var urlAdmin = "";
     $("#linkadmin").html(urlAdmin);
