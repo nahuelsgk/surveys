@@ -64,9 +64,18 @@ function renderEditSurvey(survey, createdNow){
     enableAddQuestions();
     if (typeof survey.questions !== 'undefined') {
         //console.log('rendering ['+survey.questions.length +'] questions...');
-        for(i = 0; i < survey.questions.length; ++i) {
+
+        //That adds by default two questions when no questions(that is when just created, or saved without questions)
+        if (survey.questions.length == 0) {
+            addNewQuestion();
+            addNewQuestion();
+        }
+        //Otherwise render questions
+        else{
+          for(i = 0; i < survey.questions.length; ++i) {
             //console.log('original ID: '+survey.questions[i].id);
             addQuestion(survey.questions[i]);
+          }
         }
 
     }
