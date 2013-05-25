@@ -261,11 +261,14 @@ class SurveysApi(surveysService: SurveysService, usersService: UsersService) ext
     }
 
     def getUserSurveys(idCreator: String): Response = {
-        val userSurveys = usersService.getSurveys(idCreator)
-        val listSurveys = surveysService.listSurveys(userSurveys)
-        val json = JSON.toJSON(listSurveys).value
-        println("body response: " + json)
-        Response(HttpStatusCode.Ok, null, json)
+        if(!idCreator.equals("-1")) {
+            val userSurveys = usersService.getSurveys(idCreator)
+            val listSurveys = surveysService.listSurveys(userSurveys)
+            val json = JSON.toJSON(listSurveys).value
+            println("body response: " + json)
+            Response(HttpStatusCode.Ok, null, json)
+        }
+        else Response(HttpStatusCode.Unauthorized)
     }
 }
 
