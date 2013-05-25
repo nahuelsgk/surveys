@@ -273,10 +273,9 @@ function updateCurrentSurvey(survey){
 function renderListSurveys(listOfSurveys) {
     $('#dynamicContent').empty();
     var surveysHtmlIni = $('<div id="surveysList">');
-    var header = $('<h2 id="contentTitle">Surveys list</h2>');
-    surveysHtmlIni.append(header);
-    var list = $('<ul/>');
+    var list = $('<table border="1">');
     surveysHtmlIni.append(list);
+    list.append($('<tr><th>Survey</th><th>Answers</th></tr>'));
     var count = 0;
     var obj = $.parseJSON(listOfSurveys);
     var size = obj.length;
@@ -284,8 +283,7 @@ function renderListSurveys(listOfSurveys) {
         var survey = new Survey(obj[i]);
         if (typeof survey === 'undefined') {
             console.log('undefined survey');
-        }
-        else {
+        } else {
             var key = survey.id;
             surveys[key] = survey;
             var item = listSurvey(survey);
@@ -297,11 +295,7 @@ function renderListSurveys(listOfSurveys) {
         var noSurvey = $('<span>No surveys today</span>');
 	    surveysHtmlIni.append(noSurvey);
     }
-    /*$('body').on('click', '.surveyItem', function(){           //TODO: canviar!! sino s'afegeixen masses listeners
-      var id = $(this).attr('name');
-      sendEvent('/api/survey/'+id, 'GET', null, null, updateCurrentSurvey);
-    });     */
-
+    surveysHtmlIni.append($('</table>'));
 
     displayContent(surveysHtmlIni, LIST_SURVEYS);
 }
@@ -358,7 +352,12 @@ function listSurvey(survey) {
     item.attr('name', survey.id);
     item.attr('data-since',survey.since);
     item.attr('data-until',survey.until);
-    item.text(survey.title);
+
+    spans = item.children();
+    spans.filter('.title').text(survey.title);
+    spans.filter('.numAnswers').text(survey.answers.length);
+
+
     var img = $('#deleteSurveyID').clone();
     img.attr('id',survey.id);
     img.attr('class','deleteSurvey');
