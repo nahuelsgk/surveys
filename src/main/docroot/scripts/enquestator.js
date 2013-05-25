@@ -9,6 +9,9 @@ var currentSurvey;
 var surveys = new Object();
 var secret = new Object();
 var surveyId = new Object();
+var userId = "";
+// Variable que guarda quin botó s'ha pitjat...si, en una global, si, em sento brut, odio javascript, odio aquest món
+var clickedButton;
 
 function renderLastChangeNotification(){
     date = new Date();
@@ -501,22 +504,26 @@ function renderAnswers() {
     $('#dynamicContent').append(answers);
 }
 
-function addAnswerBox(a) {
+function addAnswerBox(question, userAnswer) {
 
-    a.id = answerCounter;
+    question.id = answerCounter;
 
     var answer = $('#answerBox').clone();
     answer.attr('class','question');
     answer.attr('id','answerBox' + answerCounter);
-    answer.find('#questionText').html(answerCounter + ". " + a.text);
+    answer.find('#questionText').html(answerCounter + ". " + question.text);
 
     var text = $('<textarea>').attr({class: 'answerTextArea', id: AREA_TAG + answerCounter, row: '3', cols: '30'})
+    if(userAnswer.length == 1 && userAnswer[0].idClient == userId){
+        text.val(userAnswer[0].answered[answerCounter - 1].options[0]);
+    }
+
     answer.append(text);
     $('#answerList').append(answer);
     ++answerCounter;
 }
 
-function addAnswerRadio(question){
+function addAnswerRadio(question, userAnswer){
     var radio;
     var radioLabel;
     var answer = $('#answerBox').clone();
@@ -534,12 +541,19 @@ function addAnswerRadio(question){
         answer.append(radioLabel);
         //$('#radio' + answerCounter + '_' + i).text("hola");
         answer.append('<br>');
+
+        // Retrieve old answeer
+        if(userAnswer.length == 1 && userAnswer[0].idClient == userId){
+            if(userAnswer[0].answered[answerCounter - 1].options[i] == 'true'){
+                radio.prop('checked',true);
+            }
+        }
     }
     $('#answerList').append(answer);
     ++answerCounter;
 }
 
-function addAnswerCheckBox(question){
+function addAnswerCheckBox(question, userAnswer){
     var checkbox;
     var checkboxLabel;
     var answer = $('#answerBox').clone();
@@ -557,6 +571,12 @@ function addAnswerCheckBox(question){
         answer.append(checkboxLabel);
         //$('#radio' + answerCounter + '_' + i).text("hola");
         answer.append('<br>');
+        // Retrieve old answeer
+        if(userAnswer.length == 1 && userAnswer[0].idClient == userId){
+           if(userAnswer[0].answered[answerCounter - 1].options[i] == 'true'){
+               checkbox.prop('checked',true);
+           }
+        }
     }
     $('#answerList').append(answer);
     ++answerCounter;
@@ -586,19 +606,22 @@ function renderSurveyAnswerForm(survey, createdNow){
             for(var i = 0; i < survey.questions.length; ++i) {
                 switch(survey.questions[i].questionType){
                     case TYPE_TEXT:
-                                addAnswerBox(survey.questions[i]);
+                                addAnswerBox(survey.questions[i],survey.answers);
                                 break;
                     case TYPE_CHOICE:
-                                addAnswerRadio(survey.questions[i]);
+                                addAnswerRadio(survey.questions[i],survey.answers);
                                 break;
                     case TYPE_MULTICHOICE:
-                                addAnswerCheckBox(survey.questions[i]);
+                                addAnswerCheckBox(survey.questions[i],survey.answers);
                                 break;
                 }
             }
       }
+      $('#saveSurveyAnswers').click(function(){
+            answerSurvey("pending");
+      })
       $('#publishSurveyAnswers').click(function(){
-            answerSurvey();
+            answerSurvey("done");
       });
 }
 
@@ -606,6 +629,7 @@ function renderSurveyAnswerForm(survey, createdNow){
 function getTextAnswers(answerBox){
     var textAnswer = new Array();
     textAnswer.push(answerBox.find('textarea').val());
+
     return textAnswer;
 }
 
@@ -613,14 +637,16 @@ function getCheckOrRadioAnswers(answerBox, questionType){
       var answers = new Array();
       answerBox.find($("input[type='" + questionType + "']")).each(function(){
         if($(this).is(":checked")){
-            answers.push(($(this).val()));
+            answers.push('true');
+        }else{
+            answers.push('false');
         }
       })
       return answers;
 }
 
 
-function answerSurvey() {
+function answerSurvey(state) {
     //console.log("Updating survey: "+currentSurvey.title);
     var indexQuestion = 0;
     var answer = new AnswerList();
@@ -649,27 +675,82 @@ function answerSurvey() {
         indexQuestion++;
     });
     // Finalitzem l'enquesta
-    answer.stateAnswer = "done";
+    answer.stateAnswer = state;
     var jsonAnswer = answer;
     console.log("answer = " + JSON.stringify(jsonAnswer));
-    var loc = '/api/survey/'+currentSurvey.id+ '/answers/';
-    sendEvent(loc, 'POST', jsonAnswer, null, surveyAnswered);
+    // Mostrem link si es un save
+    if(state == "pending"){
+        showLink();
+        clickedButton = "saveAnswer";
+    }else{
+        clickedButton = "finishAnswer";
+    }
+    if(userId == "" ){
+        var loc = '/api/survey/'+currentSurvey.id+ '/answers/';
+        if(state == 'pending'){
+            sendEvent(loc, 'POST', jsonAnswer, null, surveyAnswered);
+        }else if(state == 'done'){
+            sendEvent(loc, 'POST', jsonAnswer, null, surveyAnswered);
+        }
+
+    }else{
+        var loc = '/api/survey/'+currentSurvey.id+ '/answers/' + userId;
+        if(state == "pending"){
+            sendEvent(loc, 'PUT', jsonAnswer, null, showSurveyAnsweredNotification("Your answers has been saved. Please click the link below to continue this survey in the future."));
+        }else if(state == 'done'){
+            sendEvent(loc, 'PUT', jsonAnswer, null, showSurveyAnsweredNotification("Your survey has been send!"));
+        }
+
+    }
+
+
     //var loc = '/api/survey/'+currentSurvey.id+ '/answers/51917029b45d6da4c48979fc/';
     //sendEvent(loc, 'PUT', jsonAnswer, null, surveyAnswered);
 }
 
 function surveyAnswered(data){
-    $('#notificationAnswer').text('Survey answered!');
-    $('#notificationAnswer').attr('class','info');
-
     var obj = $.parseJSON(data.value);
-    secret = obj.userId;
+    userId = obj.userId;
+    if(clickedButton == "finishSurvey"){
+        showSurveyAnsweredNotification("Your survey has been send!");
+    }else if(clickedButton = "saveSurvey"){
+        showSurveyAnsweredNotification("Your answers has been saved. Please click the link below to continue this survey in the future.");
+    }
 
-    var urlAnswer = "http://localhost:8080/?id=" + surveyId + "&user=" + secret;
+}
+
+function showSurveyAnsweredNotification(notificationText){
+    $('#notificationAnswer').text(notificationText);
+//    $('#notificationAnswer').text('Survey answered!');
+    $('#notificationAnswer').attr('class','info');
+}
+
+function showLink(){
+    var urlAnswer = "http://localhost:8080/?id=" + surveyId + "&user=" + userId;
     $("#linkanswer").html(urlAnswer);
     $("#linkanswer").attr("href",urlAnswer);
     $("#labellinkanswer").text("Your answer link: ");
+}
 
+function surveySaved(data){
+    var obj = $.parseJSON(data.value);
+    userId = obj.userId;
+    showSurveyAnsweredNotification();
+    showLink();
+}
+
+function sendGetSurveyQuestionsByUser(surveyId, userId){
+    var loc = '/api/survey/'+ surveyId + '/answers/' + userId;
+    sendEvent(loc, 'GET', null, null, getSurveyQuestions, surveyAlreadyClosed);
+}
+
+function getSurveyQuestions(request) {
+    var obj = $.parseJSON(request.value);
+    var survey = new Survey(obj);
+    currentSurvey = survey;
+    //console.log(survey);
+    //console.log("ID: "+survey.id);
+    renderSurveyAnswerForm(survey,true);
 }
 
 function renderForm() {
@@ -699,8 +780,8 @@ function renderForm() {
                 sendEvent('/api/survey/'+params.id, 'GET', null, null, updateCurrentSurvey, surveyAlreadyStarted);
             } else if(params.id && params.user) {
                 surveyId = params.id;
-                secret = params.user;
-                sendGetSurveyQuestions(params.id)
+                userId = params.user;
+                sendGetSurveyQuestionsByUser(params.id, params.user);
                 console.log("EditRespuestas");
             }
             else renderCreateForm();
