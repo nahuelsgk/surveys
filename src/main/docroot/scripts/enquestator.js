@@ -245,7 +245,7 @@ function updateCurrentSurvey(survey){
 function renderSurveyAnswers(answers) {
     $('#dynamicContent').empty();
     var surveysHtmlIni = $('<div id="surveysList">');
-    var header = $('<h2 id="contentTitle">Surveys list</h2>');
+    var header = $('<h2 id="contentTitle">Surveys answer list</h2>');
     surveysHtmlIni.append(header);
     var list = $('<ul/>');
     surveysHtmlIni.append(list);
@@ -354,14 +354,17 @@ function prepareListAnswers(listAnswers) {
     item.attr('class', '');
     item.text('idClient ' + listAnswers.idClient + 'date = ' + listAnswers.dateAnswer);
      item.click(function() {
-            //rendersurveyAnswered(listAnswers);
+            rendersurveyAnswered(listAnswers);
+            console.log("rendersurveyAnswered");
      });
 
     return item;
 }
-/*
-function renderSurveyAnswered(answer) {
-    //TODO Cambiarlo para que se muestren los answers
+
+function rendersurveyAnswered(listAnswers) {
+      var survey = currentSurvey;
+      survey.answers = new Array();
+      survey.answers[0] = listAnswers;
       answerCounter = 1;
 
       currentView = ANSWER_SURVEY;
@@ -384,25 +387,18 @@ function renderSurveyAnswered(answer) {
             for(var i = 0; i < survey.questions.length; ++i) {
                 switch(survey.questions[i].questionType){
                     case TYPE_TEXT:
-                                addAnswerBox(survey.questions[i],survey.answers);
-                                break;
+                        addAnswerBox(survey.questions[i],survey.answers, listAnswers.idClient);
+                        break;
                     case TYPE_CHOICE:
-                                addAnswerRadio(survey.questions[i],survey.answers);
-                                break;
+                        addAnswerRadio(survey.questions[i],survey.answers, listAnswers.idClient);
+                        break;
                     case TYPE_MULTICHOICE:
-                                addAnswerCheckBox(survey.questions[i],survey.answers);
-                                break;
+                        addAnswerCheckBox(survey.questions[i],survey.answers, listAnswers.idClient);
+                        break;
                 }
             }
       }
-      $('#saveSurveyAnswers').click(function() {
-            answerSurvey("pending");
-      });
-
-      $('#publishSurveyAnswers').click(function() {
-            answerSurvey("done");
-      });
-}   */
+}
 
 function listSurvey(survey) {
     var item = $('#listSurveyItem').clone(true);
@@ -547,7 +543,7 @@ function renderAnswers() {
     $('#dynamicContent').append(answers);
 }
 
-function addAnswerBox(question, userAnswer) {
+function addAnswerBox(question, userAnswer, idUser) {
 
     question.id = answerCounter;
 
@@ -556,8 +552,9 @@ function addAnswerBox(question, userAnswer) {
     answer.attr('id','answerBox' + answerCounter);
     answer.find('#questionText').html(answerCounter + ". " + question.text);
 
+    var uId = idUser;
     var text = $('<textarea>').attr({class: 'answerTextArea', id: AREA_TAG + answerCounter, row: '3', cols: '30'})
-    if(userAnswer.length == 1 && userAnswer[0].idClient == userId){
+    if(userAnswer.length == 1 && userAnswer[0].idClient == uId){
         text.val(userAnswer[0].answered[answerCounter - 1].options[0]);
     }
 
@@ -566,7 +563,7 @@ function addAnswerBox(question, userAnswer) {
     ++answerCounter;
 }
 
-function addAnswerRadio(question, userAnswer){
+function addAnswerRadio(question, userAnswer, idUser){
     var radio;
     var radioLabel;
     var answer = $('#answerBox').clone();
@@ -586,7 +583,8 @@ function addAnswerRadio(question, userAnswer){
         answer.append('<br>');
 
         // Retrieve old answeer
-        if(userAnswer.length == 1 && userAnswer[0].idClient == userId){
+        var uId = idUser;
+        if(userAnswer.length == 1 && userAnswer[0].idClient == uId){
             if(userAnswer[0].answered[answerCounter - 1].options[i] == 'true'){
                 radio.prop('checked',true);
             }
@@ -596,7 +594,7 @@ function addAnswerRadio(question, userAnswer){
     ++answerCounter;
 }
 
-function addAnswerCheckBox(question, userAnswer){
+function addAnswerCheckBox(question, userAnswer, idUser){
     var checkbox;
     var checkboxLabel;
     var answer = $('#answerBox').clone();
@@ -615,7 +613,8 @@ function addAnswerCheckBox(question, userAnswer){
         //$('#radio' + answerCounter + '_' + i).text("hola");
         answer.append('<br>');
         // Retrieve old answeer
-        if(userAnswer.length == 1 && userAnswer[0].idClient == userId){
+        var uId = idUser;
+        if(userAnswer.length == 1 && userAnswer[0].idClient == uId){
            if(userAnswer[0].answered[answerCounter - 1].options[i] == 'true'){
                checkbox.prop('checked',true);
            }
@@ -649,13 +648,13 @@ function renderSurveyAnswerForm(survey) {
             for(var i = 0; i < survey.questions.length; ++i) {
                 switch(survey.questions[i].questionType){
                     case TYPE_TEXT:
-                        addAnswerBox(survey.questions[i],survey.answers);
+                        addAnswerBox(survey.questions[i],survey.answers, userId);
                         break;
                     case TYPE_CHOICE:
-                        addAnswerRadio(survey.questions[i],survey.answers);
+                        addAnswerRadio(survey.questions[i],survey.answers, userId);
                         break;
                     case TYPE_MULTICHOICE:
-                        addAnswerCheckBox(survey.questions[i],survey.answers);
+                        addAnswerCheckBox(survey.questions[i],survey.answers, userId);
                         break;
                 }
             }
