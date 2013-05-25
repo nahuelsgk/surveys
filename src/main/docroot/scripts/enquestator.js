@@ -185,7 +185,7 @@ function surveyUpdatedCorrectly() {
 
 function surveyUpdateError() {
     $('#notification').text('You dont have permission to edit this survey');
-    $('#notification').attr('class','failure');
+    $('#notification').attr('class','error');
     hideTimeout($('#notification'));
      window.scrollTo(0, 0);
      console.log('Error updating Survey');
@@ -687,24 +687,29 @@ function answerSurvey(state) {
     if(userId == "" ){
         var loc = '/api/survey/'+currentSurvey.id+ '/answers/';
         if(state == 'pending'){
-            sendEvent(loc, 'POST', jsonAnswer, null, surveyAnswered);
+            sendEvent(loc, 'POST', jsonAnswer, null, surveyAnswered, surveyAlreadyStarted);
         }else if(state == 'done'){
-            sendEvent(loc, 'POST', jsonAnswer, null, surveyAnswered);
+            sendEvent(loc, 'POST', jsonAnswer, null, surveyAnswered, surveyAlreadyStarted);
         }
 
     }else{
         var loc = '/api/survey/'+currentSurvey.id+ '/answers/' + userId;
         if(state == "pending"){
-            sendEvent(loc, 'PUT', jsonAnswer, null, showSurveyAnsweredNotification("Your answers has been saved. Please click the link below to continue this survey in the future."));
+            sendEvent(loc, 'PUT', jsonAnswer, null, showPostSaveSurveyNotification, surveyAlreadyStarted);
         }else if(state == 'done'){
-            sendEvent(loc, 'PUT', jsonAnswer, null, showSurveyAnsweredNotification("Your survey has been send!"));
+            sendEvent(loc, 'PUT', jsonAnswer, null, showPostFinishNotification, surveyAlreadyStarted);
         }
 
     }
 
+}
 
-    //var loc = '/api/survey/'+currentSurvey.id+ '/answers/51917029b45d6da4c48979fc/';
-    //sendEvent(loc, 'PUT', jsonAnswer, null, surveyAnswered);
+function showPostSaveSurveyNotification(){
+    showSurveyAnsweredNotification("Your answers has been saved. Please click the link below to continue this survey in the future.");
+}
+
+function showPostFinishNotification(){
+    showSurveyAnsweredNotification("Your survey has been send!");
 }
 
 function surveyAnswered(data){
@@ -715,7 +720,6 @@ function surveyAnswered(data){
     }else if(clickedButton = "saveSurvey"){
         showSurveyAnsweredNotification("Your answers has been saved. Please click the link below to continue this survey in the future.");
     }
-
 }
 
 function showSurveyAnsweredNotification(notificationText){
@@ -818,7 +822,7 @@ function surveyAlreadyStarted(){
 function hideTimeout(element) {
     setTimeout(
         function() {
-            element.attr('class', element.attr('class') + ' hidden');
+            //element.attr('class', element.attr('class') + ' hidden');
         },
         5000
     );
