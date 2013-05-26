@@ -256,6 +256,20 @@ menu.main a.hidden{
   color: #fff;
 }
 
+ tr.surveyItem:hover{
+   background-color: #00f;
+   color: #fff;
+ }
+
+table {
+    width:100%;
+}
+
+.surveyItem .numAnswers {
+    width: 100px;
+    float: right
+}
+
 .hidden {
     display: none;
 }

@@ -7,11 +7,13 @@ import dsbw.domain.survey.{StatesSurvey, Survey, SurveyAnswer, Answer}
 import org.bson.types.ObjectId
 import dsbw.domain.user.User
 import javax.xml.ws
+import scala.collection.mutable.ListBuffer
 
 /* Surveys API */
 class SurveysApi(surveysService: SurveysService, usersService: UsersService) extends Api {
 
     val PatternGetSurveyId      = "GET /api/survey/(\\w+)".r
+    val PatternGetSurveyIdNoMatterWhat = "GET /api/survey/(\\w+)/noMatterWhat".r
     val PatternPutSurveyId      = "PUT /api/survey/(\\w+)".r
     val PatternGetAnswers       = "GET /api/survey/(\\w+)/answers/".r
     val PatternGetAnswersUser   = "GET /api/survey/(\\w+)/answers/(\\w+)".r
@@ -19,7 +21,6 @@ class SurveysApi(surveysService: SurveysService, usersService: UsersService) ext
     val PatternPostAnswers      = "POST /api/survey/(\\w+)/answers/".r
 
     val PatternGetUserId  = "GET /api/user/(\\w+)".r
-
     def service(
         method: String,
         uri: String,
@@ -28,12 +29,14 @@ class SurveysApi(surveysService: SurveysService, usersService: UsersService) ext
         body: Option[JSON] = None
     ): Response = {
         (method + " " + uri) match {
+            case "GET /api/userSurveysAnswered" => getUserSurveysAnswered(getIdCreator(headers))
             case "POST /api/survey" => postSurvey(getIdCreator(headers), body)
             case PatternGetAnswersUser(idSurvey, idUser) => getAnswersUser(idSurvey, idUser, body)
             case PatternGetAnswers(id) => getAnswers(id)
             case PatternGetSurveyId(id) => getSurveyById(id)
+            case PatternGetSurveyIdNoMatterWhat(id) => getSurveyByIdNoMatterWhat(id)
             case PatternPutAnswers(idSurvey, idUser) => putAnswers(idSurvey, idUser, body)
-            case PatternPostAnswers(idSurvey)=> postAnswers(idSurvey, body)
+            case PatternPostAnswers(idSurvey)=> postAnswers(idSurvey, body, getIdCreator(headers))
             case PatternPutSurveyId(id) => putSurvey(id, body)
             case "GET /api/surveys" => getUserSurveys(getIdCreator(headers))
             case "POST /api/user" => postUser(body)
@@ -58,8 +61,7 @@ class SurveysApi(surveysService: SurveysService, usersService: UsersService) ext
             } else {
                 Response(HttpStatusCode.BadRequest)
             }
-        }
-        catch {
+        } catch {
             case e: Throwable => {
                 println(e)
                 println(e.getStackTraceString)
@@ -86,9 +88,15 @@ class SurveysApi(surveysService: SurveysService, usersService: UsersService) ext
         println("*** SurveysApi.getSurveyUser()")
         println("Survey id: "+ idSurvey+ "; User id: "+ idUser)
         println("Request body: " + body)
-        val myans = surveysService.getAnswersUser(idSurvey, idUser)
-        val tmpl = JSON.toJSON(myans)
-        Response(HttpStatusCode.Ok,null, tmpl )
+        try{
+             val myans = surveysService.getAnswersUser(idSurvey, idUser)
+             val tmpl = JSON.toJSON(myans)
+             Response(HttpStatusCode.Ok,null, tmpl )
+        }
+        catch {
+            case e: IllegalStateException => println("Error")
+            Response(HttpStatusCode.BadRequest)
+        }
     }
 
     private def putAnswers(idSurvey: String, idUser: String, body: Option[JSON]): Response = {
@@ -97,20 +105,19 @@ class SurveysApi(surveysService: SurveysService, usersService: UsersService) ext
         println("Request body: " + body)
 
         try{
-        if(body.nonEmpty) {
-            val surveyAnswers = JSON.fromJSON[SurveyAnswer](body.get)
-            surveyAnswers.setId(idUser)
-            println("Survey Answer: " + surveyAnswers)
-            if(surveysService.updateAnswers(idSurvey, surveyAnswers)){
-                Response(HttpStatusCode.NoContent)
-            }
-            else{
+            if(body.nonEmpty) {
+                val surveyAnswers = JSON.fromJSON[SurveyAnswer](body.get)
+                surveyAnswers.setId(idUser)
+                println("Survey Answer: " + surveyAnswers)
+                if(surveysService.updateAnswers(idSurvey, surveyAnswers)){
+                    Response(HttpStatusCode.NoContent)
+                } else {
+                    Response(HttpStatusCode.BadRequest)
+                }
+            } else {
                 Response(HttpStatusCode.BadRequest)
             }
-        } else {
-            Response(HttpStatusCode.BadRequest)
-        }
-        }catch {
+        } catch {
             case e: Throwable => {
                 println(e)
                 println(e.getStackTraceString)
@@ -119,7 +126,7 @@ class SurveysApi(surveysService: SurveysService, usersService: UsersService) ext
         }
     }
 
-    private def postAnswers(idSurvey: String, body: Option[JSON]): Response = {
+    private def postAnswers(idSurvey: String, body: Option[JSON], headerUserId: String): Response = {
         println("*** SurveysApi.postAnswers()")
         println("Survey id: "+idSurvey)
         println("Request body: " + body)
@@ -127,7 +134,12 @@ class SurveysApi(surveysService: SurveysService, usersService: UsersService) ext
         try{
             if(body.nonEmpty) {
                 val surveyAnswers = JSON.fromJSON[SurveyAnswer](body.get)
-                val userId= new ObjectId().toString
+
+                val userId = if (headerUserId == "-1") {
+                    new ObjectId().toString
+                } else {
+                    headerUserId
+                }
                 println("Generated User id: "+ userId)
                 surveyAnswers.setId(userId)
                 println("Survey Answer: " + surveyAnswers)
@@ -173,7 +185,21 @@ class SurveysApi(surveysService: SurveysService, usersService: UsersService) ext
 
     private def getSurveyById(id: String): Response = {
         val myenq= surveysService.getSurvey(id);
+        println("-- ENQ size: "+ myenq.answers.get.size)
+        if (myenq.answers.get.size> 0) {
+            println("L'enquesta ja ha estat contestada al menys per un usuari. No es pot editar")
+            Response(HttpStatusCode.BadRequest)
+        } else {
+            val tmp1= JSON.toJSON(myenq);
+            Response(HttpStatusCode.Ok, null, tmp1);
+        }
+    }
+
+    private def getSurveyByIdNoMatterWhat(id: String): Response = {
+        val myenq= surveysService.getSurvey(id);
+        println("-- ENQ size: "+ myenq.answers.get.size)
         val tmp1= JSON.toJSON(myenq);
+
         Response(HttpStatusCode.Ok, null, tmp1);
     }
 
@@ -269,6 +295,13 @@ class SurveysApi(surveysService: SurveysService, usersService: UsersService) ext
             Response(HttpStatusCode.Ok, null, json)
         }
         else Response(HttpStatusCode.Unauthorized)
+    }
+
+    def getUserSurveysAnswered(userId: String): Response = {
+        println("inside get User Surveys Answered, userId = " + userId)
+        val data = surveysService.getSurveysAnswered(userId)
+
+        Response(HttpStatusCode.Ok, null, JSON.toJSON[ListBuffer[Survey]](data))
     }
 }
 

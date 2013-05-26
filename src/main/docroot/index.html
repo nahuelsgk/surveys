@@ -16,6 +16,7 @@
 
 <menu class="main">
     <a href="#" id="listSurveys" onclick="listSurveys();">List surveys</a>
+    <a href="#" id="answeredSurveys" onclick="answeredSurveysByUser();">Answered Surveys</a>
     <a href="#" id="createSurvey" onclick="createSurvey();">Create survey</a>
 </menu>
 
@@ -59,7 +60,9 @@
 
 
 <!-- Here are some useful html templates -->
-<li class="hidden" id="listSurveyItem" data-since="" data-until=""> </li>
+<table><tr class="hidden" id="listSurveyItem" data-since="" data-until=""><td class="title"></td><td class="numAnswers"></td></tr></table>
+
+<table><tr class="hidden" id="listSurveyAnsweredByUserItem" data-since="" data-until="" date-answered=""><td class="title"></td><td class="since"></td><td class="until"></td><td class="dateAnswered"></td><td class="answerState"></td></tr></table>
 
 <img src="img/error.png" class="hidden" id="deleteSurveyID">
 
@@ -74,7 +77,7 @@
     </form>
     <image src="img/plus.png" class="plus" id="add_question" />
     <br />
-    <input type="button"  id="publishSurvey" value="Publish" title="By publishing your survey users will be able to answer it">
+    <!-- <input type="button"  id="publishSurvey" value="Publish" title="By publishing your survey users will be able to answer it"> -->
     <input type="button"  id="updateSurvey" value="Save" title="By saving your survey you will be able to publish it later">
 
 </div>
@@ -142,8 +145,12 @@
     <br />
     <label id="labellinkanswer" for="linkanswer"></label>
     <a href="" id="linkanswer"></a><br />
+
+    <div class="answerButtons" id="answerButtons">
     <input type="button"  id="saveSurveyAnswers" value="Save survey" title="Save and resume later">
     <input type="button"  id="publishSurveyAnswers" value="Finish survey" title="Send your answers to survey administrator">
+    </div>
+
 </div>
 
 
@@ -164,6 +171,11 @@
         <p></p><label id="lemail">Email: </label><input type="text" id="newemail" value="" placeholder="Email"></p>
         <p><input type="submit" id="createAccount" name="commit" value="Sign in"></p>
     </form>
+
+</div>
+
+<li id="listAnswerItem" class="hidden">  </li>
+
 </div>
 
 <div id="userState" class="hidden">

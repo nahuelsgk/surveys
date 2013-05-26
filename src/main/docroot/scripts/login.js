@@ -44,6 +44,7 @@ function correctlyLogged(username, sayHello) {
         logOut();
     });
     $('#listSurveys').show();
+    $('#answeredSurveys').show();
     if (sayHello) sayWelcome();
 }
 
@@ -56,6 +57,7 @@ function logOut() {
     $('#logout').attr('class','hidden');
     sayGoodBye();
     $('#listSurveys').hide();
+    $('#answeredSurveys').hide();
     document.cookie=null;
     var userCookie = getCookie();
     if (userCookie != null) {
@@ -204,6 +206,7 @@ function checkCookie() {
     }
     else {  // el client no esta loguejat
         $('#listSurveys').hide();
+        $('#answeredSurveys').hide();
         if (userCookie!=null) {
             resetCookie(userCookie);
         }

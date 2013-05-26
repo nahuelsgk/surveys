@@ -22,7 +22,6 @@ case class Survey(
     secret: String = "",
     state: String = StatesSurvey.Creating,
     questions: Option[List[Question]]= None,
-    //answers: Option[Map[Int, List[Answer]]]= None
     answers: Option[List[SurveyAnswer]]= None
  )  {
 
