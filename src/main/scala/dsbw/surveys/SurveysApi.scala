@@ -20,7 +20,7 @@ class SurveysApi(surveysService: SurveysService, usersService: UsersService) ext
     val PatternPostAnswers      = "POST /api/survey/(\\w+)/answers/".r
 
     val PatternGetUserId  = "GET /api/user/(\\w+)".r
-    val PatternGetUserSurveysAnswered = "/api/user/(\\w+)/surveysAnswered".r
+    val PatternGetUserSurveysAnswered = "GET listSurveys/api/user/surveysAnswered".r
 
     def service(
         method: String,
@@ -41,7 +41,7 @@ class SurveysApi(surveysService: SurveysService, usersService: UsersService) ext
             case "POST /api/user" => postUser(body)
             case PatternGetUserId(id) => getUser(id)
             case "POST /api/login" => loginUser(body)
-            case PatternGetUserSurveysAnswered(userId) => getUserSurveysAnswered(userId)
+            case PatternGetUserSurveysAnswered => getUserSurveysAnswered(getIdCreator(headers))
             case _ => Response(HttpStatusCode.NotFound)
         }
     }
