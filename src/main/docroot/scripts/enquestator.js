@@ -305,8 +305,8 @@ function listSurveys() {
     sendEvent('/api/surveys', 'GET', null, null, renderListSurveys);
 }
 
-function answeredSurveys(){
-    sendEvent('/api/user/' + userId + '/surveysAnswered', 'GET', null, null, renderSurveysAnsweredByUser);
+function answeredSurveysByUser(){
+    sendEvent('/api/user/surveysAnswered', 'GET', null, null, renderSurveysAnsweredByUser);
 }
 
 function renderSurveysAnsweredByUser(surveyList){
