@@ -7,6 +7,7 @@ import dsbw.domain.survey.{StatesSurvey, Survey, SurveyAnswer, Answer}
 import org.bson.types.ObjectId
 import dsbw.domain.user.User
 import javax.xml.ws
+import scala.collection.mutable.ListBuffer
 
 /* Surveys API */
 class SurveysApi(surveysService: SurveysService, usersService: UsersService) extends Api {
@@ -19,6 +20,7 @@ class SurveysApi(surveysService: SurveysService, usersService: UsersService) ext
     val PatternPostAnswers      = "POST /api/survey/(\\w+)/answers/".r
 
     val PatternGetUserId  = "GET /api/user/(\\w+)".r
+    val PatternGetUserSurveysAnswered = "/api/user/(\\w+)/surveysAnswered".r
 
     def service(
         method: String,
@@ -39,6 +41,7 @@ class SurveysApi(surveysService: SurveysService, usersService: UsersService) ext
             case "POST /api/user" => postUser(body)
             case PatternGetUserId(id) => getUser(id)
             case "POST /api/login" => loginUser(body)
+            case PatternGetUserSurveysAnswered(userId) => getUserSurveysAnswered(userId)
             case _ => Response(HttpStatusCode.NotFound)
         }
     }
@@ -58,8 +61,7 @@ class SurveysApi(surveysService: SurveysService, usersService: UsersService) ext
             } else {
                 Response(HttpStatusCode.BadRequest)
             }
-        }
-        catch {
+        } catch {
             case e: Throwable => {
                 println(e)
                 println(e.getStackTraceString)
@@ -282,6 +284,13 @@ class SurveysApi(surveysService: SurveysService, usersService: UsersService) ext
             Response(HttpStatusCode.Ok, null, json)
         }
         else Response(HttpStatusCode.Unauthorized)
+    }
+
+    def getUserSurveysAnswered(userId: String): Response = {
+
+        val data = surveysService.getSurveysAnswered(userId)
+
+        Response(HttpStatusCode.Ok, null, JSON.toJSON[ListBuffer[Survey]](data))
     }
 }
 

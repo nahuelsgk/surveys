@@ -21,6 +21,30 @@ class SurveysService(surveysRepository: SurveysRepository) {
         listSurvey
     }
 
+    def getSurveysAnswered(userId: String) : ListBuffer[Survey] = {
+        val list = surveysRepository.listSurveys()
+        val listSurvey = new ListBuffer[Survey]
+
+        list.foreach((sur: SurveysRecord) => {
+            sur.answers.foreach((answer) => {
+                if (answer.idClient == userId) {
+                    listSurvey += new Survey(
+                        id = sur._id.toString,
+                        title = sur.title,
+                        since = sur.since,
+                        until = sur.until,
+                        secret = sur.secret,
+                        answers = Option(List(SurveyAnswer.fromRecord(answer)))
+                    )
+
+                }
+            })
+
+        })
+
+        listSurvey
+    }
+
     def listSurveys(idSurveys: List[String]): Set[Survey] =  {
         val surveysRecord = surveysRepository.listSurveys(idSurveys)
         var surveys = Set[Survey]()
@@ -111,7 +135,5 @@ class SurveysService(surveysRepository: SurveysRepository) {
           val sur= surveysRepository.getSurvey(id);
         Survey.fromRecord(sur)
     }
-
-
 }
 
