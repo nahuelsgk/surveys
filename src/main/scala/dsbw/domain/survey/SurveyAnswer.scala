@@ -20,10 +20,13 @@ case class SurveyAnswer(
 
     /* Recupera el ID o el genera si cal */
     private def getIdClient(): ObjectId = {
-       if (this.idClient.isEmpty)
-           return new ObjectId()
-       else
-           return new ObjectId(this.idClient)
+       if (this.idClient.isEmpty) {
+           val objId =  new ObjectId()
+           this.idClient = objId.toString
+           objId
+       } else {
+            new ObjectId(this.idClient)
+       }
     }
 
     private def getAnswersRecordList(): List[AnswerRecord] = {
@@ -34,14 +37,14 @@ case class SurveyAnswer(
 	           ll+= a.toRecord()
 	        })
 	        println("LL: ("+ ll.toList.size+ ") "+ ll.toList)
-	         return ll.toList
-	    }
-	    else{
-	        return List()
+	        ll.toList
+	    } else {
+	        List()
 	    }
     }
 
     def toRecord(): SurveyAnswerRecord = {
+        println("idclient= " + getIdClient)
 	  new SurveyAnswerRecord(
 	    idClient = this.getIdClient(),
         stateAnswer = this.stateAnswer,

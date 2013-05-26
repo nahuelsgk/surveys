@@ -26,8 +26,9 @@ class SurveysService(surveysRepository: SurveysRepository) {
         val listSurvey = new ListBuffer[Survey]
 
         list.foreach((sur: SurveysRecord) => {
-            sur.answers.foreach((answer) => {
-                if (answer.idClient == userId) {
+            sur.answers.foreach(answer => {
+                println("inside foreach, answerIdClient = " + answer.idClient + " userId = " + userId)
+                if (answer.idClient.toString == userId) {
                     listSurvey += new Survey(
                         id = sur._id.toString,
                         title = sur.title,
