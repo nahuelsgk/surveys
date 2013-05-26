@@ -316,34 +316,42 @@ function renderSurveysAnsweredByUser(surveyList){
     list.append($('<tr><th>Survey</th><th>Since</th><th>Until</th><th>Answer Date</th></tr>'));
     var obj = $.parseJSON(surveyList);
     var size = obj.length;
-
-    /*    var surveysHtmlIni = $('<div id="surveysList">');
-        var list = $('<table border="1">');
-        surveysHtmlIni.append(list);
-        list.append($('<tr><th>Survey</th><th>Answers</th></tr>'));
-        var count = 0;
-        var obj = $.parseJSON(listOfSurveys);
-        var size = obj.length;
-        for (var i = 0; i < size; ++i) {      // iteration over the all survey JSONs
-            var survey = new Survey(obj[i]);
-            if (typeof survey === 'undefined') {
-                console.log('undefined survey');
-            } else {
-                var key = survey.id;
-                surveys[key] = survey;
-                var item = listSurvey(survey);
-                list.append(item);
-                count = count + 1;
-            }
+    var count = 0;
+    for (var i = 0; i < size; ++i) {      // iteration over the all survey JSONs
+        var survey = new Survey(obj[i]);
+        if (typeof survey === 'undefined') {
+            console.log('undefined survey');
+        } else {
+            var key = survey.id;
+            surveys[key] = survey;
+            var item = listSurveyAnswered(survey);
+            list.append(item);
+            count = count + 1;
         }
-        if (count == 0) {
-            var noSurvey = $('<span>No surveys today</span>');
-    	    surveysHtmlIni.append(noSurvey);
-        }
-        surveysHtmlIni.append($('</table>'));
+    }
+    if (count == 0) {
+        var noSurvey = $('<span>No surveys answered</span>');
+        surveysHtmlIni.append(noSurvey);
+    }
+    surveysHtmlIni.append($('</table>'));
 
+    displayContent(surveysHtmlIni, LIST_SURVEYS);
+}
 
-        displayContent(surveysHtmlIni, LIST_SURVEYS);*/
+function listSurveyAnswered(survey){
+    var item = $('#listSurveyAnsweredByUserItem').clone(true);
+    item.attr('id','');
+    item.attr('class','surveyAnsweredItem'); // remove the hidden class
+    item.attr('name', survey.id);
+    item.attr('data-since',survey.since);
+    item.attr('data-until',survey.until);
+    spans = item.children();
+    spans.filter('.title').text(survey.title);
+    spans.filter('.since').text(survey.since);
+    spans.filter('.until').text(survey.until);
+    spans.filter('.dateAnswered').text(survey.answers[0].dateAnswer);
+    spans.filter('.answerState').text(survey.answers[0].stateAnswer);
+    return item;
 }
 
 function createSurvey() {
