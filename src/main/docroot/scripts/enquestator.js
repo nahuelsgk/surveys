@@ -268,11 +268,13 @@ function updateCurrentSurvey(survey){
     $("#linkadmin").attr("href",urlAdmin);
     $("#labellinkadmin").text("");
 
-    renderEditSurvey(currentSurvey);
+    if(currentSurvey.answers.length > 0) {
+        surveyAlreadyStarted();
+    } else renderEditSurvey(currentSurvey);
  }
 
 function renderSurveyAnswers(answers) {
-    $('#dynamicContent').empty();
+    //$('#dynamicContent').empty();
     var surveysHtmlIni = $('<div id="surveysList">');
     var header = $('<h2 id="contentTitle">Surveys answer list</h2>');
     surveysHtmlIni.append(header);
@@ -450,7 +452,7 @@ function listSurvey(survey) {
     });
     item.append(img);
     item.click(function() {
-        sendEvent('/api/survey/'+survey.id, 'GET', null, null, updateCurrentSurvey, surveyAlreadyStarted);
+        sendEvent('/api/survey/'+survey.id+'/noMatterWhat', 'GET', null, null, updateCurrentSurvey);
     });
 
     return item;
@@ -774,17 +776,17 @@ function answerSurvey(state) {
     if(userId == "" ){
         var loc = '/api/survey/'+currentSurvey.id+ '/answers/';
         if(state == 'pending'){
-            sendEvent(loc, 'POST', jsonAnswer, null, surveyAnswered, surveyAlreadyStarted);
+            sendEvent(loc, 'POST', jsonAnswer, null, surveyAnswered, answerProblem);
         }else if(state == 'done'){
-            sendEvent(loc, 'POST', jsonAnswer, null, surveyAnswered, surveyAlreadyStarted);
+            sendEvent(loc, 'POST', jsonAnswer, null, surveyAnswered, answerProblem);
         }
 
     }else{
         var loc = '/api/survey/'+currentSurvey.id+ '/answers/' + userId;
         if(state == "pending"){
-            sendEvent(loc, 'PUT', jsonAnswer, null, showPostSaveSurveyNotification, surveyAlreadyStarted);
+            sendEvent(loc, 'PUT', jsonAnswer, null, showPostSaveSurveyNotification, answerProblem);
         }else if(state == 'done'){
-            sendEvent(loc, 'PUT', jsonAnswer, null, showPostFinishNotification, surveyAlreadyStarted);
+            sendEvent(loc, 'PUT', jsonAnswer, null, showPostFinishNotification, answerProblem);
         }
 
     }
@@ -868,7 +870,7 @@ function renderForm() {
             if(params.id && params.secret) {
                 surveyId = params.id;
                 secret = params.secret;
-                sendEvent('/api/survey/'+params.id, 'GET', null, null, updateCurrentSurvey, surveyAlreadyStarted);
+                sendEvent('/api/survey/'+params.id+'/noMatterWhat', 'GET', null, null, updateCurrentSurvey);
             } else if(params.id && params.user) {
                 surveyId = params.id;
                 userId = params.user;
@@ -896,6 +898,15 @@ function surveyAlreadyClosed(){
     $('#dynamicContent').append(notification);
 }
 
+function answerProblem(){
+    $('#dynamicContent').empty();
+    var notification =  $('#notificationAnswer').clone();
+    notification.text('This answer was already submitted.');
+    notification.attr('class','error');
+    hideTimeout(notification);
+    $('#dynamicContent').append(notification);
+}
+
 function surveyAlreadyStarted(){
     $('#dynamicContent').empty();
     var notification =  $('#notificationAnswer').clone();
@@ -903,9 +914,13 @@ function surveyAlreadyStarted(){
     notification.attr('class','error');
     hideTimeout(notification);
     $('#dynamicContent').append(notification);
-    renderSurveyAnswers(currentSurvey.answers);//function list answers
 
-    
+    renderSurveyAnswers(currentSurvey.answers);//function list answers
+}
+
+function listSurveyAnswers(survey) {
+
+
 }
 
 function hideTimeout(element) {
