@@ -11,6 +11,8 @@ var answerListList = new Object();
 var secret = new Object();
 var surveyId = new Object();
 var userId = "";
+// Variable que guarda quin botó s'ha pitjat...si, en una global, si, em sento brut, odio javascript, odio aquest món
+var clickedButton;
 
 function renderLastChangeNotification(){
     date = new Date();
@@ -58,17 +60,28 @@ function renderEditSurvey(survey, createdNow){
     if (createdNow) {
         $('#notification').text('Your survey has been created');
         $('#notification').attr('class','success');
-    }
-    else {
+    } else {
         $('#notification').attr('class','hidden');
     }
+
+    hideTimeout($('#notification'));
+
     initDatePicker();
     enableAddQuestions();
     if (typeof survey.questions !== 'undefined') {
         //console.log('rendering ['+survey.questions.length +'] questions...');
-        for(i = 0; i < survey.questions.length; ++i) {
+
+        //That adds by default two questions when no questions(that is when just created, or saved without questions)
+        if (survey.questions.length == 0) {
+            addNewQuestion();
+            addNewQuestion();
+        }
+        //Otherwise render questions
+        else{
+          for(i = 0; i < survey.questions.length; ++i) {
             //console.log('original ID: '+survey.questions[i].id);
             addQuestion(survey.questions[i]);
+          }
         }
 
     }
@@ -136,7 +149,7 @@ function updateSurvey() {
             var type = $(this).find('#'+SELECTOR_TAG+index).val();
             //var type = $('select').val();
             var q = new Question(type,order,text);
-            console.log(index+") text: "+q.text+" type: "+q.type);
+            console.log(index+") text: "+q.text+" type: "+q.questionType);
             if (type === 'multichoice' || type === 'choice') {
                 $(this).find('.options').each(function(ind) {
                     addOptionToQuestion(q,$(this).val());
@@ -150,20 +163,31 @@ function updateSurvey() {
 
     console.log("obj: "+JSON.stringify(jsonSurvey));
     var loc = '/api/survey/'+currentSurvey.id;
+    var now= new Date();
+    now.setDate(now.getDate()- 1);
+    if(Date.parse($('#since').val())< now){
+        alert("The survey cannot start before today.");
+        console.log("FAIL! Data d'inici menor a la data actual. now: "+ now + " - since: "+ Date.parse($('#since').val()));
+        return false;
+    }
+
     sendEvent(loc, 'PUT', jsonSurvey, null, surveyUpdatedCorrectly, surveyUpdateError);
 }
 
 function surveyUpdatedCorrectly() {
     $('#notification').text('Survey updated correctly!');
     $('#notification').attr('class','info');
+
+    hideTimeout($('#notification'));
+
     window.scrollTo( 0, 0) ;
 
 }
 
 function surveyUpdateError() {
     $('#notification').text('You dont have permission to edit this survey');
-    $('#notification').attr('class','failure');
-
+    $('#notification').attr('class','error');
+    hideTimeout($('#notification'));
      window.scrollTo(0, 0);
      console.log('Error updating Survey');
 }
@@ -215,6 +239,13 @@ function surveyCreated(data, location) {
 
 function submitCreateSurvey(){
     secret = Math.random().toString(36).substr(2,16);
+    var now= new Date();
+    now.setDate(now.getDate()- 1);
+    if(Date.parse($('#since').val())< now){
+        alert("The survey cannot start before today.");
+        console.log("FAIL! Data d'inici menor a la data actual. now: "+ now + " - since: "+ Date.parse($('#since').val()));
+        return false;
+    }
     var data = {title : $('#title').val(), since : $('#since').val(), until : $('#until').val(), secret : secret};
     var method = 'POST';
     sendEvent('/api/survey', method, data, null, surveyCreated);
@@ -230,16 +261,14 @@ function updateCurrentSurvey(survey){
     currentSurvey = $.parseJSON(survey.value);
     console.log(currentSurvey);
     showEditButton();
+    secret = currentSurvey.secret;
 
     var urlAdmin = "";
     $("#linkadmin").html(urlAdmin);
     $("#linkadmin").attr("href",urlAdmin);
     $("#labellinkadmin").text("");
 
-    if(currentSurvey.answers.length > 0) {
-        renderSurveyAnswers(currentSurvey.answers);//function list answers
-    }
-    else renderEditSurvey(currentSurvey);
+    renderEditSurvey(currentSurvey);
  }
 
 function renderSurveyAnswers(answers) {
@@ -421,7 +450,7 @@ function listSurvey(survey) {
     });
     item.append(img);
     item.click(function() {
-        sendEvent('/api/survey/'+survey.id, 'GET', null, null, updateCurrentSurvey);
+        sendEvent('/api/survey/'+survey.id, 'GET', null, null, updateCurrentSurvey, surveyAlreadyStarted);
     });
 
     return item;
@@ -448,6 +477,14 @@ function initDatePicker() {
         }
    });
 }
+
+
+/*function renderNewSurveyForm() {
+    initDatePicker();
+    currentView = CREATE_SURVEY;
+    $('#buttonSurveyCreate').click(submitCreateSurvey);
+    //enableAddQuestions();
+}*/
 
 function displayTypeOfQuestion(idQuestion,type) {
     //console.log('displaying type: '+type+" for question: "+idQuestion);
@@ -480,7 +517,8 @@ function addOptionChoice(idQuestion,divNameTo) {
 
 function enableAddChoices(divNameTo,idQuestion) {
     $(divNameTo).attr('class','questionOptions');
-    $(divNameTo).find('img').click(function() {
+    $(divNameTo).find('img.add_question_icon').unbind('click');
+    $(divNameTo).find('img.add_question_icon').click(function() {
         addOptionChoice(idQuestion, divNameTo);
     });
 }
@@ -632,7 +670,7 @@ function addAnswerCheckBox(question, userAnswer, idUser){
 
 function renderSurveyAnswerForm(survey) {
       answerCounter = 1;
-
+//    cleanView(currentView);
       currentView = ANSWER_SURVEY;
       $('#dynamicContent').empty();
       var template_form = $('#answerFormDiv').clone();
@@ -729,30 +767,53 @@ function answerSurvey(state) {
     // Mostrem link si es un save
     if(state == "pending"){
         showLink();
+        clickedButton = "saveAnswer";
+    }else{
+        clickedButton = "finishAnswer";
     }
     if(userId == "" ){
         var loc = '/api/survey/'+currentSurvey.id+ '/answers/';
-        sendEvent(loc, 'POST', jsonAnswer, null, surveyAnswered);
+        if(state == 'pending'){
+            sendEvent(loc, 'POST', jsonAnswer, null, surveyAnswered, surveyAlreadyStarted);
+        }else if(state == 'done'){
+            sendEvent(loc, 'POST', jsonAnswer, null, surveyAnswered, surveyAlreadyStarted);
+        }
+
     }else{
         var loc = '/api/survey/'+currentSurvey.id+ '/answers/' + userId;
-        sendEvent(loc, 'PUT', jsonAnswer, null, showSurveyAnsweredNotification());
+        if(state == "pending"){
+            sendEvent(loc, 'PUT', jsonAnswer, null, showPostSaveSurveyNotification, surveyAlreadyStarted);
+        }else if(state == 'done'){
+            sendEvent(loc, 'PUT', jsonAnswer, null, showPostFinishNotification, surveyAlreadyStarted);
+        }
+
     }
 
+}
 
-    //var loc = '/api/survey/'+currentSurvey.id+ '/answers/51917029b45d6da4c48979fc/';
-    //sendEvent(loc, 'PUT', jsonAnswer, null, surveyAnswered);
+function showPostSaveSurveyNotification(){
+    showSurveyAnsweredNotification("Your answers has been saved. Please click the link below to continue this survey in the future.");
+}
+
+function showPostFinishNotification(){
+    showSurveyAnsweredNotification("Your survey has been send!");
 }
 
 function surveyAnswered(data){
     var obj = $.parseJSON(data.value);
     userId = obj.userId;
-    showSurveyAnsweredNotification();
-    showLink();
+    if(clickedButton == "finishSurvey"){
+        showSurveyAnsweredNotification("Your survey has been send!");
+    }else if(clickedButton = "saveSurvey"){
+        showSurveyAnsweredNotification("Your answers has been saved. Please click the link below to continue this survey in the future.");
+    }
 }
 
-function showSurveyAnsweredNotification(){
-    $('#notificationAnswer').text('Survey answered!');
+function showSurveyAnsweredNotification(notificationText){
+    $('#notificationAnswer').text(notificationText);
+//    $('#notificationAnswer').text('Survey answered!');
     $('#notificationAnswer').attr('class','info');
+    hideTimeout($('#notificationAnswer'));
 }
 
 function showLink(){
@@ -807,7 +868,7 @@ function renderForm() {
             if(params.id && params.secret) {
                 surveyId = params.id;
                 secret = params.secret;
-                sendEvent('/api/survey/'+params.id, 'GET', null, null, updateCurrentSurvey);
+                sendEvent('/api/survey/'+params.id, 'GET', null, null, updateCurrentSurvey, surveyAlreadyStarted);
             } else if(params.id && params.user) {
                 surveyId = params.id;
                 userId = params.user;
@@ -830,8 +891,33 @@ function surveyAlreadyClosed(){
     var notification =  $('#notificationAnswer').clone();
     notification.text('You can\'t answer this survey. It\'s already closed!');
     notification.attr('class','error');
+    hideTimeout(notification);
+
     $('#dynamicContent').append(notification);
 }
+
+function surveyAlreadyStarted(){
+    $('#dynamicContent').empty();
+    var notification =  $('#notificationAnswer').clone();
+    notification.text('You can\'t edit this survey. It\'s already anwered at least once!');
+    notification.attr('class','error');
+    hideTimeout(notification);
+    $('#dynamicContent').append(notification);
+    renderSurveyAnswers(currentSurvey.answers);//function list answers
+
+    
+}
+
+function hideTimeout(element) {
+    setTimeout(
+        function() {
+            //element.attr('class', element.attr('class') + ' hidden');
+        },
+        5000
+    );
+}
+
+
 
 $(document).ready(function($) {
      renderForm();

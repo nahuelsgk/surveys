@@ -86,9 +86,15 @@ class SurveysApi(surveysService: SurveysService, usersService: UsersService) ext
         println("*** SurveysApi.getSurveyUser()")
         println("Survey id: "+ idSurvey+ "; User id: "+ idUser)
         println("Request body: " + body)
-        val myans = surveysService.getAnswersUser(idSurvey, idUser)
-        val tmpl = JSON.toJSON(myans)
-        Response(HttpStatusCode.Ok,null, tmpl )
+        try{
+             val myans = surveysService.getAnswersUser(idSurvey, idUser)
+             val tmpl = JSON.toJSON(myans)
+             Response(HttpStatusCode.Ok,null, tmpl )
+        }
+        catch {
+            case e: IllegalStateException => println("Error")
+            Response(HttpStatusCode.BadRequest)
+        }
     }
 
     private def putAnswers(idSurvey: String, idUser: String, body: Option[JSON]): Response = {
@@ -173,8 +179,15 @@ class SurveysApi(surveysService: SurveysService, usersService: UsersService) ext
 
     private def getSurveyById(id: String): Response = {
         val myenq= surveysService.getSurvey(id);
-        val tmp1= JSON.toJSON(myenq);
-        Response(HttpStatusCode.Ok, null, tmp1);
+        println("-- ENQ size: "+ myenq.answers.get.size)
+        if (myenq.answers.get.size> 0){
+            println("L'enquesta ja ha estat contestada al menys per un usuari. No es pot editar")
+            Response(HttpStatusCode.BadRequest)
+        }
+        else{
+            val tmp1= JSON.toJSON(myenq);
+            Response(HttpStatusCode.Ok, null, tmp1);
+        }
     }
 
     private def getAllSurveys(): Response = {
@@ -261,11 +274,14 @@ class SurveysApi(surveysService: SurveysService, usersService: UsersService) ext
     }
 
     def getUserSurveys(idCreator: String): Response = {
-        val userSurveys = usersService.getSurveys(idCreator)
-        val listSurveys = surveysService.listSurveys(userSurveys)
-        val json = JSON.toJSON(listSurveys).value
-        println("body response: " + json)
-        Response(HttpStatusCode.Ok, null, json)
+        if(!idCreator.equals("-1")) {
+            val userSurveys = usersService.getSurveys(idCreator)
+            val listSurveys = surveysService.listSurveys(userSurveys)
+            val json = JSON.toJSON(listSurveys).value
+            println("body response: " + json)
+            Response(HttpStatusCode.Ok, null, json)
+        }
+        else Response(HttpStatusCode.Unauthorized)
     }
 }
 
