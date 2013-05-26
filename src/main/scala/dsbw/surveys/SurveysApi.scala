@@ -20,8 +20,6 @@ class SurveysApi(surveysService: SurveysService, usersService: UsersService) ext
     val PatternPostAnswers      = "POST /api/survey/(\\w+)/answers/".r
 
     val PatternGetUserId  = "GET /api/user/(\\w+)".r
-    val PatternGetUserSurveysAnswered = "GET listSurveys/api/user/surveysAnswered".r
-
     def service(
         method: String,
         uri: String,
@@ -30,6 +28,7 @@ class SurveysApi(surveysService: SurveysService, usersService: UsersService) ext
         body: Option[JSON] = None
     ): Response = {
         (method + " " + uri) match {
+            case "GET /api/userSurveysAnswered" => getUserSurveysAnswered(getIdCreator(headers))
             case "POST /api/survey" => postSurvey(getIdCreator(headers), body)
             case PatternGetAnswersUser(idSurvey, idUser) => getAnswersUser(idSurvey, idUser, body)
             case PatternGetAnswers(id) => getAnswers(id)
@@ -41,7 +40,6 @@ class SurveysApi(surveysService: SurveysService, usersService: UsersService) ext
             case "POST /api/user" => postUser(body)
             case PatternGetUserId(id) => getUser(id)
             case "POST /api/login" => loginUser(body)
-            case PatternGetUserSurveysAnswered => getUserSurveysAnswered(getIdCreator(headers))
             case _ => Response(HttpStatusCode.NotFound)
         }
     }
@@ -287,7 +285,7 @@ class SurveysApi(surveysService: SurveysService, usersService: UsersService) ext
     }
 
     def getUserSurveysAnswered(userId: String): Response = {
-
+        println("inside get User Surveys Answered, userId = " + userId)
         val data = surveysService.getSurveysAnswered(userId)
 
         Response(HttpStatusCode.Ok, null, JSON.toJSON[ListBuffer[Survey]](data))
