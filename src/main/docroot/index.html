@@ -16,6 +16,7 @@
 
 <menu class="main">
     <a href="#" id="listSurveys" onclick="listSurveys();">List surveys</a>
+    <a href="#" id="answeredSurveys" oncick="answeredSurveysByUser();">Answered Surveys</a>
     <a href="#" id="createSurvey" onclick="createSurvey();">Create survey</a>
 </menu>
 
@@ -60,6 +61,8 @@
 
 <!-- Here are some useful html templates -->
 <table><tr class="hidden" id="listSurveyItem" data-since="" data-until=""><td class="title"></td><td class="numAnswers"></td></tr></table>
+
+<table><tr class="hidden" id="listSurveyAnsweredByUserItem" data-since="" data-until="" date-answered=""><td class="title"></td><td class="since"></td><td class="until"></td><td class="dateAnswered"></td></tr></table>
 
 <img src="img/error.png" class="hidden" id="deleteSurveyID">
 
