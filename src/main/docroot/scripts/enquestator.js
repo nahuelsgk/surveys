@@ -344,7 +344,7 @@ function renderSurveysAnsweredByUser(surveyList){
     var surveysHtmlIni = $('<div id="surveysAnsweredList">');
     var list = $('<table border="1">');
     surveysHtmlIni.append(list);
-    list.append($('<tr><th>Survey</th><th>Since</th><th>Until</th><th>Answer Date</th></tr>'));
+    list.append($('<tr><th>Survey</th><th>Since</th><th>Until</th><th>Answer Date</th><th>Answer State</th></tr>'));
     var obj = $.parseJSON(surveyList.value);
     var size = obj.length;
     var count = 0;
