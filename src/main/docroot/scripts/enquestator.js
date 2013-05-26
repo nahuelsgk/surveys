@@ -395,7 +395,7 @@ function createSurvey() {
 
 function displayContent(html, view)  {
     cleanView(currentView);
-    $('#content').append(html);
+    $('#content').html(html);
     currentView = view;
 }
 
