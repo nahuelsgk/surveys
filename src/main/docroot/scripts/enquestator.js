@@ -343,8 +343,9 @@ function renderSurveysAnsweredByUser(surveyList){
     $('#dynamicContent').empty();
     var surveysHtmlIni = $('<div id="surveysAnsweredList">');
     var list = $('<table border="1">');
+    surveysHtmlIni.append(list);
     list.append($('<tr><th>Survey</th><th>Since</th><th>Until</th><th>Answer Date</th></tr>'));
-    var obj = $.parseJSON(surveyList);
+    var obj = $.parseJSON(surveyList.value);
     var size = obj.length;
     var count = 0;
     for (var i = 0; i < size; ++i) {      // iteration over the all survey JSONs
@@ -353,7 +354,6 @@ function renderSurveysAnsweredByUser(surveyList){
             console.log('undefined survey');
         } else {
             var key = survey.id;
-            surveys[key] = survey;
             var item = listSurveyAnswered(survey);
             list.append(item);
             count = count + 1;
@@ -368,7 +368,8 @@ function renderSurveysAnsweredByUser(surveyList){
     displayContent(surveysHtmlIni, LIST_SURVEYS);
 }
 
-function listSurveyAnswered(survey){
+function listSurveyAnswered(survey) {
+    console.log('ins ListSurveyAnswered');
     var item = $('#listSurveyAnsweredByUserItem').clone(true);
     item.attr('id','');
     item.attr('class','surveyAnsweredItem'); // remove the hidden class
