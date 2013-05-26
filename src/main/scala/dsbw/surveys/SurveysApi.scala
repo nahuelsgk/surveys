@@ -13,6 +13,7 @@ import scala.collection.mutable.ListBuffer
 class SurveysApi(surveysService: SurveysService, usersService: UsersService) extends Api {
 
     val PatternGetSurveyId      = "GET /api/survey/(\\w+)".r
+    val PatternGetSurveyIdNoMatterWhat = "GET /api/survey/(\\w+)/noMatterWhat".r
     val PatternPutSurveyId      = "PUT /api/survey/(\\w+)".r
     val PatternGetAnswers       = "GET /api/survey/(\\w+)/answers/".r
     val PatternGetAnswersUser   = "GET /api/survey/(\\w+)/answers/(\\w+)".r
@@ -33,6 +34,7 @@ class SurveysApi(surveysService: SurveysService, usersService: UsersService) ext
             case PatternGetAnswersUser(idSurvey, idUser) => getAnswersUser(idSurvey, idUser, body)
             case PatternGetAnswers(id) => getAnswers(id)
             case PatternGetSurveyId(id) => getSurveyById(id)
+            case PatternGetSurveyIdNoMatterWhat(id) => getSurveyByIdNoMatterWhat(id)
             case PatternPutAnswers(idSurvey, idUser) => putAnswers(idSurvey, idUser, body)
             case PatternPostAnswers(idSurvey)=> postAnswers(idSurvey, body)
             case PatternPutSurveyId(id) => putSurvey(id, body)
@@ -180,14 +182,21 @@ class SurveysApi(surveysService: SurveysService, usersService: UsersService) ext
     private def getSurveyById(id: String): Response = {
         val myenq= surveysService.getSurvey(id);
         println("-- ENQ size: "+ myenq.answers.get.size)
-        if (myenq.answers.get.size> 0){
+        if (myenq.answers.get.size> 0) {
             println("L'enquesta ja ha estat contestada al menys per un usuari. No es pot editar")
             Response(HttpStatusCode.BadRequest)
-        }
-        else{
+        } else {
             val tmp1= JSON.toJSON(myenq);
             Response(HttpStatusCode.Ok, null, tmp1);
         }
+    }
+
+    private def getSurveyByIdNoMatterWhat(id: String): Response = {
+        val myenq= surveysService.getSurvey(id);
+        println("-- ENQ size: "+ myenq.answers.get.size)
+        val tmp1= JSON.toJSON(myenq);
+
+        Response(HttpStatusCode.Ok, null, tmp1);
     }
 
     private def getAllSurveys(): Response = {
