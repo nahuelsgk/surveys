@@ -297,6 +297,7 @@ function renderListSurveys(listOfSurveys) {
     }
     surveysHtmlIni.append($('</table>'));
 
+
     displayContent(surveysHtmlIni, LIST_SURVEYS);
 }
 
@@ -304,6 +305,46 @@ function listSurveys() {
     sendEvent('/api/surveys', 'GET', null, null, renderListSurveys);
 }
 
+function answeredSurveys(){
+    sendEvent('/api/user/' + userId + '/surveysAnswered', 'GET', null, null, renderSurveysAnsweredByUser);
+}
+
+function renderSurveysAnsweredByUser(surveyList){
+    $('#dynamicContent').empty();
+    var surveysHtmlIni = $('<div id="surveysAnsweredList">');
+    var list = $('<table border="1">');
+    list.append($('<tr><th>Survey</th><th>Since</th><th>Until</th><th>Answer Date</th></tr>'));
+    var obj = $.parseJSON(surveyList);
+    var size = obj.length;
+
+    /*    var surveysHtmlIni = $('<div id="surveysList">');
+        var list = $('<table border="1">');
+        surveysHtmlIni.append(list);
+        list.append($('<tr><th>Survey</th><th>Answers</th></tr>'));
+        var count = 0;
+        var obj = $.parseJSON(listOfSurveys);
+        var size = obj.length;
+        for (var i = 0; i < size; ++i) {      // iteration over the all survey JSONs
+            var survey = new Survey(obj[i]);
+            if (typeof survey === 'undefined') {
+                console.log('undefined survey');
+            } else {
+                var key = survey.id;
+                surveys[key] = survey;
+                var item = listSurvey(survey);
+                list.append(item);
+                count = count + 1;
+            }
+        }
+        if (count == 0) {
+            var noSurvey = $('<span>No surveys today</span>');
+    	    surveysHtmlIni.append(noSurvey);
+        }
+        surveysHtmlIni.append($('</table>'));
+
+
+        displayContent(surveysHtmlIni, LIST_SURVEYS);*/
+}
 
 function createSurvey() {
     cleanView(currentView);
