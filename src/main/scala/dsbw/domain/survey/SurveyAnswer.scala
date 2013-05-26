@@ -72,7 +72,8 @@ object SurveyAnswer {
         new SurveyAnswer(
             idClient = record.idClient.toString,
             stateAnswer = record.stateAnswer,
-            answered = Some(answered.toList)
+            answered = Some(answered.toList),
+            dateAnswer = record.dateAnswer
         )
     }
 }

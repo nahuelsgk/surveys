@@ -7,6 +7,7 @@ var SIGN_IN = 4;
 var WELCOME_VIEW = 5;
 var currentSurvey;
 var surveys = new Object();
+var answerListList = new Object();
 var secret = new Object();
 var surveyId = new Object();
 var userId = "";
@@ -267,8 +268,37 @@ function updateCurrentSurvey(survey){
     $("#linkadmin").attr("href",urlAdmin);
     $("#labellinkadmin").text("");
 
-    renderEditSurvey(currentSurvey);
+    if(currentSurvey.answers.length > 0) {
+        surveyAlreadyStarted();
+    } else renderEditSurvey(currentSurvey);
  }
+
+function renderSurveyAnswers(answers) {
+    //$('#dynamicContent').empty();
+    var surveysHtmlIni = $('<div id="surveysList">');
+    var header = $('<h2 id="contentTitle">Surveys answer list</h2>');
+    surveysHtmlIni.append(header);
+    var list = $('<ul/>');
+    surveysHtmlIni.append(list);
+
+    var size = answers.length;
+
+    for (var i = 0; i < size; ++i) {      // iteration over the all survey JSONs
+        var listListAnswers = new AnsweredQuestionList(answers[i]);
+        //idClient dateAnswer
+        //if(listListAnswers.answered.length > 0)
+        console.log(listListAnswers.answered.length);
+        var item = prepareListAnswers(listListAnswers);
+        list.append(item);
+    }
+
+    if (size == 0) {
+        var noAnswer = $('<span>No surveys today</span>');
+        surveysHtmlIni.append(noAnswer);
+    }
+
+    displayContent(surveysHtmlIni, LIST_SURVEYS);
+}
 
 function renderListSurveys(listOfSurveys) {
     $('#dynamicContent').empty();
@@ -394,6 +424,63 @@ function cleanView(view) {
 }
 
 
+function prepareListAnswers(listAnswers) {
+    var item = $('#listAnswerItem').clone(true); //TODO crear listAnswerItem
+    item.attr('id', '');
+    item.attr('class', 'surveyItem');
+    item.text('idClient ' + listAnswers.idClient + ' date = ' + listAnswers.dateAnswer+ ' ' + listAnswers.stateAnswer);
+     item.click(function() {
+            rendersurveyAnswered(listAnswers);
+            console.log("rendersurveyAnswered");
+     });
+
+    return item;
+}
+
+function rendersurveyAnswered(listAnswers) {
+      cleanView(currentView);
+      var survey = currentSurvey;
+      survey.answers = new Array();
+      survey.answers[0] = listAnswers;
+      answerCounter = 1;
+
+      currentView = ANSWER_SURVEY;
+      $('#dynamicContent').empty();
+      var template_form = $('#answerFormDiv').clone();
+      template_form.find('#surveyTitle').html(survey.title + " answered by " + listAnswers.idClient + " on " + listAnswers.dateAnswer);
+
+      template_form.attr('class', 'answerFormDiv');
+      $('#dynamicContent').append(template_form);
+      $('#dynamicContent').show();
+
+
+      var url = "http://localhost:8080/?id=" + survey.id;
+      $("#linkanswer").html(url);
+      $("#linkanswer").attr("href",url);
+      $("#labellinkanswer").text("Your survey link: ");
+
+
+      renderAnswers();
+      if (typeof survey.questions !== 'undefined') {
+            console.log('rendering ['+survey.questions.length +'] questions...');
+            for(var i = 0; i < survey.questions.length; ++i) {
+                switch(survey.questions[i].questionType){
+                    case TYPE_TEXT:
+                        addAnswerBox(survey.questions[i],survey.answers, listAnswers.idClient);
+                        break;
+                    case TYPE_CHOICE:
+                        addAnswerRadio(survey.questions[i],survey.answers, listAnswers.idClient);
+                        break;
+                    case TYPE_MULTICHOICE:
+                        addAnswerCheckBox(survey.questions[i],survey.answers, listAnswers.idClient);
+                        break;
+                }
+            }
+      }
+      $('#answerButtons').attr('class','hidden');
+
+}
+
 function listSurvey(survey) {
     var item = $('#listSurveyItem').clone(true);
     item.attr('id','');
@@ -415,7 +502,7 @@ function listSurvey(survey) {
     });
     item.append(img);
     item.click(function() {
-        sendEvent('/api/survey/'+survey.id, 'GET', null, null, updateCurrentSurvey, surveyAlreadyStarted);
+        sendEvent('/api/survey/'+survey.id+'/noMatterWhat', 'GET', null, null, updateCurrentSurvey);
     });
 
     return item;
@@ -540,7 +627,7 @@ function getSurveyQuestions(request) {
     currentSurvey = survey;
     //console.log(survey);
     //console.log("ID: "+survey.id);
-    renderSurveyAnswerForm(survey,true);
+    renderSurveyAnswerForm(survey);
 }
 
 
@@ -551,7 +638,7 @@ function renderAnswers() {
     $('#dynamicContent').append(answers);
 }
 
-function addAnswerBox(question, userAnswer) {
+function addAnswerBox(question, userAnswer, idUser) {
 
     question.id = answerCounter;
 
@@ -560,8 +647,9 @@ function addAnswerBox(question, userAnswer) {
     answer.attr('id','answerBox' + answerCounter);
     answer.find('#questionText').html(answerCounter + ". " + question.text);
 
+    var uId = idUser;
     var text = $('<textarea>').attr({class: 'answerTextArea', id: AREA_TAG + answerCounter, row: '3', cols: '30'})
-    if(userAnswer.length == 1 && userAnswer[0].idClient == userId){
+    if(userAnswer.length == 1 && userAnswer[0].idClient == uId){
         text.val(userAnswer[0].answered[answerCounter - 1].options[0]);
     }
 
@@ -570,7 +658,7 @@ function addAnswerBox(question, userAnswer) {
     ++answerCounter;
 }
 
-function addAnswerRadio(question, userAnswer){
+function addAnswerRadio(question, userAnswer, idUser){
     var radio;
     var radioLabel;
     var answer = $('#answerBox').clone();
@@ -590,7 +678,8 @@ function addAnswerRadio(question, userAnswer){
         answer.append('<br>');
 
         // Retrieve old answeer
-        if(userAnswer.length == 1 && userAnswer[0].idClient == userId){
+        var uId = idUser;
+        if(userAnswer.length == 1 && userAnswer[0].idClient == uId){
             if(userAnswer[0].answered[answerCounter - 1].options[i] == 'true'){
                 radio.prop('checked',true);
             }
@@ -600,7 +689,7 @@ function addAnswerRadio(question, userAnswer){
     ++answerCounter;
 }
 
-function addAnswerCheckBox(question, userAnswer){
+function addAnswerCheckBox(question, userAnswer, idUser){
     var checkbox;
     var checkboxLabel;
     var answer = $('#answerBox').clone();
@@ -619,7 +708,8 @@ function addAnswerCheckBox(question, userAnswer){
         //$('#radio' + answerCounter + '_' + i).text("hola");
         answer.append('<br>');
         // Retrieve old answeer
-        if(userAnswer.length == 1 && userAnswer[0].idClient == userId){
+        var uId = idUser;
+        if(userAnswer.length == 1 && userAnswer[0].idClient == uId){
            if(userAnswer[0].answered[answerCounter - 1].options[i] == 'true'){
                checkbox.prop('checked',true);
            }
@@ -630,14 +720,14 @@ function addAnswerCheckBox(question, userAnswer){
 }
 
 
-function renderSurveyAnswerForm(survey, createdNow){
+function renderSurveyAnswerForm(survey) {
       answerCounter = 1;
 //    cleanView(currentView);
       currentView = ANSWER_SURVEY;
       $('#dynamicContent').empty();
       var template_form = $('#answerFormDiv').clone();
       template_form.find('#surveyTitle').html(survey.title);
-      //template_form.find('#survey_description').html('Fullfill your info to update');
+
       template_form.attr('class', 'answerFormDiv');
       $('#dynamicContent').append(template_form);
       $('#dynamicContent').show();
@@ -653,21 +743,22 @@ function renderSurveyAnswerForm(survey, createdNow){
             for(var i = 0; i < survey.questions.length; ++i) {
                 switch(survey.questions[i].questionType){
                     case TYPE_TEXT:
-                                addAnswerBox(survey.questions[i],survey.answers);
-                                break;
+                        addAnswerBox(survey.questions[i],survey.answers, userId);
+                        break;
                     case TYPE_CHOICE:
-                                addAnswerRadio(survey.questions[i],survey.answers);
-                                break;
+                        addAnswerRadio(survey.questions[i],survey.answers, userId);
+                        break;
                     case TYPE_MULTICHOICE:
-                                addAnswerCheckBox(survey.questions[i],survey.answers);
-                                break;
+                        addAnswerCheckBox(survey.questions[i],survey.answers, userId);
+                        break;
                 }
             }
       }
-      $('#saveSurveyAnswers').click(function(){
+      $('#saveSurveyAnswers').click(function() {
             answerSurvey("pending");
-      })
-      $('#publishSurveyAnswers').click(function(){
+      });
+
+      $('#publishSurveyAnswers').click(function() {
             answerSurvey("done");
       });
 }
@@ -707,17 +798,17 @@ function answerSurvey(state) {
         idQuestion = currentSurvey.questions[indexQuestion].id;
         answerType = currentSurvey.questions[indexQuestion].questionType;
         switch(answerType){
-                            case TYPE_TEXT:
-                                        answerOptions = getTextAnswers($(this))
-                                        break;
-                            case TYPE_CHOICE:
-                                        answerOptions = getCheckOrRadioAnswers($(this),'radio');
-                                        break;
-                            case TYPE_MULTICHOICE:
-                                        answerOptions = getCheckOrRadioAnswers($(this),'checkbox');
-                                        break;
-         }
-        //answerText = $(this).find('textarea').val();
+            case TYPE_TEXT:
+                answerOptions = getTextAnswers($(this))
+                break;
+            case TYPE_CHOICE:
+                answerOptions = getCheckOrRadioAnswers($(this),'radio');
+                break;
+            case TYPE_MULTICHOICE:
+                answerOptions = getCheckOrRadioAnswers($(this),'checkbox');
+                break;
+        }
+
         answer.answered.push(new Answer(idQuestion,answerType,answerOptions));
         indexQuestion++;
     });
@@ -735,17 +826,17 @@ function answerSurvey(state) {
     if(userId == "" ){
         var loc = '/api/survey/'+currentSurvey.id+ '/answers/';
         if(state == 'pending'){
-            sendEvent(loc, 'POST', jsonAnswer, null, surveyAnswered, surveyAlreadyStarted);
+            sendEvent(loc, 'POST', jsonAnswer, null, surveyAnswered, answerProblem);
         }else if(state == 'done'){
-            sendEvent(loc, 'POST', jsonAnswer, null, surveyAnswered, surveyAlreadyStarted);
+            sendEvent(loc, 'POST', jsonAnswer, null, surveyAnswered, answerProblem);
         }
 
     }else{
         var loc = '/api/survey/'+currentSurvey.id+ '/answers/' + userId;
         if(state == "pending"){
-            sendEvent(loc, 'PUT', jsonAnswer, null, showPostSaveSurveyNotification, surveyAlreadyStarted);
+            sendEvent(loc, 'PUT', jsonAnswer, null, showPostSaveSurveyNotification, answerProblem);
         }else if(state == 'done'){
-            sendEvent(loc, 'PUT', jsonAnswer, null, showPostFinishNotification, surveyAlreadyStarted);
+            sendEvent(loc, 'PUT', jsonAnswer, null, showPostFinishNotification, answerProblem);
         }
 
     }
@@ -802,7 +893,7 @@ function getSurveyQuestions(request) {
     currentSurvey = survey;
     //console.log(survey);
     //console.log("ID: "+survey.id);
-    renderSurveyAnswerForm(survey,true);
+    renderSurveyAnswerForm(survey);
 }
 
 function renderForm() {
@@ -829,7 +920,7 @@ function renderForm() {
             if(params.id && params.secret) {
                 surveyId = params.id;
                 secret = params.secret;
-                sendEvent('/api/survey/'+params.id, 'GET', null, null, updateCurrentSurvey, surveyAlreadyStarted);
+                sendEvent('/api/survey/'+params.id+'/noMatterWhat', 'GET', null, null, updateCurrentSurvey);
             } else if(params.id && params.user) {
                 surveyId = params.id;
                 userId = params.user;
@@ -857,6 +948,15 @@ function surveyAlreadyClosed(){
     $('#dynamicContent').append(notification);
 }
 
+function answerProblem(){
+    $('#dynamicContent').empty();
+    var notification =  $('#notificationAnswer').clone();
+    notification.text('This answer was already submitted.');
+    notification.attr('class','error');
+    hideTimeout(notification);
+    $('#dynamicContent').append(notification);
+}
+
 function surveyAlreadyStarted(){
     $('#dynamicContent').empty();
     var notification =  $('#notificationAnswer').clone();
@@ -864,7 +964,8 @@ function surveyAlreadyStarted(){
     notification.attr('class','error');
     hideTimeout(notification);
     $('#dynamicContent').append(notification);
-    
+
+    renderSurveyAnswers(currentSurvey.answers);//function list answers
 }
 
 function hideTimeout(element) {
