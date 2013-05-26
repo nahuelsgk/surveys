@@ -286,6 +286,8 @@ function renderSurveyAnswers(answers) {
     for (var i = 0; i < size; ++i) {      // iteration over the all survey JSONs
         var listListAnswers = new AnsweredQuestionList(answers[i]);
         //idClient dateAnswer
+        //if(listListAnswers.answered.length > 0)
+        console.log(listListAnswers.answered.length);
         var item = prepareListAnswers(listListAnswers);
         list.append(item);
     }
@@ -377,7 +379,7 @@ function prepareListAnswers(listAnswers) {
     var item = $('#listAnswerItem').clone(true); //TODO crear listAnswerItem
     item.attr('id', '');
     item.attr('class', 'surveyItem');
-    item.text('idClient ' + listAnswers.idClient + 'date = ' + listAnswers.dateAnswer);
+    item.text('idClient ' + listAnswers.idClient + ' date = ' + listAnswers.dateAnswer+ ' ' + listAnswers.stateAnswer);
      item.click(function() {
             rendersurveyAnswered(listAnswers);
             console.log("rendersurveyAnswered");
@@ -915,11 +917,6 @@ function surveyAlreadyStarted(){
     $('#dynamicContent').append(notification);
 
     renderSurveyAnswers(currentSurvey.answers);//function list answers
-}
-
-function listSurveyAnswers(survey) {
-
-
 }
 
 function hideTimeout(element) {
