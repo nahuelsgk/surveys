@@ -10,7 +10,7 @@ import javax.xml.ws
 import scala.collection.mutable.ListBuffer
 
 /* Surveys API */
-class SurveysApi(surveysService: SurveysService, usersService: UsersService) extends Api {
+class SurveysApi(surveysService: SurveysService) extends Api {
 
     val PatternGetSurveyId      = "GET /api/survey/(\\w+)".r
     val PatternGetSurveyIdNoMatterWhat = "GET /api/survey/(\\w+)/noMatterWhat".r
@@ -29,16 +29,16 @@ class SurveysApi(surveysService: SurveysService, usersService: UsersService) ext
         body: Option[JSON] = None
     ): Response = {
         (method + " " + uri) match {
-            case "GET /api/userSurveysAnswered" => getUserSurveysAnswered(getIdCreator(headers))
-            case "POST /api/survey" => postSurvey(getIdCreator(headers), body)
+            case "GET /api/userSurveysAnswered" => getUserSurveysAnswered(getIdUserFromCookie(headers))
+            case "POST /api/survey" => postSurvey(getIdUserFromCookie(headers), body)
             case PatternGetAnswersUser(idSurvey, idUser) => getAnswersUser(idSurvey, idUser, body)
             case PatternGetAnswers(id) => getAnswers(id)
             case PatternGetSurveyId(id) => getSurveyById(id)
             case PatternGetSurveyIdNoMatterWhat(id) => getSurveyByIdNoMatterWhat(id)
             case PatternPutAnswers(idSurvey, idUser) => putAnswers(idSurvey, idUser, body)
-            case PatternPostAnswers(idSurvey)=> postAnswers(idSurvey, body, getIdCreator(headers))
+            case PatternPostAnswers(idSurvey)=> postAnswers(idSurvey, body, getIdUserFromCookie(headers))
             case PatternPutSurveyId(id) => putSurvey(id, body)
-            case "GET /api/surveys" => getUserSurveys(getIdCreator(headers))
+            case "GET /api/surveys" => getUserSurveys(getIdUserFromCookie(headers))
             case "POST /api/user" => postUser(body)
             case PatternGetUserId(id) => getUser(id)
             case "POST /api/login" => loginUser(body)
@@ -53,7 +53,7 @@ class SurveysApi(surveysService: SurveysService, usersService: UsersService) ext
             if (body.nonEmpty) {
 
                 val surveyInfo = surveysService.createSurvey(JSON.fromJSON[Survey](body.get), idCreator)
-                usersService.putSurvey(idCreator, surveyInfo("id"))
+                surveysService.putSurvey(idCreator, surveyInfo("id"))
                 //Es construeix la resposta amb la nova URI amb la id que ha proporcionat la BD
                 val uri = "/api/survey/" + surveyInfo("id")
                 val headers = Map("Location" -> uri)
@@ -230,8 +230,8 @@ class SurveysApi(surveysService: SurveysService, usersService: UsersService) ext
     private def postUser(body: Option[JSON]): Response = {
         if (body.isDefined) {
             val user = JSON.fromJSON[User](body.get)
-            if(!usersService.existsUserName(user)) {
-                val id = usersService.createUser(user)
+            if(!surveysService.existsUserName(user)) {
+                val id = surveysService.createUser(user)
                 println("userCreated: " + user)
                 val uri = "/api/user/" + id
                 val headers = Map("Location" -> uri)
@@ -248,7 +248,7 @@ class SurveysApi(surveysService: SurveysService, usersService: UsersService) ext
     }
 
     private def getUser(id: String): Response = {
-        val user = usersService.getUser(id)
+        val user = surveysService.getUser(id)
         val json = JSON.toJSON(user)
         Response(HttpStatusCode.Ok, null, json)
     }
@@ -256,7 +256,7 @@ class SurveysApi(surveysService: SurveysService, usersService: UsersService) ext
     private def loginUser(body: Option[JSON]): Response = {
         if (body.isDefined) {
             val user = JSON.fromJSON[User](body.get)
-            val id = usersService.login(user)
+            val id = surveysService.login(user)
 
             if(id != null)  {
                 val uri = "/api/user/" + id
@@ -270,7 +270,7 @@ class SurveysApi(surveysService: SurveysService, usersService: UsersService) ext
         }
     }
 
-    def getIdCreator(headers: Map[String, String]): String = {
+    def getIdUserFromCookie(headers: Map[String, String]): String = {
         var idCreator = "-1";
         println("headers " + headers)
         println("Contains cookie " + headers.contains("cookie"))
@@ -288,7 +288,7 @@ class SurveysApi(surveysService: SurveysService, usersService: UsersService) ext
 
     def getUserSurveys(idCreator: String): Response = {
         if(!idCreator.equals("-1")) {
-            val userSurveys = usersService.getSurveys(idCreator)
+            val userSurveys = surveysService.getSurveys(idCreator)
             val listSurveys = surveysService.listSurveys(userSurveys)
             val json = JSON.toJSON(listSurveys).value
             println("body response: " + json)
@@ -313,9 +313,8 @@ object SurveysApp extends App {
     val db = new DB(dbHostName, dbPort, dbName, username, pwd)
     val surveysRepository = new SurveysRepository(new SurveysDao(db))
     val usersRepository = new UsersRepository(new UsersDao(db))
-    val surveysService = new SurveysService(surveysRepository)
-    val usersService = new UsersService(usersRepository)
+    val surveysService = new SurveysService(surveysRepository, usersRepository)
 
-    val server = new Server(new SurveysApi(surveysService, usersService), webServerPort)
+    val server = new Server(new SurveysApi(surveysService), webServerPort)
     server.start()
 }
