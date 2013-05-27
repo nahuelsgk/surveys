@@ -5,6 +5,7 @@ var EDIT_SURVEY = 2;
 var ANSWER_SURVEY = 3;
 var SIGN_IN = 4;
 var WELCOME_VIEW = 5;
+var LIST_ANSWERED_SURVEYS = 6;
 var currentSurvey;
 var surveys = new Object();
 var answerListList = new Object();
@@ -340,7 +341,7 @@ function answeredSurveysByUser(){
 }
 
 function renderSurveysAnsweredByUser(surveyList){
-    $('#dynamicContent').empty();
+    cleanView(currentView);
     var surveysHtmlIni = $('<div id="surveysAnsweredList">');
     var list = $('<table border="1">');
     surveysHtmlIni.append(list);
@@ -365,7 +366,7 @@ function renderSurveysAnsweredByUser(surveyList){
     }
     surveysHtmlIni.append($('</table>'));
 
-    displayContent(surveysHtmlIni, LIST_SURVEYS);
+    displayContent(surveysHtmlIni, LIST_ANSWERED_SURVEYS);
 }
 
 function listSurveyAnswered(survey) {
@@ -395,7 +396,7 @@ function createSurvey() {
 
 function displayContent(html, view)  {
     cleanView(currentView);
-    $('#content').html(html);
+    $('#content').append(html);
     currentView = view;
 }
 
@@ -420,6 +421,9 @@ function cleanView(view) {
          case WELCOME_VIEW:
             $('.signInContainer').remove();
          break;
+	 case LIST_ANSWERED_SURVEYS:
+	    $('#surveysAnsweredList').remove();
+	 break;
 
     }
 }
