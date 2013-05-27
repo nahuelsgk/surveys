@@ -855,10 +855,14 @@ function showPostFinishNotification(){
 function surveyAnswered(data){
     var obj = $.parseJSON(data.value);
     userId = obj.userId;
-    if(clickedButton == "finishSurvey"){
+    if(clickedButton == "finishAnswer"){
         showSurveyAnsweredNotification("Your survey has been send!");
-    }else if(clickedButton = "saveSurvey"){
+        $("#linkanswer").attr('class','hidden');
+    }else if(clickedButton = "saveAnswer"){
         showSurveyAnsweredNotification("Your answers has been saved. Please click the link below to continue this survey in the future.");
+
+        //JMurcia: Fix bug! show user in link when POST
+        showLink();
     }
 }
 
