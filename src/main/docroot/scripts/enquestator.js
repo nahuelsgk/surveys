@@ -47,7 +47,7 @@ function renderEditSurvey(survey, createdNow){
     template_form.find('form').attr('id', 'edit_survey_form');
     //console.log(survey);
 
-    var url = "http://localhost:8080/?id=" + survey.id;
+    var url = getBaseUrl() + "?id=" + survey.id;
     $("#link").html(url);
     $("#link").attr("href",url);
 
@@ -227,7 +227,7 @@ function surveyCreated(data, location) {
         var obj = $.parseJSON(data.value);
         secret = obj.secret;
 
-        var urlAdmin = "http://localhost:8080/?id=" + obj.id + "&secret=" + secret;
+        var urlAdmin = getBaseUrl() + "?id=" + obj.id + "&secret=" + secret;
         $("#linkadmin").html(urlAdmin);
         $("#linkadmin").attr("href",urlAdmin);
         $("#labellinkadmin").text("Your admin link:");
@@ -459,7 +459,7 @@ function rendersurveyAnswered(listAnswers) {
       $('#dynamicContent').show();
 
 
-      var url = "http://localhost:8080/?id=" + survey.id;
+      var url = getBaseUrl() + "?id=" + survey.id;
       $("#linkanswer").html(url);
       $("#linkanswer").attr("href",url);
       $("#labellinkanswer").text("Your survey link: ");
@@ -878,7 +878,7 @@ function showSurveyAnsweredNotification(notificationText){
 }
 
 function showLink(){
-    var urlAnswer = "http://localhost:8080/?id=" + surveyId + "&user=" + userId;
+    var urlAnswer = getBaseUrl() + "?id=" + surveyId + "&user=" + userId;
     $("#linkanswer").html(urlAnswer);
     $("#linkanswer").attr("href",urlAnswer);
     $("#labellinkanswer").text("Your answer link: ");
@@ -986,7 +986,9 @@ function hideTimeout(element) {
     );
 }
 
-
+function getBaseUrl() {
+    return document.URL.split('?')[0]
+}
 
 $(document).ready(function($) {
      renderForm();
