@@ -671,7 +671,9 @@ function addAnswerBox(question, userAnswer, idUser, editable) {
     var idInput = AREA_TAG + answerCounter;
     var text = $('<textarea>').attr({class: 'answerTextArea', id: idInput, row: '3', cols: '30', disabled: !editable});
     //$('<textarea>').attr('disabled', disabled);
-    if(userAnswer.length == 1 && userAnswer[0].idClient == uId){
+    console.log('userAnswer: '+JSON.stringify(userAnswer));
+    if(userAnswer.length == 1 && userAnswer[0].idClient == uId &&
+        typeof userAnswer[0].answered[answerCounter - 1] !== 'undefined' && userAnswer[0].answered[answerCounter - 1].options != null){
         text.val(userAnswer[0].answered[answerCounter - 1].options[0]);
     }
 
@@ -701,7 +703,8 @@ function addAnswerRadio(question, userAnswer, idUser, editable){
 
         // Retrieve old answeer
         var uId = idUser;
-        if(userAnswer.length == 1 && userAnswer[0].idClient == uId){
+        if(userAnswer.length == 1 && userAnswer[0].idClient == uId &&
+            typeof userAnswer[0].answered[answerCounter - 1] !== 'undefined' && userAnswer[0].answered[answerCounter - 1].options[i] != null){
             if(userAnswer[0].answered[answerCounter - 1].options[i] == 'true'){
                 radio.prop('checked',true);
             }
@@ -731,7 +734,8 @@ function addAnswerCheckBox(question, userAnswer, idUser, editable){
         answer.append('<br>');
         // Retrieve old answeer
         var uId = idUser;
-        if(userAnswer.length == 1 && userAnswer[0].idClient == uId){
+        if(userAnswer.length == 1 && userAnswer[0].idClient == uId &&
+            typeof userAnswer[0].answered[answerCounter - 1] !== 'undefined' && userAnswer[0].answered[answerCounter - 1].options[i] != null){
            if(userAnswer[0].answered[answerCounter - 1].options[i] == 'true'){
                checkbox.prop('checked',true);
            }
@@ -895,7 +899,9 @@ function showSurveyAnsweredNotification(notificationText){
 }
 
 function showLink(){
-    var urlAnswer = getBaseUrl() + "?id=" + surveyId + "&user=" + userId;
+    var url = getBaseUrl();
+    url.replace('#','');
+    var urlAnswer = url + "?id=" + surveyId + "&user=" + userId;
     $("#linkanswer").html(urlAnswer);
     $("#linkanswer").attr("href",urlAnswer);
     $("#labellinkanswer").text("Your answer link: ");
