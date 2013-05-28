@@ -488,3 +488,17 @@ table {
 .fieldError {
     color: red;
 }
+
+.surveyAnsweredItem td {
+    padding:8px;
+}
+
+.surveyAnsweredItem:hover{
+   background-color: #00f;
+   color:white;
+   cursor: pointer;
+}
+
+#headerAnsw th{
+    padding:8px;
+}

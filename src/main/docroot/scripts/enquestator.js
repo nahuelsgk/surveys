@@ -345,7 +345,7 @@ function renderSurveysAnsweredByUser(surveyList){
     var surveysHtmlIni = $('<div id="surveysAnsweredList">');
     var list = $('<table border="1">');
     surveysHtmlIni.append(list);
-    list.append($('<tr><th>Survey</th><th>Since</th><th>Until</th><th>Answer Date</th><th>Answer State</th></tr>'));
+    list.append($('<tr id="headerAnsw"><th>Survey</th><th>Since</th><th>Until</th><th>Answer Date</th><th>Answer State</th></tr>'));
     var obj = $.parseJSON(surveyList.value);
     var size = obj.length;
     var count = 0;
@@ -383,7 +383,20 @@ function listSurveyAnswered(survey) {
     spans.filter('.until').text(survey.until);
     spans.filter('.dateAnswered').text(survey.answers[0].dateAnswer);
     spans.filter('.answerState').text(survey.answers[0].stateAnswer);
+    item.click(function() {
+        renderUserAnswers(survey);
+    });
     return item;
+}
+
+function renderUserAnswers(survey) {
+    currentSurvey = survey;
+    var answers = survey.answers;
+    if (typeof answers[0] !== 'undefined' &&  answers[0] != null)  {
+        var listAnswers = new AnsweredQuestionList(answers[0]);
+        rendersurveyAnswered(listAnswers);
+    }
+
 }
 
 function createSurvey() {
