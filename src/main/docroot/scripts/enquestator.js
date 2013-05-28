@@ -645,7 +645,7 @@ function getSurveyQuestions(request) {
     currentSurvey = survey;
     //console.log(survey);
     //console.log("ID: "+survey.id);
-    renderSurveyAnswerForm(survey);
+    renderSurveyAnswerForm(survey, true);
 }
 
 
@@ -742,7 +742,7 @@ function addAnswerCheckBox(question, userAnswer, idUser, editable){
 }
 
 
-function renderSurveyAnswerForm(survey) {
+function renderSurveyAnswerForm(survey, editable) {
       answerCounter = 1;
 //    cleanView(currentView);
       currentView = ANSWER_SURVEY;
@@ -765,13 +765,13 @@ function renderSurveyAnswerForm(survey) {
             for(var i = 0; i < survey.questions.length; ++i) {
                 switch(survey.questions[i].questionType){
                     case TYPE_TEXT:
-                        addAnswerBox(survey.questions[i],survey.answers, userId);
+                        addAnswerBox(survey.questions[i],survey.answers, userId, editable);
                         break;
                     case TYPE_CHOICE:
-                        addAnswerRadio(survey.questions[i],survey.answers, userId);
+                        addAnswerRadio(survey.questions[i],survey.answers, userId, editable);
                         break;
                     case TYPE_MULTICHOICE:
-                        addAnswerCheckBox(survey.questions[i],survey.answers, userId);
+                        addAnswerCheckBox(survey.questions[i],survey.answers, userId, editable);
                         break;
                 }
             }
@@ -919,7 +919,7 @@ function getSurveyQuestions(request) {
     currentSurvey = survey;
     //console.log(survey);
     //console.log("ID: "+survey.id);
-    renderSurveyAnswerForm(survey);
+    renderSurveyAnswerForm(survey, true);
 }
 
 function renderForm() {
