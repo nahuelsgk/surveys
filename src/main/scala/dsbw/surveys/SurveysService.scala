@@ -29,15 +29,8 @@ class SurveysService(surveysRepository: SurveysRepository, usersRepository: User
             sur.answers.foreach(answer => {
                 println("inside foreach, answerIdClient = " + answer.idClient + " userId = " + userId)
                 if (answer.idClient.toString == userId) {
-                    listSurvey += new Survey(
-                        id = sur._id.toString,
-                        title = sur.title,
-                        since = sur.since,
-                        until = sur.until,
-                        secret = sur.secret,
-                        answers = Option(List(SurveyAnswer.fromRecord(answer)))
-                    )
-
+                    val auxSurvey = Survey.fromRecord(sur)
+                    listSurvey += auxSurvey.setAnswers(Option(List(SurveyAnswer.fromRecord(answer))))
                 }
             })
 

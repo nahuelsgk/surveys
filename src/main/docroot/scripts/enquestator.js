@@ -435,14 +435,14 @@ function prepareListAnswers(listAnswers) {
     item.attr('class', 'surveyItem');
     item.text('idClient ' + listAnswers.idClient + ' date = ' + listAnswers.dateAnswer+ ' ' + listAnswers.stateAnswer);
      item.click(function() {
-            rendersurveyAnswered(listAnswers);
+            rendersurveyAnswered(listAnswers, false);
             console.log("rendersurveyAnswered");
      });
 
     return item;
 }
 
-function rendersurveyAnswered(listAnswers) {
+function rendersurveyAnswered(listAnswers, editable) {
       cleanView(currentView);
       var survey = currentSurvey;
       survey.answers = new Array();
@@ -471,13 +471,13 @@ function rendersurveyAnswered(listAnswers) {
             for(var i = 0; i < survey.questions.length; ++i) {
                 switch(survey.questions[i].questionType){
                     case TYPE_TEXT:
-                        addAnswerBox(survey.questions[i],survey.answers, listAnswers.idClient);
+                        addAnswerBox(survey.questions[i],survey.answers, listAnswers.idClient, editable);
                         break;
                     case TYPE_CHOICE:
-                        addAnswerRadio(survey.questions[i],survey.answers, listAnswers.idClient);
+                        addAnswerRadio(survey.questions[i],survey.answers, listAnswers.idClient, editable);
                         break;
                     case TYPE_MULTICHOICE:
-                        addAnswerCheckBox(survey.questions[i],survey.answers, listAnswers.idClient);
+                        addAnswerCheckBox(survey.questions[i],survey.answers, listAnswers.idClient, editable);
                         break;
                 }
             }
@@ -643,7 +643,7 @@ function renderAnswers() {
     $('#dynamicContent').append(answers);
 }
 
-function addAnswerBox(question, userAnswer, idUser) {
+function addAnswerBox(question, userAnswer, idUser, editable) {
 
     question.id = answerCounter;
 
@@ -652,8 +652,12 @@ function addAnswerBox(question, userAnswer, idUser) {
     answer.attr('id','answerBox' + answerCounter);
     answer.find('#questionText').html(answerCounter + ". " + question.text);
 
+    console.log("editable: " + !editable);
+
     var uId = idUser;
-    var text = $('<textarea>').attr({class: 'answerTextArea', id: AREA_TAG + answerCounter, row: '3', cols: '30'})
+    var idInput = AREA_TAG + answerCounter;
+    var text = $('<textarea>').attr({class: 'answerTextArea', id: idInput, row: '3', cols: '30', disabled: !editable});
+    //$('<textarea>').attr('disabled', disabled);
     if(userAnswer.length == 1 && userAnswer[0].idClient == uId){
         text.val(userAnswer[0].answered[answerCounter - 1].options[0]);
     }
@@ -663,7 +667,7 @@ function addAnswerBox(question, userAnswer, idUser) {
     ++answerCounter;
 }
 
-function addAnswerRadio(question, userAnswer, idUser){
+function addAnswerRadio(question, userAnswer, idUser, editable){
     var radio;
     var radioLabel;
     var answer = $('#answerBox').clone();
@@ -672,7 +676,7 @@ function addAnswerRadio(question, userAnswer, idUser){
     answer.find('#questionText').html(answerCounter + ". " + question.text);
     for(var i = 0; i < question.options.length; ++i){
         radio = $('<input>').attr({
-              type: 'radio', name: 'question' + answerCounter, value: question.options[i], id: RADIO_TAG + answerCounter + '_' + i
+              type: 'radio', name: 'question' + answerCounter, value: question.options[i], id: RADIO_TAG + answerCounter + '_' + i, disabled: !editable
         });
         radioLabel = $('<label>');
         radioLabel.attr('for', RADIO_TAG + answerCounter + '_' + i);
@@ -694,7 +698,7 @@ function addAnswerRadio(question, userAnswer, idUser){
     ++answerCounter;
 }
 
-function addAnswerCheckBox(question, userAnswer, idUser){
+function addAnswerCheckBox(question, userAnswer, idUser, editable){
     var checkbox;
     var checkboxLabel;
     var answer = $('#answerBox').clone();
@@ -703,7 +707,7 @@ function addAnswerCheckBox(question, userAnswer, idUser){
     answer.find('#questionText').html(answerCounter + ". " + question.text);
     for(var i = 0; i < question.options.length; ++i){
         checkbox = $('<input>').attr({
-              type: 'checkbox', name: 'question' + answerCounter, value: question.options[i], id: CHECKBOX_TAG + answerCounter + '_' + i
+              type: 'checkbox', name: 'question' + answerCounter, value: question.options[i], id: CHECKBOX_TAG + answerCounter + '_' + i, disabled: !editable
         });
         checkboxLabel = $('<label>');
         checkboxLabel.attr('for',CHECKBOX_TAG + answerCounter + '_' + i);
