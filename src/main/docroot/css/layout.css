@@ -259,7 +259,13 @@ menu.main a.hidden{
  tr.surveyItem:hover{
    background-color: #00f;
    color: #fff;
+  cursor: pointer;
  }
+
+.surveyItem td {
+
+  padding: 2px;
+}
 
 table {
     width:100%;

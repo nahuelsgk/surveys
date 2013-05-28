@@ -153,7 +153,7 @@ function sayWelcome() {
     container.find('h1').text('Welcome '+currentUser.userName);
     var info = $('#userState').clone();
     info.attr('class','');
-    info.find('#totalSurveys').text('Total surveys: '+currentUser.surveys.length);
+    info.find('#totalSurveys').text('You can now start creating new surveys, share them, show their results and also see what you have answered to some other surveys!');
     container.append(info);
     $('#content').append(container);
 }
