@@ -305,6 +305,10 @@ table {
     width:100px;
 }
 
+#add_question {
+    float:right;
+}
+
 #publishSurvey {
     width:100px;
     margin-right:20px;

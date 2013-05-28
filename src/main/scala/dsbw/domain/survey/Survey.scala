@@ -50,6 +50,20 @@ case class Survey(
         }
     }
 
+    def setAnswers(ans: Option[List[SurveyAnswer]]): Survey = {
+        new Survey(
+            id= this.id,
+            title = this.title,
+            since = this.since,
+            until = this.until,
+            idCreator = this.idCreator,
+            secret = this.secret,
+            state = this.state,
+            questions = this.questions,
+            answers = ans
+        )
+    }
+
     /* Genera el record */
     def toRecord(): SurveysRecord= {
         new SurveysRecord(
