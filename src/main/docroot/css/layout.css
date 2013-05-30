@@ -3,22 +3,25 @@
 }
 
 h1 {
-    font-size: 1.3em;
+    font-size: 2.1em;
     margin-bottom: 10px;
+    font-variant:small-caps;
 }
 
 h2 {
-    font-size: 1.1em;
+    font-size: 1.7em;
     margin-bottom: 10px;
+    font-variant:small-caps;
 }
 
 a {
     text-decoration:none;
-    color: #09C;
+    color: rgb(0, 133, 255);
+    font-weight: bold;
 }
 
 a:visited {
-    color: #09C;
+    color: rgb(0, 133, 255);
 }
 
 p.error{
@@ -35,43 +38,53 @@ header p.error{
 }
 
 input[type=submit], input[type=button] {
-    color: white;
-    background-color: #019AD2;
-    border-radius: 4px;
-    -moz-border-radius: 4px;
-    border: none;
+    color: #ffb423;
+    background-color: #162737;
+    border-top-left-radius: 5px;
+    border-bottom-right-radius: 5px;
+    border: 1px solid #ff00f0;
     padding: 5px;
     cursor: pointer;
-
+    font-size: 1.2em;
 }
 
 .login input[type=submit], .login-help input[type=submit], .logout input[type=submit]{
-    background: #cde5ef;
-    color: #527881;
+    color: #ffb423;
+    background-color: #162737;
     font-weight: bold;
 }
 
 body {
-    background: url(../img/background.png) repeat-x left top;
+    background: url(../img/background.png) repeat-x center center;
     background-attachment:fixed;
     width: 800px;
     margin: 0 auto;
-    font-family: "Helvetica Neue",Arial,sans-serif;
-    font-size: 14px;
-    line-height: 18px;
+    font-family: Arial, sans-serif;
+    font-size: 16px;
+    line-height: 19px;
+    color: #000;
 }
 
 header, menu.main, section{
-  background: #ffffff;
-  border-radius: 5px;
-  -moz-border-radius: 5px;
-  border: 1px solid #EEE;
+  background: rgba(247, 180, 253, 0.96);
+  border-top-left-radius: 15px;
+  border-bottom-right-radius: 15px;
+  border: 3px solid #000;
 }
 
 header {
-  padding: 10px;
   margin: 15px 0;
+}
 
+#h1img{
+    background: url(../img/img1.png) no-repeat top right;
+    height: 190px;
+    margin-right: 50px;
+}
+
+header h1{
+  padding: 20px;
+  font-variant:small-caps;
 }
 
 header:after, section:after, #content ul li:after {
@@ -82,7 +95,6 @@ header:after, section:after, #content ul li:after {
 
 header img {
     float: left;
-    margin: 1em;
 }
 
 header form.logout{
@@ -106,13 +118,17 @@ menu.main, #loginSection {
 
 menu.main a{
     display: block;
-    border-bottom: 1px solid #EEE;
     padding: 10px;
-    background-color: #F9F9F9;
+    margin-left: 3px;
+    margin-right: 3px;
+    background-color: transparent;
+    border-top-left-radius: 15px;
+    border-bottom-right-radius: 15px;
 }
 
 menu.main a:hover{
-    background-color: #ffffff;
+    color: #ffb423;
+    background-color: #162737;
 }
 
 menu.main a.hidden{
@@ -130,11 +146,16 @@ menu.main a.hidden{
 
 #copyright{
   padding: 10px;
+  background: url(../img/copyleft.png) no-repeat bottom right;
+  background-color: #162737;
+  height: 100px;
 }
 
 #copyright p{
-    font-size: 0.9em;
-    color: #666;
+    font-size: 1.1em;
+    text-align: center;
+    padding-right: 60px;
+    color: rgb(247, 180, 253);
 }
 
 #chirp{
@@ -324,31 +345,38 @@ table {
 }
 
 .info, .success, .warning, .error, .validation {
-  border: 1px solid;
+  border: 3px dotted;
   margin: 10px 0px;
-  padding:10px 10px 10px 50px;
+  padding:15px 15px 15px 50px;
   background-repeat: no-repeat;
   background-position: 10px center;
+  border-top-left-radius: 15px;
+  border-bottom-right-radius: 15px;
+  font-weight: bold;
 }
 .info {
-  color: #00529B;
-  background-color: #BDE5F8;
-  background-image: url('../img/info.png');
+    color: rgb(0, 0, 0);
+    background-color: rgb(0, 255, 255);
+    background-image: url('../img/info.png');
+    padding-left: 90px;
 }
 .success {
-  color: #4F8A10;
-  background-color: #DFF2BF;
-  background-image:url('../img/success.png');
+    color: rgb(0, 0, 0);
+    background-color: rgb(0, 255, 0);
+    background-image: url('../img/success.png');
+    padding-left: 90px;
 }
 .warning {
-  color: #9F6000;
-  background-color: #FEEFB3;
-  background-image: url('../img/warning.png');
+    color: rgb(0, 0, 0);
+    background-color: rgb(255, 255, 0);
+    background-image: url('../img/warning.png');
+    padding-left: 90px;
 }
 .error {
-  color: #D8000C;
-  background-color: #FFBABA;
-  background-image: url('../img/error.png');
+    color: rgb(0, 0, 0);
+    background-color: rgb(255, 0, 0);
+    background-image: url('../img/error.png');
+    padding-left: 90px;
 }
 
 .deleteSurvey {
@@ -386,8 +414,8 @@ table {
   line-height: 31px;
 }
 .login p.remember_me label {
-  font-size: 12px;
-  color: #777;
+  font-size: 11px;
+  color: #000;
   cursor: pointer;
 }
 .login p.remember_me input {
@@ -400,7 +428,7 @@ table {
 .login-help {
   margin: 5px 0;
   font-size: 11px;
-  color: #2a85a1;
+  color: #000;
   text-align: left;
 }
 .login-help a {
@@ -433,10 +461,11 @@ table {
 
 .login h1 {
   line-height: 20px;
-  font-size: 15px;
+  font-size: 20px;
   font-weight: bold;
-  color: #555;
+  color: #000;
   text-align: center;
+  font-variant:small-caps;
 }
 
 #signIn {
