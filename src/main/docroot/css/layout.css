@@ -129,6 +129,7 @@ menu.main a{
 menu.main a:hover{
     color: #ffb423;
     background-color: #162737;
+    border: 1px solid #ff00f0;
 }
 
 menu.main a.hidden{
@@ -243,6 +244,10 @@ menu.main a.hidden{
     padding: 0 5px;
 }
 
+#content #editForm{
+    background: url(../img/img2.png) no-repeat top right;
+}
+
 #content #create_survey_form ul li, #content #edit_survey_form ul li{
     vertical-align: middle;
     border-bottom: none;
@@ -270,6 +275,10 @@ menu.main a.hidden{
     min-width: 60px;
     padding: 5px 20px 0 0;
     text-align: left;
+}
+
+#content #edit_survey_form #title, #content #create_survey_form #title{
+    width: 300px;
 }
 
 #content #surveysList ul li.surveyItem:hover{
@@ -313,7 +322,7 @@ table {
 
 .options {
     resize:none;
-    width:200px;
+    width:460px;
     text-align: left;
     margin-top: 5px;
 }
@@ -393,6 +402,7 @@ table {
     float:float;
     width:20px;
     margin-top:10px;
+    margin-left: 10px;
 }
 
 .deleteOption {
@@ -402,11 +412,14 @@ table {
 }
 
 .optionDiv {
-    width:230px;
+    width:500px;
+    padding-left: 10px;
 }
 
 #loginSection {
     padding:10px;
+    background: url(../img/log.png) no-repeat bottom left;
+    background-color: rgba(247, 180, 253, 0.96);
 }
 
 .login p.remember_me {
@@ -429,7 +442,7 @@ table {
   margin: 5px 0;
   font-size: 11px;
   color: #000;
-  text-align: left;
+  text-align: right;
 }
 .login-help a {
   color: #2a85a1;
@@ -493,6 +506,8 @@ table {
 .signInContainer {
     width:100%;
     padding:10px;
+    padding-right: 100px;
+    background: url(../img/welcome.png) no-repeat top right;
 }
 
 .signInContainer input[type=text],  .signInContainer input[type=password]{

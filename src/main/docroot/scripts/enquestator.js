@@ -533,9 +533,11 @@ function initDatePicker() {
     //setting since and until to the current day
     d = new Date();
     today = d.toISOString().substr(0,10);
+    d.setMonth( d.getMonth() + 1 );
+    oneMonth= d.toISOString().substr(0,10);
 
     $('#since').attr('value', today);
-    $('#until').attr('value', today);
+    $('#until').attr('value', oneMonth);
 
     $( "#since" ).datepicker({
         dateFormat: $.datepicker.ISO_8601,

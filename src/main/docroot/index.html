@@ -38,7 +38,7 @@
     </div>
 
     <div id="login-help" class="login-help">
-        <p>Don't have an account yet?<input type="submit" onclick="javascript:showSignIn();" id="signIn" value="Sign in!"></p>
+        <p>Don't have an account yet?<br/>><input type="submit" onclick="javascript:showSignIn();" id="signIn" value="Sign in!"></p>
     </div>
 
     <div id="logout" class="hidden">
@@ -68,7 +68,7 @@
 
 <div class="hidden" id="questions">
     <label for="link">Your survey link:</label>
-    <a href="http://localhost:8080" id="link"></a><br />
+    <a href="http://localhost:8080" id="link" target="_blank"></a><br />
     <label id="labellinkadmin" for="linkadmin">Your admin link:</label>
     <a href="" id="linkadmin"></a><br />
     <form>
@@ -128,8 +128,8 @@
 </div>
 
 <div id="optionTemplateBig" class="hidden">
-    <textarea class="hidden" id="optionTemplate" rows="1" cols="30" wrap=physical></textarea>
-    <img src="img/error.png" class="deleteOption">
+    <textarea class="hidden" id="optionTemplate" rows="1" cols="60" wrap=physical></textarea>
+    <img src="img/del_option.png" class="deleteOption">
 </div>
 
 <div class="hidden" id="answerFormDiv">
