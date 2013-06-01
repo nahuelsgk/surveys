@@ -9,7 +9,7 @@
 </head>
 <body>
 <header>
-    <h1>Enquestator</h1>
+    <div id="h1img"><h1><img src="../img/title.png"></h1></div>
 </header>
 
 <div id="left">
@@ -38,7 +38,7 @@
     </div>
 
     <div id="login-help" class="login-help">
-        <p>Don't have an account yet?<input type="submit" onclick="javascript:showSignIn();" id="signIn" value="Sign in!"></p>
+        <p>Don't have an account yet?<br/><input type="submit" onclick="javascript:showSignIn();" id="signIn" value="Sign in!"></p>
     </div>
 
     <div id="logout" class="hidden">
@@ -47,7 +47,7 @@
 </section>
 
 <section id="copyright">
-    <p>Your awesome copyright statement goes here.</p>
+    <p><br/>ola k ase,<br/>DSBW o k ase</p>
 </section>
 
 </div>
@@ -68,7 +68,7 @@
 
 <div class="hidden" id="questions">
     <label for="link">Your survey link:</label>
-    <a href="http://localhost:8080" id="link"></a><br />
+    <a href="http://localhost:8080" id="link" target="_blank"></a><br />
     <label id="labellinkadmin" for="linkadmin">Your admin link:</label>
     <a href="" id="linkadmin"></a><br />
     <form>
@@ -88,7 +88,7 @@
     <textarea id="questionArea" class="questionTextArea" rows="3" cols="70"> </textarea>
     <br>
     Question Type:
-    <select id="typeSelector">
+    <select id="typeSelector" class="typeSelector">
         <option value="text">Text</option>
         <option value="choice">Choice</option>
         <option value="multichoice">Multichoice</option>
@@ -103,7 +103,7 @@
 <div class="hidden" id="surveyForm">
     <div class="hidden" id="notification">
     </div>
- 	<h2 id="contentTitle">Welcome to Enquestator!</h2>
+ 	<h1 id="contentTitle">Welcome to SurBEERs!</h1>
         <p id="survey_description">Start now creating your new survey filling the gaps below.</p>
         <br />
         <form id="surveyFormList"  class="survey" >
@@ -128,8 +128,8 @@
 </div>
 
 <div id="optionTemplateBig" class="hidden">
-    <textarea class="hidden" id="optionTemplate" rows="1" cols="30" wrap=physical></textarea>
-    <img src="img/error.png" class="deleteOption">
+    <textarea class="hidden" id="optionTemplate" rows="1" cols="60" wrap=physical></textarea>
+    <img src="img/del_option.png" class="deleteOption">
 </div>
 
 <div class="hidden" id="answerFormDiv">
