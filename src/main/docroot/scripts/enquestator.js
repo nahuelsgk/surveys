@@ -134,6 +134,7 @@ function addQuestion(q) {
         }
     }
     ++questionCounter;
+    $('#questionList').sortable();
 }
 
 function updateSurvey() {
@@ -145,17 +146,17 @@ function updateSurvey() {
     console.log("nQuestions: "+nQuestions);
     if (nQuestions > 0) {
         cleanQuestions(currentSurvey);
-        $('.question').each(function(index) {
+        $('.question').each(function(index, question) {
             //var text = $(this).find('#'+AREA_TAG+index).val();     //TODO: index no esta be
-            var text = $(this).find('textarea').val();
+            var text = $(question).find('textarea').val();
             text = $.trim(text);
             var order = index;
-            var type = $(this).find('#'+SELECTOR_TAG+index).val();
+            var type = $(question).find('.typeSelector').val();
             //var type = $('select').val();
             var q = new Question(type,order,text);
             console.log(index+") text: "+q.text+" type: "+q.questionType);
             if (type === 'multichoice' || type === 'choice') {
-                $(this).find('.options').each(function(ind) {
+                $(question).find('.options').each(function(ind) {
                     addOptionToQuestion(q,$(this).val());
                 });
             }
@@ -627,6 +628,7 @@ function addNewQuestion() {
         deleteQuestion($(this));
     });
     ++questionCounter;
+    $('#questionList').sortable();
 }
 
 function enableAddQuestions() {
@@ -1021,6 +1023,7 @@ $(document).ready(function($) {
      renderForm();
      checkCookie();
     //renderNewSurveyForm();
+
 });
 
 
