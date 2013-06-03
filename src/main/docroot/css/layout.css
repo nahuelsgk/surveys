@@ -556,3 +556,11 @@ table {
 #headerAnsw th{
     padding:8px;
 }
+
+#surveyTitle {
+    line-height:100%;
+}
+
+#surveysList {
+    margin-Top:10px;
+}
