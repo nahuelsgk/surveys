@@ -123,7 +123,6 @@ function addQuestion(q) {
     console.log('rendering question of type: '+q.questionType);
     if (q.questionType === 'choice' || q.questionType === 'multichoice') {
         $('#'+name).val(q.questionType);
-        displayTypeOfQuestion(q.id,q.questionType);
         var divNameTo = '#'+TYPE_TAG+q.id;
         var counter = 0;
         for(j=0; j < q.options.length; ++j) {
@@ -132,6 +131,8 @@ function addQuestion(q) {
             ++counter;
             $('#'+tag_id).text(q.options[j]);
         }
+        displayTypeOfQuestion(q.id,q.questionType);
+
     }
     ++questionCounter;
     $('#questionList').sortable();
@@ -593,6 +594,8 @@ function addOptionChoice(idQuestion,divNameTo) {
 
 function enableAddChoices(divNameTo,idQuestion) {
     $(divNameTo).attr('class','questionOptions');
+    var size = $(divNameTo).find('.optionDiv').length;
+    for(size; size < 2; ++size) addOptionChoice(idQuestion, divNameTo);
     $(divNameTo).find('img.add_question_icon').unbind('click');
     $(divNameTo).find('img.add_question_icon').click(function() {
         addOptionChoice(idQuestion, divNameTo);
