@@ -25,6 +25,10 @@ class UsersRepository(dao: UsersDao) {
             dao.findOneByID(new ObjectId(id)).get;
       }
 
+      def getUserOption(id: String): Option[UserRecord] = {
+            dao.findOneByID(new ObjectId(id));
+      }
+
       def loginUser(userName: String, pass: String): Option[UserRecord] = {
             val query = Map("userName" -> userName, "password" -> pass)
             dao.findOne(query)

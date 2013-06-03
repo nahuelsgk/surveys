@@ -46,6 +46,21 @@ class SurveysService(surveysRepository: SurveysRepository, usersRepository: User
         surveys
     }
 
+    def getUsersName(survey: Survey) : Map[String, String] = {
+        var reto = Map[String,String]()
+        survey.answers.get.foreach(answer => {
+                                    //println("PRINTANDO" + answer.idClient)
+                                    //println(usersRepository.getUser(answer.idClient))
+                                    val userRecord = usersRepository.getUserOption(answer.idClient)
+                                    if(userRecord.isEmpty == false){
+                                      val user = User.fromRecord(userRecord.get)
+                                      reto +=  user.id -> user.userName
+                                    }
+                                })
+        reto
+
+    }
+
     def createSurvey(survey: Survey, idCreator: String): Map[String, String] = {
         println("*** SurveysService.createSurvey() idCreator: " + idCreator )
 
@@ -126,7 +141,7 @@ class SurveysService(surveysRepository: SurveysRepository, usersRepository: User
 
     def getSurvey(id: String) : Survey = {
         println("Survey gotten: "+ id);
-          val sur= surveysRepository.getSurvey(id);
+        val sur= surveysRepository.getSurvey(id);
         Survey.fromRecord(sur)
     }
 
@@ -165,7 +180,8 @@ class SurveysService(surveysRepository: SurveysRepository, usersRepository: User
     }
 
     def getSurveys(idUser: String): List[String] = {
-        usersRepository.getUser(idUser).surveys
+        val surveys = usersRepository.getUser(idUser).surveys
+        surveys
     }
 }
 

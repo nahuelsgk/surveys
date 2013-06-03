@@ -8,6 +8,7 @@ var WELCOME_VIEW = 5;
 var LIST_ANSWERED_SURVEYS = 6;
 var SURVEY_ALREADY_STARTED = 7;
 var currentSurvey;
+var currentSurveyUserNames;
 var surveyCopy;
 var surveys = new Object();
 var answerListList = new Object();
@@ -263,9 +264,15 @@ function showEditButton(){
     $('#editSurvey').attr('class','');
 }
 
-function updateCurrentSurvey(survey){
+function updateCurrentSurvey(surveyInfo){
+    survey = surveyInfo[0];
+    users  = surveyInfo[1];
     console.log('updating Current Survey: '+survey);
-    if (typeof(survey) !== 'undefined' && survey != null) currentSurvey = $.parseJSON(survey.value);
+    if (typeof(survey) !== 'undefined' && survey != null){
+        currentSurvey = $.parseJSON(survey.value);
+        currentSurveyUserNames = $.parseJSON(users.value);
+    }
+
     surveyCopy = cloneObject(currentSurvey);
     //console.log(currentSurvey);
     showEditButton();
@@ -451,12 +458,25 @@ function cleanView(view) {
     }
 }
 
+function resolveUserNameByIdClient(idClient){
+    console.log("Searching in...");
+    console.log(idClient);
+    console.log(currentSurveyUserNames);
+    var idClientString = ""+idClient
+    console.log(currentSurveyUserNames.idClientString);
+    for (var key in currentSurveyUserNames){
+       console.log(key)
+       if (key == idClient) return currentSurveyUserNames[key];
+    }
+    return "Anonymous";
+}
 
 function prepareListAnswers(listAnswers) {
     var item = $('#listAnswerItem').clone(true); //TODO crear listAnswerItem
     item.attr('id', '');
     item.attr('class', 'surveyItem');
-    item.text('idClient ' + listAnswers.idClient + ' date = ' + listAnswers.dateAnswer+ ' ' + listAnswers.stateAnswer);
+    //item.text('idClient ' + listAnswers.idClient + ' name ' + resolveUserNameByIdClient(listAnswers.idClient) +' date = ' + listAnswers.dateAnswer+ ' ' + listAnswers.stateAnswer);
+    item.text('Answer by "' + resolveUserNameByIdClient(listAnswers.idClient) +'" on ' + listAnswers.dateAnswer+ ': ' + listAnswers.stateAnswer);
      item.click(function() {
             rendersurveyAnswered(listAnswers, false, true);
             window.scrollTo( 0, 150) ;
