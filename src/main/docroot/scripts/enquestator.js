@@ -43,18 +43,13 @@ function renderEditSurvey(survey, createdNow){
     $('#dynamicContent').empty();
     var template_form = $('#surveyForm').clone();
     template_form.find('#contentTitle').html('Update your survey');
-    template_form.find('#survey_description').html('Fullfill your info to update');
+    template_form.find('#survey_description').html('Fulfill your info to update');
     template_form.attr('class', '');
     template_form.attr('id', 'editForm');
     template_form.find('form').attr('id', 'edit_survey_form');
     //console.log(survey);
 
-    var l = getBaseUrl();
-    //console.log('l: '+l);
-    var url = l.replace("#",'')+ "?id=" + survey.id;
-    //console.log('l: '+url);
-    $("#link").html(url);
-    $("#link").attr("href",url);
+    changeURL( '/?id=' + survey.id);
 
     template_form.find('#title').val(survey.title);
     template_form.find('#since').val(survey.since);
@@ -227,15 +222,10 @@ function displaySurvey(request) {
 
 function surveyCreated(data, location) {
     if (location !== 'none') {
-        //console.log("URI: "+location);
-        //$('#editSurvey').attr('class','');
         var obj = $.parseJSON(data.value);
         secret = obj.secret;
-        var l = getBaseUrl() ;
-        var urlAdmin = l.replace('#','') + "?id=" + obj.id + "&secret=" + secret;
-        $("#linkadmin").html(urlAdmin);
-        $("#linkadmin").attr("href",urlAdmin);
-        $("#labellinkadmin").text("Your admin link:");
+
+        changeURL( '/?id=' + obj.id + "&secret=" + secret);
 
 	    showEditButton();
 	    //@TODO Evitar dues peticionsseguides (POST + GET)
@@ -482,8 +472,8 @@ function rendersurveyAnswered(listAnswers, editable,back) {
       $('#dynamicContent').append(template_form);
       $('#dynamicContent').show();
 
-      var l = getBaseUrl();
-      var url = l.replace('#','') + "?id=" + survey.id;
+      changeURL('/?id=' + survey.id);
+
       $("#linkanswer").html(url);
       $("#linkanswer").attr("href",url);
       $("#labellinkanswer").text("Your survey link: ");
@@ -837,8 +827,6 @@ function renderSurveyAnswerForm(survey, editable) {
 }
 
 
-
-
 function getTextAnswers(answerBox){
     var textAnswer = new Array();
     textAnswer.push(answerBox.find('textarea').val());
@@ -1104,6 +1092,11 @@ function hideTimeout(element) {
 
 function getBaseUrl() {
     return document.URL.split('?')[0]
+}
+
+function changeURL(url)
+{
+    window.history.pushState("", "Enquestator", url);
 }
 
 $(document).ready(function($) {
