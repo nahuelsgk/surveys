@@ -203,7 +203,7 @@ class SurveysApi(surveysService: SurveysService) extends Api {
         val myUserNames = surveysService.getUsersName(myenq)
         val tmp2= JSON.toJSON[Map[String, String]](myUserNames)
         println(tmp2)
-        Response(HttpStatusCode.Ok, null, List(tmp1, tmp2));
+        Response(HttpStatusCode.Ok, null, Map("survey" -> tmp1, "users" -> tmp2));
     }
 
     private def getAllSurveys(): Response = {

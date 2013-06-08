@@ -264,9 +264,7 @@ function showEditButton(){
     $('#editSurvey').attr('class','');
 }
 
-function updateCurrentSurvey(surveyInfo){
-    survey = surveyInfo[0];
-    users  = surveyInfo[1];
+function updateCurrentSurvey(survey, users){
     console.log('updating Current Survey: '+survey);
     if (typeof(survey) !== 'undefined' && survey != null){
         currentSurvey = $.parseJSON(survey.value);
@@ -459,11 +457,7 @@ function cleanView(view) {
 }
 
 function resolveUserNameByIdClient(idClient){
-    console.log("Searching in...");
-    console.log(idClient);
-    console.log(currentSurveyUserNames);
     var idClientString = ""+idClient
-    console.log(currentSurveyUserNames.idClientString);
     for (var key in currentSurveyUserNames){
        console.log(key)
        if (key == idClient) return currentSurveyUserNames[key];
@@ -496,7 +490,7 @@ function rendersurveyAnswered(listAnswers, editable,back) {
       currentView = ANSWER_SURVEY;
       $('#dynamicContent').empty();
       var template_form = $('#answerFormDiv').clone();
-      template_form.find('#surveyTitle').html(survey.title + " answered by " + listAnswers.idClient + " on " + listAnswers.dateAnswer);
+      template_form.find('#surveyTitle').html(survey.title + ' answered by "' + resolveUserNameByIdClient(listAnswers.idClient) + '" on ' + listAnswers.dateAnswer);
 
       template_form.attr('class', 'answerFormDiv');
       $('#dynamicContent').append(template_form);
@@ -563,7 +557,7 @@ function listSurvey(survey) {
     });
     item.append(img);
     item.click(function() {
-        sendEvent('/api/survey/'+survey.id+'/noMatterWhat', 'GET', null, null, updateCurrentSurvey);
+        sendEvent('/api/survey/'+survey.id+'/noMatterWhat', 'GET', null, null, function (surveyInfo){updateCurrentSurvey(surveyInfo.survey, surveyInfo.users)});
     });
 
     return item;
@@ -997,7 +991,7 @@ function renderForm() {
             if(params.id && params.secret) {
                 surveyId = params.id;
                 secret = params.secret;
-                sendEvent('/api/survey/'+params.id+'/noMatterWhat', 'GET', null, null, updateCurrentSurvey);
+                sendEvent('/api/survey/'+params.id+'/noMatterWhat', 'GET', null, null, function (surveyInfo){updateCurrentSurvey(surveyInfo.survey, surveyInfo.users)});
             } else if(params.id && params.user) {
                 surveyId = params.id;
                 userId = params.user;
