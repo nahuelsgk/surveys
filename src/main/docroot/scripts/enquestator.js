@@ -1099,7 +1099,7 @@ function appendSurvey(container) {
 function hideTimeout(element) {
     setTimeout(
         function() {
-            //element.attr('class', element.attr('class') + ' hidden');
+            element.attr('class', element.attr('class') + ' hidden');
         },
         5000
     );
