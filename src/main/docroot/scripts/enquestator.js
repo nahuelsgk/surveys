@@ -1045,7 +1045,7 @@ function surveyAlreadyStarted(){
     $('#dynamicContent').empty();
     var notification =  $('#notificationAnswer').clone();
     notification.text('You can\'t edit this survey. It\'s already anwered at least once!');
-    notification.attr('class','error');
+    notification.attr('class','info');
     hideTimeout(notification);
     console.log(currentSurvey);
     $('#dynamicContent').append(notification);
