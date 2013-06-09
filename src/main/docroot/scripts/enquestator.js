@@ -537,7 +537,7 @@ function rendersurveyAnswered(listAnswers, editable,back) {
 
             $('#publishSurveyAnswers').click(function() {
                   answerSurvey("done");
-                  rendersurveyAnswered(listAnswers, false);
+                  rendersurveyAnswered(listAnswers, false, false);
             });
       }
       else {
@@ -838,6 +838,11 @@ function renderSurveyAnswerForm(survey, editable) {
 
       $('#publishSurveyAnswers').click(function() {
             answerSurvey("done");
+            $('#dynamicContent').find('*').each(function() {
+                $(this).attr('disabled', true);
+            });
+            $('#saveSurveyAnswers').hide();
+            $('#publishSurveyAnswers').hide();
       });
 }
 
