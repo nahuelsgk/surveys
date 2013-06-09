@@ -423,6 +423,7 @@ function displayContent(html, view)  {
 }
 
 function cleanView(view) {
+    changeURL('/');
     switch(view) {
         case CREATE_SURVEY:
             $('#dynamicContent').empty();
