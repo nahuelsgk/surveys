@@ -1,5 +1,6 @@
 var DAYS_WITH_COOKIE = 10;
 var currentUser;
+var intervalID;
 
 $('#username').focusout(function() {
        $('#loginfeedback').attr('class','hidden');
@@ -45,7 +46,18 @@ function correctlyLogged(username, sayHello) {
     });
     $('#listSurveys').show();
     $('#answeredSurveys').show();
+    initCheckLogOut();
     if (sayHello) sayWelcome();
+}
+
+function initCheckLogOut(){
+    intervalID = setInterval(function(){
+        console.log("Checking still logged");
+        if (getCookie() == null){
+            window.location = '/';
+        }
+    }
+    , 5000);
 }
 
 function logOut() {
@@ -58,7 +70,9 @@ function logOut() {
     sayGoodBye();
     $('#listSurveys').hide();
     $('#answeredSurveys').hide();
+    window.clearInterval(intervalID);
     document.cookie=null;
+
     var userCookie = getCookie();
     if (userCookie != null) {
         userCookie.expires = null;
