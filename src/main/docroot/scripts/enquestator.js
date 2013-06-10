@@ -44,7 +44,7 @@ function renderEditSurvey(survey, createdNow){
     $('#dynamicContent').empty();
     var template_form = $('#surveyForm').clone();
     template_form.find('#contentTitle').html('Update your survey');
-    template_form.find('#survey_description').html('Fullfill your info to update');
+    template_form.find('#survey_description').html('Fulfill your info to update');
     template_form.attr('class', '');
     template_form.attr('id', 'editForm');
     template_form.find('form').attr('id', 'edit_survey_form');
@@ -56,6 +56,8 @@ function renderEditSurvey(survey, createdNow){
     //console.log('l: '+url);
     $("#link").html(url);
     $("#link").attr("href",url);
+
+    changeURL( '/?id=' + survey.id);
 
     template_form.find('#title').val(survey.title);
     template_form.find('#since').val(survey.since);
@@ -228,15 +230,15 @@ function displaySurvey(request) {
 
 function surveyCreated(data, location) {
     if (location !== 'none') {
-        //console.log("URI: "+location);
-        //$('#editSurvey').attr('class','');
         var obj = $.parseJSON(data.value);
         secret = obj.secret;
+
         var l = getBaseUrl() ;
         var urlAdmin = l.replace('#','') + "?id=" + obj.id + "&secret=" + secret;
         $("#linkadmin").html(urlAdmin);
         $("#linkadmin").attr("href",urlAdmin);
         $("#labellinkadmin").text("Your admin link:");
+        changeURL( '/?id=' + obj.id + "&secret=" + secret);
 
 	    showEditButton();
 	    //@TODO Evitar dues peticionsseguides (POST + GET)
@@ -426,6 +428,7 @@ function displayContent(html, view)  {
 }
 
 function cleanView(view) {
+    changeURL('/');
     switch(view) {
         case CREATE_SURVEY:
             $('#dynamicContent').empty();
@@ -498,6 +501,8 @@ function rendersurveyAnswered(listAnswers, editable,back) {
 
       var l = getBaseUrl();
       var url = l.replace('#','') + "?id=" + survey.id;
+      changeURL('/?id=' + survey.id);
+
       $("#linkanswer").html(url);
       $("#linkanswer").attr("href",url);
       $("#labellinkanswer").text("Your survey link: ");
@@ -521,9 +526,13 @@ function rendersurveyAnswered(listAnswers, editable,back) {
             }
       }
       //$('#answerButtons').attr('class','hidden');
+
+      if(back || editable) {
+          $('#answerButtons').attr('class','');
+      }
+      else $('#answerButtons').attr('class','hidden');
+
       if (back) {
-          $('#saveSurveyAnswers').hide();
-          $('#publishSurveyAnswers').hide();
           $('#backAnswers').show();
           $('#backAnswers').click(function() {
             currentSurvey = surveyCopy;
@@ -533,7 +542,22 @@ function rendersurveyAnswered(listAnswers, editable,back) {
             window.scrollTo(0,500);
           });
       }
-      else $('#answerButtons').attr('class','hidden');
+
+      if(editable) {
+            $('#backAnswers').hide();
+            $('#saveSurveyAnswers').click(function() {
+                  answerSurvey("pending");
+            });
+
+            $('#publishSurveyAnswers').click(function() {
+                  answerSurvey("done");
+                  rendersurveyAnswered(listAnswers, false, false);
+            });
+      }
+      else {
+            $('#saveSurveyAnswers').attr('class','hidden');
+            $('#publishSurveyAnswers').attr('class','hidden');
+      }
 }
 
 function listSurvey(survey) {
@@ -828,62 +852,12 @@ function renderSurveyAnswerForm(survey, editable) {
 
       $('#publishSurveyAnswers').click(function() {
             answerSurvey("done");
+            $('#dynamicContent').find('*').each(function() {
+                $(this).attr('disabled', true);
+            });
+            $('#saveSurveyAnswers').hide();
+            $('#publishSurveyAnswers').hide();
       });
-}
-
-function rendersurveyAnswered(listAnswers, editable) {
-      cleanView(currentView);
-      var survey = currentSurvey;
-      survey.answers = new Array();
-      survey.answers[0] = listAnswers;
-      answerCounter = 1;
-
-      currentView = ANSWER_SURVEY;
-      $('#dynamicContent').empty();
-      var template_form = $('#answerFormDiv').clone();
-      template_form.find('#surveyTitle').html(survey.title + " answered by " + listAnswers.idClient + " on " + listAnswers.dateAnswer);
-
-      template_form.attr('class', 'answerFormDiv');
-      $('#dynamicContent').append(template_form);
-      $('#dynamicContent').show();
-
-      var l = getBaseUrl();
-      var url = l.replace('#','') + "?id=" + survey.id;
-      $("#linkanswer").html(url);
-      $("#linkanswer").attr("href",url);
-      $("#labellinkanswer").text("Your survey link: ");
-
-
-      renderAnswers();
-      if (typeof survey.questions !== 'undefined') {
-            console.log('rendering ['+survey.questions.length +'] questions...');
-            for(var i = 0; i < survey.questions.length; ++i) {
-                switch(survey.questions[i].questionType){
-                    case TYPE_TEXT:
-                        addAnswerBox(survey.questions[i],survey.answers, listAnswers.idClient, editable);
-                        break;
-                    case TYPE_CHOICE:
-                        addAnswerRadio(survey.questions[i],survey.answers, listAnswers.idClient, editable);
-                        break;
-                    case TYPE_MULTICHOICE:
-                        addAnswerCheckBox(survey.questions[i],survey.answers, listAnswers.idClient, editable);
-                        break;
-                }
-            }
-      }
-
-      if(editable) {
-          $('#answerButtons').attr('class','');
-          $('#saveSurveyAnswers').click(function() {
-                answerSurvey("pending");
-          });
-
-          $('#publishSurveyAnswers').click(function() {
-                answerSurvey("done");
-                rendersurveyAnswered(listAnswers, false);
-          });
-      }
-      else $('#answerButtons').attr('class','hidden');
 }
 
 
@@ -1090,7 +1064,7 @@ function surveyAlreadyStarted(){
     $('#dynamicContent').empty();
     var notification =  $('#notificationAnswer').clone();
     notification.text('You can\'t edit this survey. It\'s already anwered at least once!');
-    notification.attr('class','error');
+    notification.attr('class','info');
     hideTimeout(notification);
     console.log(currentSurvey);
     $('#dynamicContent').append(notification);
@@ -1144,7 +1118,7 @@ function appendSurvey(container) {
 function hideTimeout(element) {
     setTimeout(
         function() {
-            //element.attr('class', element.attr('class') + ' hidden');
+            element.attr('class', element.attr('class') + ' hidden');
         },
         5000
     );
@@ -1152,6 +1126,11 @@ function hideTimeout(element) {
 
 function getBaseUrl() {
     return document.URL.split('?')[0]
+}
+
+function changeURL(url)
+{
+    window.history.pushState("", "Enquestator", url);
 }
 
 $(document).ready(function($) {
