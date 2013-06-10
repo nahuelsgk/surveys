@@ -426,6 +426,7 @@ table {
 .login p.remember_me {
   float: left;
   line-height: 31px;
+  display: none;
 }
 .login p.remember_me label {
   font-size: 11px;

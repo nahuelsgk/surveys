@@ -51,8 +51,7 @@ function correctlyLogged(username, sayHello) {
 }
 
 function initCheckLogOut(){
-    intervalID = setInterval(function(){
-        console.log("Checking still logged");
+    intervalID = window.setInterval(function(){
         if (getCookie() == null){
             window.location = '/';
         }
