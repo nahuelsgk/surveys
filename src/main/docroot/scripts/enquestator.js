@@ -8,6 +8,7 @@ var WELCOME_VIEW = 5;
 var LIST_ANSWERED_SURVEYS = 6;
 var SURVEY_ALREADY_STARTED = 7;
 var currentSurvey;
+var currentSurveyUserNames;
 var surveyCopy;
 var surveys = new Object();
 var answerListList = new Object();
@@ -264,9 +265,13 @@ function showEditButton(){
     $('#editSurvey').attr('class','');
 }
 
-function updateCurrentSurvey(survey){
+function updateCurrentSurvey(survey, users){
     console.log('updating Current Survey: '+survey);
-    if (typeof(survey) !== 'undefined' && survey != null) currentSurvey = $.parseJSON(survey.value);
+    if (typeof(survey) !== 'undefined' && survey != null){
+        currentSurvey = $.parseJSON(survey.value);
+        currentSurveyUserNames = $.parseJSON(users.value);
+    }
+
     surveyCopy = cloneObject(currentSurvey);
     //console.log(currentSurvey);
     showEditButton();
@@ -454,12 +459,21 @@ function cleanView(view) {
     }
 }
 
+function resolveUserNameByIdClient(idClient){
+    var idClientString = ""+idClient
+    for (var key in currentSurveyUserNames){
+       console.log(key)
+       if (key == idClient) return currentSurveyUserNames[key];
+    }
+    return "Anonymous";
+}
 
 function prepareListAnswers(listAnswers) {
     var item = $('#listAnswerItem').clone(true); //TODO crear listAnswerItem
     item.attr('id', '');
     item.attr('class', 'surveyItem');
-    item.text('idClient ' + listAnswers.idClient + ' date = ' + listAnswers.dateAnswer+ ' ' + listAnswers.stateAnswer);
+    //item.text('idClient ' + listAnswers.idClient + ' name ' + resolveUserNameByIdClient(listAnswers.idClient) +' date = ' + listAnswers.dateAnswer+ ' ' + listAnswers.stateAnswer);
+    item.text('Answer by "' + resolveUserNameByIdClient(listAnswers.idClient) +'" on ' + listAnswers.dateAnswer+ ': ' + listAnswers.stateAnswer);
      item.click(function() {
             rendersurveyAnswered(listAnswers, false, true);
             window.scrollTo( 0, 150) ;
@@ -479,7 +493,7 @@ function rendersurveyAnswered(listAnswers, editable,back) {
       currentView = ANSWER_SURVEY;
       $('#dynamicContent').empty();
       var template_form = $('#answerFormDiv').clone();
-      template_form.find('#surveyTitle').html(survey.title + " answered by " + listAnswers.idClient + " on " + listAnswers.dateAnswer);
+      template_form.find('#surveyTitle').html(survey.title + ' answered by "' + resolveUserNameByIdClient(listAnswers.idClient) + '" on ' + listAnswers.dateAnswer);
 
       template_form.attr('class', 'answerFormDiv');
       $('#dynamicContent').append(template_form);
@@ -567,7 +581,7 @@ function listSurvey(survey) {
     });
     item.append(img);
     item.click(function() {
-        sendEvent('/api/survey/'+survey.id+'/noMatterWhat', 'GET', null, null, updateCurrentSurvey);
+        sendEvent('/api/survey/'+survey.id+'/noMatterWhat', 'GET', null, null, function (surveyInfo){updateCurrentSurvey(surveyInfo.survey, surveyInfo.users)});
     });
 
     return item;
@@ -1009,7 +1023,7 @@ function renderForm() {
             if(params.id && params.secret) {
                 surveyId = params.id;
                 secret = params.secret;
-                sendEvent('/api/survey/'+params.id+'/noMatterWhat', 'GET', null, null, updateCurrentSurvey);
+                sendEvent('/api/survey/'+params.id+'/noMatterWhat', 'GET', null, null, function (surveyInfo){updateCurrentSurvey(surveyInfo.survey, surveyInfo.users)});
             } else if(params.id && params.user) {
                 surveyId = params.id;
                 userId = params.user;
